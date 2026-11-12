@@ -9,6 +9,7 @@ import {
 import {
   extractWorkbook,
   WORKBOOK_PATH,
+  type ExtractedArchiveEntry,
   type ExtractedWorkbook,
 } from '../../src/infrastructure/excel/index.ts'
 import {
@@ -25,6 +26,7 @@ export interface PreparedCubeSource {
   validation?: ValidationResult
   unresolved: readonly UnresolvedCard[]
   metadata: readonly CardMetadata[]
+  archive: readonly ExtractedArchiveEntry[]
   resolution: {
     fetchedCount: number
     cacheHitCount: number
@@ -62,7 +64,8 @@ export async function prepareCubeSource(
 ): Promise<PreparedCubeSource> {
   const { workbookPath: configuredPath, ...resolutionOptions } = options
   const workbookPath = configuredPath ?? resolve(process.cwd(), WORKBOOK_PATH)
-  const extracted = activeOnly(await extractWorkbook(workbookPath))
+  const extractedWorkbook = await extractWorkbook(workbookPath)
+  const extracted = activeOnly(extractedWorkbook)
   const resolved = await resolveExtractedWorkbook(extracted, {
     ...resolutionOptions,
     suggestCorrections: false,
@@ -89,6 +92,7 @@ export async function prepareCubeSource(
     return {
       unresolved,
       metadata,
+      archive: extractedWorkbook.archive,
       resolution: resolved.stats,
     }
   }
@@ -105,6 +109,7 @@ export async function prepareCubeSource(
     validation: validateCube(cube, DEFAULT_CUBE_RULES),
     unresolved,
     metadata,
+    archive: extractedWorkbook.archive,
     resolution: resolved.stats,
   }
 }

@@ -14,6 +14,7 @@
     "cube:extract": "tsx scripts/cube/extract.ts",
     "cube:resolve": "tsx scripts/cube/resolve.ts",
     "cube:validate": "tsx scripts/cube/validate.ts",
+    "cube:archive": "tsx scripts/cube/archive.ts",
     "cube:release": "tsx scripts/cube/release.ts"
   },
   "dependencies": {

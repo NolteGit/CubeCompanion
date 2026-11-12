@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { AnalysisDashboard } from '../features/analysis/AnalysisDashboard'
+import { ArchiveBrowser } from '../features/archive/ArchiveBrowser'
 import { CubeBrowser } from '../features/browser/CubeBrowser'
 import { commanderCards, draftCards, releaseInfo } from '../features/browser/data'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import './app.css'
 
-type AppPage = 'browse' | 'analysis' | 'history'
+type AppPage = 'browse' | 'analysis' | 'history' | 'archive'
 
 function formatPublishedAt(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value))
@@ -39,21 +40,30 @@ function App() {
           </div>
         </section>
 
-        <nav className="app-nav" aria-label="Cube companion sections">
-          <button className={page === 'browse' ? 'active' : ''} onClick={() => setPage('browse')}>
-            Browse
+        <div className="app-navigation-row">
+          <nav className="app-nav" aria-label="Cube companion sections">
+            <button className={page === 'browse' ? 'active' : ''} onClick={() => setPage('browse')}>
+              Browse
+            </button>
+            <button className={page === 'analysis' ? 'active' : ''} onClick={() => setPage('analysis')}>
+              Analysis
+            </button>
+            <button className={page === 'history' ? 'active' : ''} onClick={() => setPage('history')}>
+              History
+            </button>
+          </nav>
+          <button
+            className={`archive-nav${page === 'archive' ? ' active' : ''}`}
+            onClick={() => setPage('archive')}
+          >
+            Archive
           </button>
-          <button className={page === 'analysis' ? 'active' : ''} onClick={() => setPage('analysis')}>
-            Analysis
-          </button>
-          <button className={page === 'history' ? 'active' : ''} onClick={() => setPage('history')}>
-            History
-          </button>
-        </nav>
+        </div>
 
         {page === 'browse' && <CubeBrowser />}
         {page === 'analysis' && <AnalysisDashboard />}
         {page === 'history' && <HistoryBrowser />}
+        {page === 'archive' && <ArchiveBrowser />}
       </main>
     </div>
   )

@@ -1,4 +1,8 @@
 import { DEFAULT_CUBE_RULES } from '../../src/domain/index.ts'
+import {
+  DEFAULT_ARCHIVE_PATH,
+  publishArchive,
+} from '../../src/infrastructure/archive/index.ts'
 import { publishCube } from '../../src/infrastructure/snapshots/index.ts'
 import { prepareCubeSource } from './pipeline.ts'
 import { printPreparedCube, printUnresolved, printValidationIssues } from './report.ts'
@@ -9,6 +13,10 @@ function optionValue(name: string): string | undefined {
   const value = process.argv[index + 1]
   if (!value || value.startsWith('--')) throw new Error(`${name} requires a value`)
   return value
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
 }
 
 const note = optionValue('--note')
@@ -45,5 +53,13 @@ if (result.unresolved.length > 0) {
   console.log(`History:    ${publication.createdHistory ? 'created' : 'reused'} ${publication.historyPath}`)
   console.log('Current:    data/current/cube.json')
   console.log('Metadata:   data/metadata/cards.json')
+
+  try {
+    const archive = await publishArchive(result.archive)
+    console.log(`Archive:    ${archive.entries.length} entries ${DEFAULT_ARCHIVE_PATH}`)
+  } catch (error) {
+    console.warn(`Archive:    warning — ${errorMessage(error)}`)
+  }
+
   console.log('\x1b[32m✓ RELEASE READY — review and commit generated changes\x1b[0m')
 }

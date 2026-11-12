@@ -16,10 +16,11 @@ CubeUebersicht.xlsx
   -> validation
   -> deterministic content hash
   -> current + immutable history + metadata JSON
+  -> raw historical archive JSON
   -> manual Git commit/push
 ```
 
-A release never commits or pushes Git changes automatically. Invalid source data writes no publication files.
+A release never commits or pushes Git changes automatically. Invalid active source data writes no publication files.
 
 ## State model
 
@@ -29,7 +30,7 @@ The content hash is calculated from sorted draft Oracle IDs together with their 
 
 `data/metadata/cards.json` contains Scryfall metadata for cards in the active cube. It is generated separately so metadata changes cannot alter cube identity.
 
-Archive data remains outside the content hash. Full archive publication is handled separately from the active-cube release path, so historical spelling issues cannot block an otherwise valid cube release.
+`data/archive/cards.json` contains the workbook Archive sheet as raw names, pools, and historical sections. It deliberately does not require Scryfall resolution, so historical typos or obsolete names cannot block an otherwise valid release. The website combines this manual archive with former cards recoverable from immutable published snapshots.
 
 ## Module boundaries
 
@@ -37,10 +38,10 @@ Archive data remains outside the content hash. Full archive publication is handl
 src/app             application shell and routing
 src/domain          cube model, rules, validation, history, sandbox logic
 src/features        browser, analytics, history, archive, draft, sandbox UI
-src/infrastructure  Excel, Scryfall, snapshots, browser storage
+src/infrastructure  Excel, Scryfall, snapshots, archive publication, browser storage
 src/shared          small reusable UI/types/utilities
 scripts/cube        local release tooling
-data                 generated current/history/metadata artifacts
+data                 generated current/history/metadata/archive artifacts
 ```
 
 Domain code must not depend on React, Excel, Scryfall, or browser storage. Infrastructure adapters isolate external formats and services.

@@ -53,6 +53,13 @@ main {
   gap: 22px;
 }
 
+.app-navigation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .app-nav {
   display: flex;
   width: fit-content;
@@ -78,6 +85,20 @@ main {
 .app-nav button.active {
   color: var(--text);
   background: var(--surface-raised, rgba(127, 127, 127, 0.1));
+}
+
+.archive-nav {
+  padding: 6px 2px;
+  border: 0;
+  color: var(--text-faint);
+  background: transparent;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.archive-nav:hover,
+.archive-nav.active {
+  color: var(--text);
 }
 
 .release-strip {
@@ -120,6 +141,10 @@ main {
   .app-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .app-navigation-row {
+    align-items: flex-start;
   }
 
   .release-strip {

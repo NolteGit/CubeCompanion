@@ -28,4 +28,6 @@ The adapter verifies section labels before reading. A moved or renamed workbook 
 
 Archive columns are scanned independently through the used sheet rows because historical lists may contain gaps or grow over time. Archive entries remain reference data and do not affect cube-state identity.
 
+Archive publication preserves the workbook name, pool, and section without requiring Scryfall resolution. Historical spelling mistakes therefore remain searchable as recorded and never become active-card validation failures. The website supplements these entries with former cards found in committed official snapshots.
+
 Downstream code must not depend on workbook coordinates or formatting.
