@@ -1,7 +1,7 @@
 # Roadmap
 
-1. **Foundation** — structure, documentation, test tooling, minimal app shell.
-2. **Domain model** — cube types, rules configuration, validation and tests.
+1. **Foundation** — complete.
+2. **Domain model** — complete.
 3. **Workbook adapter** — extract active cube, commanders, and archive; prove the 411/55 baseline.
 4. **Card resolution** — Scryfall identity/metadata with local caching and explicit resolution errors.
 5. **Release pipeline** — extract, resolve, validate, hash, generate current/history data.

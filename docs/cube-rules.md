@@ -24,10 +24,9 @@ Color categorization follows Commander color identity. A colored land belongs to
 
 - singleton by logical card identity
 - no overlap with the draft pool
-- all five mono-color identities must have equal counts
-- all ten dual-color identities must have equal counts
-- all ten triple-color identities must have equal counts
-- colorless commanders are allowed without a symmetry requirement
+- identity counts are symmetrical independently for mono-, dual-, triple-, and four-color commanders
+- colorless commanders are unrestricted
+- five-color commanders are allowed; only one five-color identity exists, so no symmetry check is needed
 - Partner-specific deck rules are intentionally out of scope
 
 ## Release behavior

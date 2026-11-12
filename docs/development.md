@@ -4,10 +4,10 @@
 
 ```bash
 npm run dev
-npm test
-npm run build
-npm run lint
+npm run verify
 ```
+
+`verify` runs tests, production build, and linting. A successful run ends with a green confirmation line.
 
 `npm run cube:release` will be added with the release pipeline. Smaller cube commands may exist for debugging but should not be required for normal use.
 
@@ -25,16 +25,11 @@ npm run lint
 
 ## Patch workflow
 
-Changes supplied externally should be checked before application:
-
 ```bash
 git apply --check <patch>
 git apply <patch>
-npm install
-npm test
-npm run build
-npm run lint
-git diff
+npm install      # only when dependencies changed
+npm run verify
 ```
 
-Run `npm install` when a patch changes dependencies so `package-lock.json` is synchronized before committing.
+If verification is green, commit and push. When a patch changes dependencies, `npm install` also synchronizes `package-lock.json` before commit.
