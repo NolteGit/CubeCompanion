@@ -15,14 +15,6 @@ export function sandboxDiffText(diff: SandboxDiff): string {
 
   lines.push(...section('DRAFT ADDED', names(diff.addedDraft)))
   lines.push(...section('DRAFT REMOVED', names(diff.removedDraft)))
-  lines.push(
-    ...section(
-      'DRAFT REALLOCATED',
-      [...diff.reallocatedDraft]
-        .sort((left, right) => left.card.name.localeCompare(right.card.name))
-        .map((change) => `${change.card.name}: ${change.from} -> ${change.to}`),
-    ),
-  )
   lines.push(...section('COMMANDERS ADDED', names(diff.addedCommanders)))
   lines.push(...section('COMMANDERS REMOVED', names(diff.removedCommanders)))
 

@@ -4,6 +4,7 @@ import { lookupSandboxCard } from '../../src/features/sandbox/scryfall'
 import {
   applySandboxCard,
   createSandboxState,
+  inferSandboxDraftAllocation,
   removeSandboxCard,
   sandboxChangeCount,
   sandboxDiff,
@@ -37,28 +38,41 @@ describe('sandbox state', () => {
   ]
   const officialCommanders = [card('commander', 'Commander')]
 
-  it('tracks additions, removals, and reallocations from the official snapshot', () => {
+  it('tracks only additions and removals from the official snapshot', () => {
     let state = createSandboxState('snapshot', officialDraft, officialCommanders)
-    state = applySandboxCard(state, officialDraft[1], {
-      pool: 'draft',
-      draftAllocation: { section: 'colorless' },
-    })
-    state = applySandboxCard(state, card('new', 'New card'), {
-      pool: 'draft',
-      draftAllocation: { section: 'green' },
-    })
+    state = applySandboxCard(
+      state,
+      card('new', 'New card', { colorIdentity: ['G'] }),
+      'draft',
+    )
     state = removeSandboxCard(state, 'commander', 'commander')
 
     const diff = sandboxDiff(state, officialDraft, officialCommanders)
 
-    expect(diff.addedDraft.map((entry) => entry.name)).toEqual(['New card'])
-    expect(diff.reallocatedDraft[0]).toMatchObject({
-      card: { name: 'Blue card' },
-      from: 'Blue',
-      to: 'Colorless',
-    })
+    expect(diff.addedDraft).toMatchObject([
+      { name: 'New card', draftAllocation: { section: 'green' } },
+    ])
     expect(diff.removedCommanders.map((entry) => entry.name)).toEqual(['Commander'])
-    expect(sandboxChangeCount(diff)).toBe(3)
+    expect(sandboxChangeCount(diff)).toBe(2)
+  })
+
+  it('infers draft allocation from resolved Scryfall card facts', () => {
+    expect(inferSandboxDraftAllocation(
+      card('spell', 'Azorius spell', { colorIdentity: ['U', 'W'] }),
+    )).toEqual({ section: 'multicolor', guild: 'WU' })
+
+    expect(inferSandboxDraftAllocation(
+      card('land', 'Azorius land', { colorIdentity: ['U', 'W'], isLand: true }),
+    )).toEqual({ section: 'land', guild: 'WU' })
+  })
+
+  it('preserves an official allocation when a removed official card is re-added', () => {
+    let state = createSandboxState('snapshot', officialDraft, officialCommanders)
+    state = removeSandboxCard(state, 'draft', 'blue')
+    state = applySandboxCard(state, officialDraft[1], 'draft')
+
+    expect(state.draftCards.find((entry) => entry.oracleId === 'blue')?.draftAllocation)
+      .toEqual({ section: 'blue' })
   })
 
   it('persists only sandbox states based on the current official snapshot', () => {

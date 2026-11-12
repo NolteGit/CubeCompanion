@@ -20,13 +20,10 @@ function card(name: string, oracleId: string, section = 'white'): BrowserCard {
 }
 
 describe('sandbox text exports', () => {
-  it('exports additions, removals, and reallocations as a readable diff', () => {
-    const added = card('Added Card', 'added')
-    const moved = card('Moved Card', 'moved')
+  it('exports additions and removals as a readable diff', () => {
     const diff: SandboxDiff = {
-      addedDraft: [added],
+      addedDraft: [card('Added Card', 'added')],
       removedDraft: [],
-      reallocatedDraft: [{ card: moved, from: 'White', to: 'Blue' }],
       addedCommanders: [],
       removedCommanders: [card('Old Commander', 'old')],
     }
@@ -34,7 +31,7 @@ describe('sandbox text exports', () => {
     const text = sandboxDiffText(diff)
 
     expect(text).toContain('DRAFT ADDED\nAdded Card')
-    expect(text).toContain('Moved Card: White -> Blue')
+    expect(text).not.toContain('REALLOCATED')
     expect(text).toContain('COMMANDERS REMOVED\nOld Commander')
   })
 

@@ -139,7 +139,7 @@
 
 .sandbox-add-form {
   display: grid;
-  grid-template-columns: minmax(220px, 2fr) minmax(130px, 0.7fr) minmax(180px, 1fr) auto;
+  grid-template-columns: minmax(220px, 2fr) minmax(130px, 0.7fr) auto;
   align-items: end;
   gap: 10px;
 }
@@ -161,8 +161,7 @@
 
 .sandbox-add-form input,
 .sandbox-add-form select,
-.sandbox-manage-search input,
-.sandbox-card-row select {
+.sandbox-manage-search input {
   min-width: 0;
   padding: 9px 10px;
   border: 1px solid var(--border);
@@ -203,10 +202,6 @@
 .sandbox-card-row span {
   color: var(--text-muted);
   font-size: 0.75rem;
-}
-
-.sandbox-card-row select {
-  width: min(220px, 30vw);
 }
 
 .sandbox-card-row button {
@@ -250,9 +245,5 @@
   .sandbox-change-group {
     grid-template-columns: 1fr;
     gap: 3px;
-  }
-
-  .sandbox-card-row select {
-    width: 100%;
   }
 }

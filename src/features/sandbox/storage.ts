@@ -2,7 +2,7 @@ import type { BrowserCard } from '../browser/types'
 import { createSandboxState } from './state'
 import type { SandboxState } from './types'
 
-export const SANDBOX_STORAGE_KEY = 'cube-companion:sandbox:v1'
+export const SANDBOX_STORAGE_KEY = 'cube-companion:sandbox:v2'
 
 type SandboxStorage = Pick<Storage, 'getItem' | 'setItem'>
 
