@@ -5,11 +5,14 @@
 ```bash
 npm run dev
 npm run verify
+npm run cube:release
 ```
 
-`verify` runs tests, production build, and linting. A successful run ends with a green confirmation line.
+`verify` is offline and checks tests, the production build, and linting. A successful run ends with a green confirmation line.
 
-`npm run cube:extract` prints a diagnostic workbook summary. `npm run cube:resolve` resolves workbook card names through Scryfall, uses a git-ignored local cache, and suggests likely corrections without changing the workbook. Unresolved active cube cards fail the command; archive-only misses are reported separately. `npm run cube:release` will be added with the release pipeline.
+`cube:release` is the normal publication command. It reads the workbook, resolves active card names through Scryfall, blocks on unresolved names or cube-rule violations, and only then writes generated current/history/metadata files. It never commits or pushes Git changes.
+
+Diagnostic commands are available when needed: `cube:extract` prints workbook counts, `cube:resolve` checks the full workbook including archive names, and `cube:validate` runs the active-cube release checks without writing publication files.
 
 ## Engineering conventions
 
@@ -32,4 +35,4 @@ npm install      # only when dependencies changed
 npm run verify
 ```
 
-If verification is green, commit and push. When a patch changes dependencies, `npm install` also synchronizes `package-lock.json` before commit.
+If verification is green, run any patch-specific cube command, then commit and push. When a patch changes dependencies, `npm install` also synchronizes `package-lock.json` before commit.

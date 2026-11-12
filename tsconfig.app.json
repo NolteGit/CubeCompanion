@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  "exclude": ["src/infrastructure/excel", "src/infrastructure/scryfall"]
+  "exclude": ["src/infrastructure/excel", "src/infrastructure/scryfall", "src/infrastructure/snapshots"]
 }

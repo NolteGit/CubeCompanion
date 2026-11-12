@@ -21,6 +21,7 @@
   "include": [
     "scripts/cube",
     "src/infrastructure/excel",
-    "src/infrastructure/scryfall"
+    "src/infrastructure/scryfall",
+    "src/infrastructure/snapshots"
   ]
 }

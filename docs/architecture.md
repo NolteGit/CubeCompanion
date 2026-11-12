@@ -11,23 +11,25 @@ Cube Companion publishes validated, immutable snapshots of the locally maintaine
 ```text
 CubeUebersicht.xlsx
   -> workbook adapter
+  -> active-card Scryfall resolution
   -> normalized cube
-  -> Scryfall resolution
   -> validation
-  -> content hash + snapshot
-  -> generated website data
+  -> deterministic content hash
+  -> current + immutable history + metadata JSON
   -> manual Git commit/push
 ```
 
-A release never commits or pushes Git changes automatically.
+A release never commits or pushes Git changes automatically. Invalid source data writes no publication files.
 
 ## State model
 
-An official snapshot contains the active draft pool, commander pool, publication timestamp, optional note, rules revision, and validation summary.
+The content hash is calculated from sorted Oracle IDs in the draft and commander pools, with the pool itself included in the identity. Excel row order, archive contents, artwork/printing choices, timestamps, Scryfall metadata, and rules-revision changes do not affect the content hash.
 
-The snapshot ID is a deterministic hash of sorted logical draft-card and commander identities. Excel row order, archive contents, artwork/printing choices, timestamps, and Scryfall metadata do not affect cube identity.
+`data/history/<hash>.json` stores the first immutable snapshot for a content state. `data/current/cube.json` points at that snapshot and records the current publication timestamp, note, rules revision, and validation result. Releasing unchanged cube content reuses the history snapshot instead of creating another content state.
 
-Archive data is published as reference data but does not affect the snapshot hash. Website experiments are temporary sandbox states and never become official versions automatically.
+`data/metadata/cards.json` contains Scryfall metadata for cards in the active cube. It is generated separately so metadata changes cannot alter cube identity.
+
+Archive data remains outside the content hash. Full archive publication is handled separately from the active-cube release path, so historical spelling issues cannot block an otherwise valid cube release.
 
 ## Module boundaries
 
@@ -50,7 +52,7 @@ Domain code must not depend on React, Excel, Scryfall, or browser storage. Infra
 - Oxlint
 - Vitest
 - Scryfall for card identity and metadata
-- Excel reader introduced with the workbook adapter
+- ExcelJS for the local source adapter
 - static Cloudflare deployment planned for v1
 
 No backend, database, authentication, Docker, or cross-device sandbox persistence is required for v1.

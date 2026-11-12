@@ -12,7 +12,9 @@
     "test:watch": "vitest",
     "verify": "npm test && npm run build && npm run lint && node -e \"console.log('\\x1b[32m✓ GREEN — verification passed\\x1b[0m')\"",
     "cube:extract": "tsx scripts/cube/extract.ts",
-    "cube:resolve": "tsx scripts/cube/resolve.ts"
+    "cube:resolve": "tsx scripts/cube/resolve.ts",
+    "cube:validate": "tsx scripts/cube/validate.ts",
+    "cube:release": "tsx scripts/cube/release.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

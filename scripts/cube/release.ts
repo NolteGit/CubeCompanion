@@ -1,0 +1,49 @@
+import { DEFAULT_CUBE_RULES } from '../../src/domain/index.ts'
+import { publishCube } from '../../src/infrastructure/snapshots/index.ts'
+import { prepareCubeSource } from './pipeline.ts'
+import { printPreparedCube, printUnresolved, printValidationIssues } from './report.ts'
+
+function optionValue(name: string): string | undefined {
+  const index = process.argv.indexOf(name)
+  if (index === -1) return undefined
+  const value = process.argv[index + 1]
+  if (!value || value.startsWith('--')) throw new Error(`${name} requires a value`)
+  return value
+}
+
+const note = optionValue('--note')
+const result = await prepareCubeSource({
+  refresh: process.argv.includes('--refresh'),
+  suggestCorrections: true,
+})
+
+console.log('Cube release')
+printPreparedCube(result)
+
+if (result.unresolved.length > 0) {
+  printUnresolved(result.unresolved)
+  process.exitCode = 1
+} else if (!result.validation) {
+  throw new Error('Cube release did not produce a validation result')
+} else if (!result.validation.valid) {
+  printValidationIssues(result.validation)
+  process.exitCode = 1
+} else if (!result.cube) {
+  throw new Error('Cube release did not produce a normalized cube')
+} else {
+  const publication = await publishCube({
+    cube: result.cube,
+    validation: result.validation,
+    metadata: result.metadata,
+    rulesRevision: DEFAULT_CUBE_RULES.revision,
+    note,
+  })
+
+  console.log(`Snapshot:   ${publication.published.snapshot.id}`)
+  console.log(`Draft:      ${publication.published.snapshot.draftCards.length}`)
+  console.log(`Commanders: ${publication.published.snapshot.commanders.length}`)
+  console.log(`History:    ${publication.createdHistory ? 'created' : 'reused'} ${publication.historyPath}`)
+  console.log('Current:    data/current/cube.json')
+  console.log('Metadata:   data/metadata/cards.json')
+  console.log('\x1b[32m✓ RELEASE READY — review and commit generated changes\x1b[0m')
+}
