@@ -53,6 +53,33 @@ main {
   gap: 22px;
 }
 
+.app-nav {
+  display: flex;
+  width: fit-content;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+}
+
+.app-nav button {
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: transparent;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-nav button:hover,
+.app-nav button.active {
+  color: var(--text);
+  background: var(--surface-raised, rgba(127, 127, 127, 0.1));
+}
+
 .release-strip {
   display: flex;
   align-items: center;
