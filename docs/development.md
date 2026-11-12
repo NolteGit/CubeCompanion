@@ -9,7 +9,7 @@ npm run verify
 
 `verify` runs tests, production build, and linting. A successful run ends with a green confirmation line.
 
-`npm run cube:extract` prints a diagnostic summary of the current workbook. `npm run cube:release` will be added with the release pipeline.
+`npm run cube:extract` prints a diagnostic workbook summary. `npm run cube:resolve` resolves workbook card names through Scryfall, uses a git-ignored local cache, and suggests likely corrections without changing the workbook. Unresolved active cube cards fail the command; archive-only misses are reported separately. `npm run cube:release` will be added with the release pipeline.
 
 ## Engineering conventions
 
