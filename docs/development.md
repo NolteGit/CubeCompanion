@@ -9,7 +9,7 @@ npm run verify
 
 `verify` runs tests, production build, and linting. A successful run ends with a green confirmation line.
 
-`npm run cube:release` will be added with the release pipeline. Smaller cube commands may exist for debugging but should not be required for normal use.
+`npm run cube:extract` prints a diagnostic summary of the current workbook. `npm run cube:release` will be added with the release pipeline.
 
 ## Engineering conventions
 

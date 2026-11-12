@@ -2,7 +2,7 @@
 
 1. **Foundation** — complete.
 2. **Domain model** — complete.
-3. **Workbook adapter** — extract active cube, commanders, and archive; prove the 411/55 baseline.
+3. **Workbook adapter** — complete; extracts active cube, commanders, and archive and proves the 411/55 baseline.
 4. **Card resolution** — Scryfall identity/metadata with local caching and explicit resolution errors.
 5. **Release pipeline** — extract, resolve, validate, hash, generate current/history data.
 6. **Cube browser** — current cube, commanders, filtering, sorting, card presentation.

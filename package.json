@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm test && npm run build && npm run lint && node -e \"console.log('\\x1b[32m✓ GREEN — verification passed\\x1b[0m')\""
+    "verify": "npm test && npm run build && npm run lint && node -e \"console.log('\\x1b[32m✓ GREEN — verification passed\\x1b[0m')\"",
+    "cube:extract": "tsx scripts/cube/extract.ts"
   },
   "dependencies": {
     "react": "^19.3.1",
@@ -24,7 +25,9 @@
     "oxlint": "^1.90.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.6",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "exceljs": "^4.4.0",
+    "tsx": "^4.23.15"
   },
   "volta": {
     "node": "24.15.0",

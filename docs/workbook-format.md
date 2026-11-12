@@ -2,31 +2,26 @@
 
 ## Source
 
-The authoritative workbook is committed at:
+`source/CubeUebersicht.xlsx` is authoritative and read-only to application code.
 
-`source/CubeUebersicht.xlsx`
+## Included sheets
 
-The application and release tooling treat this file as read-only.
+`Cube` provides the active draft pool and commander pool. `Archive` provides historical draft and commander reference data. `Cut-Watch-Interest` stays local to the Excel workflow and is not extracted.
 
-## Relevant sheets
+## Active-section convention
 
-### `Cube`
+Only the Excel adapter owns worksheet coordinates.
 
-Contains the active draft pool and active commander pool. It also contains working/planned areas that are not part of the active cube. The workbook adapter is responsible for distinguishing these regions.
+Draft sections use bounded active blocks. Mono-color and multicolor blocks match their fixed rule sizes; colorless and land blocks include their full allowed ranges. Blank cells inside a block are skipped, so an unfinished cut does not hide later active rows.
 
-Known current active baseline:
+Commander lists start at known cells and end at their first blank separator. This keeps later scratch/planned blocks outside the active pool while allowing commander counts to change. `-` is treated as an empty placeholder, currently used by the colorless commander section.
 
-- 411 draft cards
-- 55 commanders
+Current diagnostic baseline is 411 draft cards and 55 commanders.
 
-### `Archive`
+The adapter verifies section labels before reading. A moved or renamed workbook section therefore fails loudly instead of silently extracting the wrong cells.
 
-Contains historical draft cards and commanders. Archive content is published for reference/search but does not affect official cube-state identity.
+## Archive
 
-### `Cut-Watch-Interest`
+Archive columns are scanned independently through the used sheet rows because historical lists may contain gaps or grow over time. Archive entries remain reference data and do not affect cube-state identity.
 
-Private working space for ideas, watch items, future additions, and cuts. It is not imported into the website.
-
-## Extraction rule
-
-Only the Excel infrastructure adapter may know worksheet coordinates, formatting conventions, or section boundaries. Downstream code receives normalized cube data only.
+Downstream code must not depend on workbook coordinates or formatting.
