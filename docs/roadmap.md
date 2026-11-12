@@ -7,7 +7,7 @@
 5. **Release pipeline** — complete; active-name resolution, validation, deterministic content hash, immutable history, and generated current/metadata data.
 6. **Cube browser** — complete; published cube/commander browsing, section and type filters, search, sorting, list/image views, and release metadata.
 7. **Analysis/history/archive** — complete; current analysis, immutable version diffs, raw workbook archive publication, and historical lookup.
-8. **Playtest/sandbox** — four 18-card draft packs and 5-card commander packs complete; session sandbox, live validation, and text exports next.
+8. **Playtest/sandbox** — complete; random draft/commander packs plus a session-only sandbox with live validation, Scryfall additions, reallocation/removal, reset, and text exports.
 9. **Deployment polish** — Cloudflare deployment, responsive/error-state cleanup.
 
 Split any step further when that keeps patches easier to review and test.
