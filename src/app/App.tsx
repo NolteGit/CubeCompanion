@@ -4,9 +4,10 @@ import { ArchiveBrowser } from '../features/archive/ArchiveBrowser'
 import { CubeBrowser } from '../features/browser/CubeBrowser'
 import { commanderCards, draftCards, releaseInfo } from '../features/browser/data'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
+import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import './app.css'
 
-type AppPage = 'browse' | 'analysis' | 'history' | 'archive'
+type AppPage = 'browse' | 'playtest' | 'analysis' | 'history' | 'archive'
 
 function formatPublishedAt(value: string): string {
   return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value))
@@ -45,6 +46,9 @@ function App() {
             <button className={page === 'browse' ? 'active' : ''} onClick={() => setPage('browse')}>
               Browse
             </button>
+            <button className={page === 'playtest' ? 'active' : ''} onClick={() => setPage('playtest')}>
+              Playtest
+            </button>
             <button className={page === 'analysis' ? 'active' : ''} onClick={() => setPage('analysis')}>
               Analysis
             </button>
@@ -61,6 +65,7 @@ function App() {
         </div>
 
         {page === 'browse' && <CubeBrowser />}
+        {page === 'playtest' && <PlaytestTable />}
         {page === 'analysis' && <AnalysisDashboard />}
         {page === 'history' && <HistoryBrowser />}
         {page === 'archive' && <ArchiveBrowser />}
