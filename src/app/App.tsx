@@ -1,4 +1,10 @@
+import { CubeBrowser } from '../features/browser/CubeBrowser'
+import { commanderCards, draftCards, releaseInfo } from '../features/browser/data'
 import './app.css'
+
+function formatPublishedAt(value: string): string {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(new Date(value))
+}
 
 function App() {
   return (
@@ -8,27 +14,25 @@ function App() {
           <p className="eyebrow">MTG Commander Cube</p>
           <h1>Cube Companion</h1>
         </div>
-        <span className="status">Foundation</span>
+        <div className="header-counts" aria-label="Current cube size">
+          <span><strong>{draftCards.length}</strong> draft</span>
+          <span><strong>{commanderCards.length}</strong> commanders</span>
+        </div>
       </header>
 
       <main>
-        <section className="intro-card">
-          <h2>Project foundation ready</h2>
-          <p>
-            The local workbook remains the source of truth. The next step is the
-            normalized cube domain model and validation rules.
-          </p>
-          <dl>
-            <div>
-              <dt>Source</dt>
-              <dd>source/CubeUebersicht.xlsx</dd>
-            </div>
-            <div>
-              <dt>Publication</dt>
-              <dd>Validated, immutable snapshots</dd>
-            </div>
-          </dl>
+        <section className="release-strip" aria-label="Published cube version">
+          <div>
+            <strong>{releaseInfo.note ?? 'Current cube'}</strong>
+            <span>Published {formatPublishedAt(releaseInfo.publishedAt)}</span>
+          </div>
+          <div className="release-meta">
+            <span>Rules v{releaseInfo.rulesRevision}</span>
+            <span title={releaseInfo.snapshotId}>Snapshot {releaseInfo.snapshotId.slice(0, 8)}</span>
+          </div>
         </section>
+
+        <CubeBrowser />
       </main>
     </div>
   )
