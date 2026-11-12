@@ -5,8 +5,8 @@ Personal web companion for the MTG Commander Cube stored in `source/CubeUebersic
 ```bash
 npm install
 npm run dev
-npm test
-npm run build
+npm run verify
+npm run cube:release
 ```
 
-Architecture and project conventions live in [`docs/`](docs/architecture.md).
+Architecture, release workflow, and Cloudflare Pages settings live in [`docs/`](docs/architecture.md).

@@ -8,6 +8,6 @@
 6. **Cube browser** — complete; published cube/commander browsing, section and type filters, search, sorting, list/image views, and release metadata.
 7. **Analysis/history/archive** — complete; current analysis, immutable version diffs, raw workbook archive publication, and historical lookup.
 8. **Playtest/sandbox** — complete; random draft/commander packs plus a session-only sandbox with live validation, Scryfall-resolved additions, removals, reset, and text exports.
-9. **Deployment polish** — Cloudflare deployment, responsive/error-state cleanup.
+9. **Deployment polish** — complete; Cloudflare Pages build settings, pinned Node runtime, static security/cache headers, responsive navigation, and a top-level render fallback.
 
-Split any step further when that keeps patches easier to review and test.
+V1 is feature-complete. Future work should be driven by actual cube use rather than adding infrastructure pre-emptively.

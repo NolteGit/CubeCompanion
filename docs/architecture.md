@@ -54,6 +54,6 @@ Domain code must not depend on React, Excel, Scryfall, or browser storage. Infra
 - Vitest
 - Scryfall for card identity and metadata
 - ExcelJS for the local source adapter
-- static Cloudflare deployment planned for v1
+- static Cloudflare Pages deployment from GitHub
 
 No backend, database, authentication, Docker, or cross-device sandbox persistence is required for v1.

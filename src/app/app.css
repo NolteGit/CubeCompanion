@@ -145,11 +145,72 @@ main {
   }
 
   .app-navigation-row {
-    align-items: flex-start;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .app-nav {
+    flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-nav button {
+    flex: 0 0 auto;
+  }
+
+  .archive-nav {
+    align-self: flex-end;
+  }
+
+  .header-counts,
+  .release-meta {
+    flex-wrap: wrap;
   }
 
   .release-strip {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+.app-error {
+  width: min(680px, calc(100% - 32px));
+  margin: 12vh auto 0;
+  padding: clamp(24px, 5vw, 42px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.app-error h1 {
+  margin: 6px 0 10px;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.app-error > p:not(.eyebrow) {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.app-error button {
+  margin-top: 22px;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text);
+  background: var(--surface-raised);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.app-error button:hover {
+  background: var(--surface-hover);
 }
