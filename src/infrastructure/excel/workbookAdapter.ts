@@ -6,6 +6,7 @@ import {
   COMMANDER_SECTIONS,
   CUBE_SHEET,
   DRAFT_SECTIONS,
+  draftAllocationFor,
   type ActiveSectionLayout,
   type ArchiveSectionLayout,
 } from './layout'
@@ -60,7 +61,13 @@ function readActiveSection(
     }
     if (IGNORED_VALUES.has(name)) continue
 
-    cards.push({ name, pool, section: layout.section, cell })
+    cards.push({
+      name,
+      pool,
+      section: layout.section,
+      cell,
+      draftAllocation: pool === 'draft' ? draftAllocationFor(layout.section, row) : undefined,
+    })
   }
 
   return cards

@@ -1,7 +1,12 @@
 import {
   COLOR_SYMBOLS,
+  GUILD_KEYS,
+  type ColorSymbol,
   type CubeCard,
   type CubeDefinition,
+  type DraftAllocation,
+  type DraftSection,
+  type GuildKey,
 } from '../cube/types'
 import {
   colorIdentityCombinations,
@@ -14,6 +19,29 @@ import type {
   ValidationIssue,
   ValidationResult,
 } from './types'
+
+const SECTION_BY_COLOR: Record<ColorSymbol, DraftSection> = {
+  W: 'white',
+  U: 'blue',
+  B: 'black',
+  R: 'red',
+  G: 'green',
+}
+
+const SECTION_LABELS: Record<DraftSection, string> = {
+  white: 'White',
+  blue: 'Blue',
+  black: 'Black',
+  red: 'Red',
+  green: 'Green',
+  colorless: 'Colorless',
+  multicolor: 'Multicolor',
+  land: 'Land',
+}
+
+function emptyGuildCounts(): Record<GuildKey, number> {
+  return Object.fromEntries(GUILD_KEYS.map((guild) => [guild, 0])) as Record<GuildKey, number>
+}
 
 function countByIdentity(cards: readonly CubeCard[], size: number): Record<string, number> {
   const counts: Record<string, number> = {}
@@ -32,30 +60,53 @@ function countByIdentity(cards: readonly CubeCard[], size: number): Record<strin
   return counts
 }
 
+function inferredDraftAllocation(card: CubeCard): DraftAllocation {
+  if (card.draftAllocation) return card.draftAllocation
+  if (card.isLand) return { section: 'land' }
+
+  const size = colorIdentitySize(card.colorIdentity)
+  if (size === 0) return { section: 'colorless' }
+  if (size === 1) return { section: SECTION_BY_COLOR[card.colorIdentity[0]] }
+  if (size === 2) return { section: 'multicolor', guild: colorIdentityKey(card.colorIdentity) as GuildKey }
+  return { section: 'multicolor' }
+}
+
 function buildDraftSummary(cards: readonly CubeCard[]): DraftValidationSummary {
-  const mono = countByIdentity(cards, 1)
-  const dual = countByIdentity(cards, 2)
+  const mono = Object.fromEntries(COLOR_SYMBOLS.map((color) => [color, 0])) as Record<ColorSymbol, number>
+  const dual = emptyGuildCounts()
+  const guildLands = emptyGuildCounts()
+  let multicolor = 0
   let colorless = 0
   let lands = 0
+  let generalLands = 0
 
   for (const card of cards) {
-    if (colorIdentitySize(card.colorIdentity) !== 0) {
-      continue
-    }
+    const allocation = inferredDraftAllocation(card)
+    const monoColor = COLOR_SYMBOLS.find((color) => SECTION_BY_COLOR[color] === allocation.section)
 
-    if (card.isLand) {
-      lands += 1
-    } else {
+    if (monoColor) {
+      mono[monoColor] += 1
+    } else if (allocation.section === 'multicolor') {
+      multicolor += 1
+      if (allocation.guild) dual[allocation.guild] += 1
+    } else if (allocation.section === 'colorless') {
       colorless += 1
+    } else if (allocation.section === 'land') {
+      lands += 1
+      if (allocation.guild) guildLands[allocation.guild] += 1
+      else generalLands += 1
     }
   }
 
   return {
     total: cards.length,
     mono,
+    multicolor,
     dual,
     colorless,
     lands,
+    guildLands,
+    generalLands,
   }
 }
 
@@ -118,24 +169,44 @@ function validateDraftCounts(
   for (const color of COLOR_SYMBOLS) {
     const actual = summary.mono[color] ?? 0
     if (actual !== rules.draft.monoColorCount) {
+      const section = SECTION_BY_COLOR[color]
       issues.push({
         code: 'draft.mono-count',
-        message: `${color} must contain exactly ${rules.draft.monoColorCount} cards; found ${actual}.`,
+        message: `${SECTION_LABELS[section]} section must contain exactly ${rules.draft.monoColorCount} cards; found ${actual}.`,
         expected: rules.draft.monoColorCount,
         actual,
       })
     }
   }
 
-  for (const identity of colorIdentityCombinations(2)) {
-    const key = colorIdentityKey(identity)
-    const actual = summary.dual[key] ?? 0
+  const expectedMulticolor = rules.draft.dualColorCount * GUILD_KEYS.length
+  if (summary.multicolor !== expectedMulticolor) {
+    issues.push({
+      code: 'draft.multicolor-count',
+      message: `Multicolor section must contain exactly ${expectedMulticolor} cards; found ${summary.multicolor}.`,
+      expected: expectedMulticolor,
+      actual: summary.multicolor,
+    })
+  }
+
+  for (const guild of GUILD_KEYS) {
+    const actual = summary.dual[guild] ?? 0
     if (actual !== rules.draft.dualColorCount) {
       issues.push({
         code: 'draft.dual-count',
-        message: `${key} must contain exactly ${rules.draft.dualColorCount} cards; found ${actual}.`,
+        message: `${guild} multicolor allocation must contain exactly ${rules.draft.dualColorCount} cards; found ${actual}.`,
         expected: rules.draft.dualColorCount,
         actual,
+      })
+    }
+
+    const landActual = summary.guildLands[guild] ?? 0
+    if (landActual !== rules.draft.guildLandCount) {
+      issues.push({
+        code: 'draft.guild-land-count',
+        message: `${guild} land allocation must contain exactly ${rules.draft.guildLandCount} cards; found ${landActual}.`,
+        expected: rules.draft.guildLandCount,
+        actual: landActual,
       })
     }
   }
@@ -219,14 +290,14 @@ export function validateCube(
   addRangeIssue(
     issues,
     'draft.colorless-range',
-    'Colorless card count',
+    'Colorless section count',
     draftSummary.colorless,
     rules.draft.colorless,
   )
   addRangeIssue(
     issues,
     'draft.land-range',
-    'Colorless land count',
+    'Land section count',
     draftSummary.lands,
     rules.draft.lands,
   )

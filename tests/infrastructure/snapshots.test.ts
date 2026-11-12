@@ -26,7 +26,16 @@ const validation: ValidationResult = {
   valid: true,
   issues: [],
   summary: {
-    draft: { total: 2, mono: {}, dual: {}, colorless: 2, lands: 0 },
+    draft: {
+      total: 2,
+      mono: {},
+      multicolor: 0,
+      dual: {},
+      colorless: 2,
+      lands: 0,
+      guildLands: {},
+      generalLands: 0,
+    },
     commanders: 1,
   },
 }
@@ -65,6 +74,21 @@ describe('cube content hash', () => {
     }
 
     expect(hashCubeContent(moved)).not.toBe(hashCubeContent(original))
+  })
+
+
+  it('changes when workbook allocation changes', () => {
+    const original = cube()
+    original.draftCards[0].draftAllocation = { section: 'blue' }
+    const reallocated: CubeDefinition = {
+      draftCards: [
+        { ...original.draftCards[0], draftAllocation: { section: 'colorless' } },
+        original.draftCards[1],
+      ],
+      commanders: [...original.commanders],
+    }
+
+    expect(hashCubeContent(reallocated)).not.toBe(hashCubeContent(original))
   })
 })
 

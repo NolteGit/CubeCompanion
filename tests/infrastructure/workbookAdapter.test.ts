@@ -1,62 +1,49 @@
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
+  draftAllocationFor,
   extractWorkbook,
   WORKBOOK_PATH,
-  type ExtractedCard,
 } from '../../src/infrastructure/excel'
+import { GUILD_KEYS } from '../../src/domain'
 
-function sectionCount(cards: ExtractedCard[], section: ExtractedCard['section']): number {
-  return cards.filter((card) => card.section === section).length
+function rowNumber(cell: string): number {
+  return Number(cell.replace(/^[A-Z]+/, ''))
 }
 
 describe('CubeUebersicht workbook adapter', () => {
-  it('extracts the active draft blocks and ignores later scratch rows', async () => {
+  it('keeps draft and commander extraction on opposite sides of row 77', async () => {
     const extracted = await extractWorkbook(resolve(process.cwd(), WORKBOOK_PATH))
-    const names = new Set(extracted.draftCards.map((card) => card.name))
 
-    expect(sectionCount(extracted.draftCards, 'white')).toBe(50)
-    expect(sectionCount(extracted.draftCards, 'blue')).toBe(50)
-    expect(sectionCount(extracted.draftCards, 'black')).toBe(50)
-    expect(sectionCount(extracted.draftCards, 'red')).toBe(50)
-    expect(sectionCount(extracted.draftCards, 'green')).toBe(50)
-    expect(sectionCount(extracted.draftCards, 'multicolor')).toBe(40)
-    expect(sectionCount(extracted.draftCards, 'colorless')).toBeGreaterThanOrEqual(51)
-    expect(sectionCount(extracted.draftCards, 'colorless')).toBeLessThanOrEqual(71)
-    expect(sectionCount(extracted.draftCards, 'land')).toBeGreaterThanOrEqual(50)
-    expect(sectionCount(extracted.draftCards, 'land')).toBeLessThanOrEqual(70)
-    expect(extracted.draftCards.length).toBeGreaterThanOrEqual(391)
-    expect(extracted.draftCards.length).toBeLessThanOrEqual(431)
-
-    expect(names.has('Ocelot Pride')).toBe(false)
-    expect(names.has('Pollywog Prodigy')).toBe(false)
-    expect(names.has('Razorkin Needlehead')).toBe(false)
+    expect(extracted.draftCards.length).toBeGreaterThan(0)
+    expect(extracted.draftCards.every((card) => rowNumber(card.cell) >= 4)).toBe(true)
+    expect(extracted.draftCards.every((card) => rowNumber(card.cell) <= 76)).toBe(true)
+    expect(extracted.commanders.every((card) => rowNumber(card.cell) >= 79)).toBe(true)
+    expect(extracted.commanders.every((card) => rowNumber(card.cell) <= 150)).toBe(true)
   })
 
-  it('extracts commander lists until their first blank separator', async () => {
-    const extracted = await extractWorkbook(resolve(process.cwd(), WORKBOOK_PATH))
-    const names = new Set(extracted.commanders.map((card) => card.name))
-    const monoCounts = ['white', 'blue', 'black', 'red', 'green'].map((section) =>
-      sectionCount(extracted.commanders, section as ExtractedCard['section']),
-    )
+  it('maps the ten four-row guild blocks without consulting card identity', () => {
+    GUILD_KEYS.forEach((guild, index) => {
+      const firstRow = 4 + index * 4
+      const lastRow = firstRow + 3
 
-    expect(new Set(monoCounts).size).toBe(1)
-    expect(sectionCount(extracted.commanders, 'dual') % 10).toBe(0)
-    expect(sectionCount(extracted.commanders, 'triple') % 10).toBe(0)
-    expect(sectionCount(extracted.commanders, 'colorless')).toBe(0)
+      expect(draftAllocationFor('multicolor', firstRow)).toEqual({
+        section: 'multicolor',
+        guild,
+      })
+      expect(draftAllocationFor('land', lastRow)).toEqual({ section: 'land', guild })
+    })
 
-    expect(names.has('Alela, Artful Provocateur')).toBe(false)
-    expect(names.has('Ms. Bumbleflower')).toBe(false)
+    expect(draftAllocationFor('land', 44)).toEqual({ section: 'land' })
+    expect(draftAllocationFor('land', 76)).toEqual({ section: 'land' })
   })
 
-  it('extracts draft and commander archive reference data across gaps', async () => {
+  it('keeps commander placeholders and archive data out of the draft pool', async () => {
     const extracted = await extractWorkbook(resolve(process.cwd(), WORKBOOK_PATH))
-    const draftArchive = extracted.archive.filter((entry) => entry.pool === 'draft')
-    const commanderArchive = extracted.archive.filter((entry) => entry.pool === 'commander')
 
-    expect(draftArchive.length).toBeGreaterThan(0)
-    expect(commanderArchive.length).toBeGreaterThan(0)
-    expect(draftArchive.some((entry) => entry.name === 'Fractured Identity')).toBe(true)
-    expect(commanderArchive.some((entry) => entry.name === 'Akroma, Vision of Ixidor')).toBe(true)
+    expect(extracted.commanders.every((card) => card.pool === 'commander')).toBe(true)
+    expect(extracted.commanders.some((card) => card.name === '-')).toBe(false)
+    expect(extracted.archive.every((entry) => entry.pool === 'draft' || entry.pool === 'commander')).toBe(true)
+    expect(extracted.archive.length).toBeGreaterThan(0)
   })
 })

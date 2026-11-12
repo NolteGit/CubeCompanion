@@ -23,7 +23,7 @@ A release never commits or pushes Git changes automatically. Invalid source data
 
 ## State model
 
-The content hash is calculated from sorted Oracle IDs in the draft and commander pools, with the pool itself included in the identity. Excel row order, archive contents, artwork/printing choices, timestamps, Scryfall metadata, and rules-revision changes do not affect the content hash.
+The content hash is calculated from sorted draft Oracle IDs together with their workbook allocation, and sorted commander Oracle IDs. Excel row order within an allocation, archive contents, artwork/printing choices, timestamps, Scryfall metadata, and rules-revision changes do not affect the content hash.
 
 `data/history/<hash>.json` stores the first immutable snapshot for a content state. `data/current/cube.json` points at that snapshot and records the current publication timestamp, note, rules revision, and validation result. Releasing unchanged cube content reuses the history snapshot instead of creating another content state.
 

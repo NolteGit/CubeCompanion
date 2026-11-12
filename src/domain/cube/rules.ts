@@ -8,6 +8,7 @@ export interface CubeRules {
   draft: {
     monoColorCount: number
     dualColorCount: number
+    guildLandCount: number
     colorless: TargetRange
     lands: TargetRange
     total: TargetRange
@@ -18,10 +19,11 @@ export interface CubeRules {
 }
 
 export const DEFAULT_CUBE_RULES: CubeRules = {
-  revision: '1',
+  revision: '2',
   draft: {
     monoColorCount: 50,
     dualColorCount: 4,
+    guildLandCount: 4,
     colorless: { target: 61, tolerance: 10 },
     lands: { target: 60, tolerance: 10 },
     total: { target: 411, tolerance: 20 },

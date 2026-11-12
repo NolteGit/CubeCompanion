@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
   COLOR_SYMBOLS,
+  GUILD_KEYS,
   colorIdentityCombinations,
   colorIdentityKey,
   validateCube,
   type ColorIdentity,
-  type CubeCard
+  type CubeCard,
+  type DraftAllocation,
+  type DraftSection,
+  type GuildKey,
 } from '../../src/domain'
 
 let nextId = 1
@@ -15,8 +19,9 @@ function card(
   colorIdentity: ColorIdentity,
   isLand = false,
   oracleId = `oracle-${nextId++}`,
+  draftAllocation?: DraftAllocation,
 ): CubeCard {
-  return { oracleId, name, colorIdentity, isLand }
+  return { oracleId, name, colorIdentity, isLand, draftAllocation }
 }
 
 function cardsForIdentity(
@@ -24,9 +29,10 @@ function cardsForIdentity(
   identity: ColorIdentity,
   count: number,
   isLand = false,
+  draftAllocation?: DraftAllocation,
 ): CubeCard[] {
   return Array.from({ length: count }, (_, index) =>
-    card(`${prefix}-${index + 1}`, identity, isLand),
+    card(`${prefix}-${index + 1}`, identity, isLand, undefined, draftAllocation),
   )
 }
 
@@ -34,16 +40,32 @@ function buildValidCube() {
   nextId = 1
   const draftCards: CubeCard[] = []
 
+  const sectionByColor: Record<(typeof COLOR_SYMBOLS)[number], DraftSection> = {
+    W: 'white',
+    U: 'blue',
+    B: 'black',
+    R: 'red',
+    G: 'green',
+  }
+
   for (const color of COLOR_SYMBOLS) {
-    draftCards.push(...cardsForIdentity(color, [color], 50))
+    draftCards.push(
+      ...cardsForIdentity(color, [color], 50, false, { section: sectionByColor[color] }),
+    )
   }
 
   for (const identity of colorIdentityCombinations(2)) {
-    draftCards.push(...cardsForIdentity(colorIdentityKey(identity), identity, 4))
+    const guild = colorIdentityKey(identity) as GuildKey
+    draftCards.push(
+      ...cardsForIdentity(guild, identity, 4, false, { section: 'multicolor', guild }),
+    )
   }
 
-  draftCards.push(...cardsForIdentity('Colorless', [], 61))
-  draftCards.push(...cardsForIdentity('Land', [], 60, true))
+  draftCards.push(...cardsForIdentity('Colorless', [], 61, false, { section: 'colorless' }))
+  for (const guild of GUILD_KEYS) {
+    draftCards.push(...cardsForIdentity(`Land-${guild}`, [], 4, true, { section: 'land', guild }))
+  }
+  draftCards.push(...cardsForIdentity('Land-General', [], 20, true, { section: 'land' }))
 
   const commanders: CubeCard[] = []
   for (const size of [1, 2, 3, 4]) {
@@ -100,15 +122,21 @@ describe('cube validation', () => {
     )
   })
 
-  it('distinguishes colorless lands from other colorless cards', () => {
+  it('uses workbook allocation instead of Scryfall identity for draft quotas', () => {
     const cube = buildValidCube()
-    const colorlessCard = cube.draftCards.find((entry) => entry.name === 'Colorless-1')!
-    colorlessCard.isLand = true
+    const blueCard = cube.draftCards.find((entry) => entry.name === 'U-1')!
+    blueCard.colorIdentity = []
+    const wuLand = cube.draftCards.find((entry) => entry.name === 'Land-WU-1')!
+    wuLand.colorIdentity = []
 
     const result = validateCube(cube)
 
-    expect(result.summary.draft.colorless).toBe(60)
-    expect(result.summary.draft.lands).toBe(61)
+    expect(result.valid).toBe(true)
+    expect(result.summary.draft.mono.U).toBe(50)
+    expect(result.summary.draft.dual.WU).toBe(4)
+    expect(result.summary.draft.guildLands.WU).toBe(4)
+    expect(result.summary.draft.generalLands).toBe(20)
+    expect(result.summary.draft.lands).toBe(60)
   })
 
   it('enforces configured flexible ranges', () => {

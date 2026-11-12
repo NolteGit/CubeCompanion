@@ -1,3 +1,5 @@
+import type { DraftAllocation } from '../../domain'
+
 export type WorkbookPool = 'draft' | 'commander'
 
 export type WorkbookSection =
@@ -17,6 +19,7 @@ export interface ExtractedCard {
   pool: WorkbookPool
   section: WorkbookSection
   cell: string
+  draftAllocation?: DraftAllocation
 }
 
 export interface ExtractedArchiveEntry {

@@ -6,17 +6,21 @@
 
 ## Included sheets
 
-`Cube` provides the active draft pool and commander pool. `Archive` provides historical draft and commander reference data. `Cut-Watch-Interest` stays local to the Excel workflow and is not extracted.
+`Cube` provides the draft and commander working pools. `Archive` provides historical draft and commander reference data. `Cut-Watch-Interest` stays local to the Excel workflow and is not extracted.
 
-## Active-section convention
+## Draft convention
 
 Only the Excel adapter owns worksheet coordinates.
 
-Draft sections use bounded active blocks. Mono-color and multicolor blocks match their fixed rule sizes; colorless and land blocks include their full allowed ranges. Blank cells inside a block are skipped, so an unfinished cut does not hide later active rows.
+For every draft column, nonblank card cells from rows 4 through 76 are draft candidates. This intentionally includes temporary ideas below the normal filled block, so an unfinished change appears as an excess count or duplicate instead of silently disappearing from validation. Row 77 separates the draft area from the commander area.
 
-Commander lists start at known cells and end at their first blank separator. This keeps later scratch/planned blocks outside the active pool while allowing commander counts to change. `-` is treated as an empty placeholder, currently used by the colorless commander section.
+The Multicolor and Land sections use the same guild order: WU, UB, BR, RG, WG, WB, UR, BG, WR, UG. Rows 4-43 form ten four-card guild allocations. Land rows 44-76 are the general/colorless land allocation.
 
-Current diagnostic baseline is 411 draft cards and 55 commanders.
+Workbook allocation is preserved downstream and is separate from Scryfall color identity. For example, a fetchland can occupy a guild land slot and a mechanically blue colorless artifact can occupy the Blue section.
+
+## Commander convention
+
+Commander headings are on row 78 and card lists begin on row 79. Each commander list ends at its first blank separator, allowing later notes or scratch blocks to remain outside the active commander pool. `-` is treated as an empty placeholder.
 
 The adapter verifies section labels before reading. A moved or renamed workbook section therefore fails loudly instead of silently extracting the wrong cells.
 

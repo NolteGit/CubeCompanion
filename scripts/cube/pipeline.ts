@@ -40,12 +40,16 @@ function activeOnly(workbook: ExtractedWorkbook): ExtractedWorkbook {
   return { ...workbook, archive: [] }
 }
 
-function toCubeCard(card: CardMetadata): CubeCard {
+function toCubeCard(
+  card: CardMetadata,
+  draftAllocation?: CubeCard['draftAllocation'],
+): CubeCard {
   return {
     oracleId: card.oracleId,
     name: card.name,
     colorIdentity: card.colorIdentity,
     isLand: card.isLand,
+    draftAllocation,
   }
 }
 
@@ -90,7 +94,9 @@ export async function prepareCubeSource(
   }
 
   const cube: CubeDefinition = {
-    draftCards: resolved.draftCards.map(({ card }) => toCubeCard(card)),
+    draftCards: resolved.draftCards.map(({ card, source }) =>
+      toCubeCard(card, source.draftAllocation),
+    ),
     commanders: resolved.commanders.map(({ card }) => toCubeCard(card)),
   }
 
