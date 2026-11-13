@@ -3,6 +3,7 @@ import {
   averageManaValue,
   manaCurve,
   sectionDistribution,
+  sectionManaCurve,
   typeDistribution,
 } from '../../src/features/analysis/analysis'
 import type { DraftSection } from '../../src/domain'
@@ -53,6 +54,18 @@ describe('cube analysis', () => {
     expect(curve.find((bucket) => bucket.label === '2')?.count).toBe(1)
     expect(curve.find((bucket) => bucket.label === '3')?.count).toBe(1)
     expect(curve.find((bucket) => bucket.label === '7+')?.count).toBe(1)
+  })
+
+  it('breaks the mana curve down by workbook section', () => {
+    const curve = sectionManaCurve(cards)
+    const mv2 = curve.find((bucket) => bucket.label === '2')
+    const mv3 = curve.find((bucket) => bucket.label === '3')
+    const sevenPlus = curve.find((bucket) => bucket.label === '7+')
+
+    expect(mv2?.sections.find((section) => section.key === 'colorless')?.count).toBe(1)
+    expect(mv3?.sections.find((section) => section.key === 'blue')?.count).toBe(1)
+    expect(sevenPlus?.sections.find((section) => section.key === 'red')?.count).toBe(1)
+    expect(curve.reduce((sum, bucket) => sum + bucket.total, 0)).toBe(3)
   })
 
   it('counts each card once by primary type and averages nonlands', () => {
