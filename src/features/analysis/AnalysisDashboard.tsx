@@ -215,7 +215,7 @@ function GroupedCurve({
 }
 
 export function AnalysisDashboard() {
-  const [curveMode, setCurveMode] = useState<CurveMode>('stacked')
+  const [curveMode, setCurveMode] = useState<CurveMode>('grouped')
   const sectionCurve = sectionManaCurve(draftCards)
   const sections = sectionDistribution(draftCards)
   const types = typeDistribution(draftCards)

@@ -234,16 +234,16 @@
 }
 
 .grouped-track {
-  padding: 0 6px;
+  padding: 0 10px;
 }
 
 .grouped-bars {
   display: flex;
-  width: min(88%, 126px);
+  width: min(78%, 110px);
   height: 100%;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .grouped-bars i {
