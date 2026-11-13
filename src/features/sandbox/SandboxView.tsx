@@ -24,6 +24,11 @@ interface EditorNotice {
   message: string
 }
 
+interface UndoEntry {
+  state: SandboxState
+  label: string
+}
+
 function validationMessage(valid: boolean, issueCount: number): string {
   if (valid) return 'Cube is valid.'
   return `${issueCount} validation issue${issueCount === 1 ? '' : 's'}.`
@@ -91,6 +96,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
   const [editorNotice, setEditorNotice] = useState<EditorNotice | null>(null)
+  const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null)
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -147,6 +153,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
         draftCards: nextState.draftCards,
         commanders: nextState.commanders,
       })
+      setUndoEntry({ state, label: `Add ${card.name}` })
       setState(nextState)
       setAddName('')
       setEditorNotice({
@@ -172,6 +179,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
       draftCards: nextState.draftCards,
       commanders: nextState.commanders,
     })
+    setUndoEntry({ state, label: `Remove ${card.name}` })
     setState(nextState)
     setEditorNotice({
       tone: 'success',
@@ -179,6 +187,17 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
         nextValidation.valid,
         nextValidation.issues.length,
       )}`,
+    })
+  }
+
+  function undoLastChange() {
+    if (!undoEntry) return
+    setState(undoEntry.state)
+    setUndoEntry(null)
+    setSearch('')
+    setEditorNotice({
+      tone: 'info',
+      message: `Undid: ${undoEntry.label}.`,
     })
   }
 
@@ -190,6 +209,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
   function resetSandbox() {
     if (!window.confirm('Reset all pending changes to the current official snapshot?')) return
     setState(createSandboxState(releaseInfo.snapshotId, draftCards, commanderCards))
+    setUndoEntry(null)
     setSearch('')
     setAddName('')
     setEditorNotice({
@@ -219,6 +239,15 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
             onClick={() => downloadText('cube-sandbox-full.txt', sandboxFullListText(state))}
           >
             Export list
+          </button>
+          <button
+            type="button"
+            className="sandbox-undo"
+            disabled={!undoEntry}
+            title={undoEntry ? `Undo ${undoEntry.label}` : 'Nothing to undo'}
+            onClick={undoLastChange}
+          >
+            Undo
           </button>
           <button type="button" className="sandbox-reset" onClick={resetSandbox}>
             Reset

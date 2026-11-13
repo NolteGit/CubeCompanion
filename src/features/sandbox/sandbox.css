@@ -67,6 +67,20 @@
   background: var(--surface-hover);
 }
 
+.changes-header-actions button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.changes-header-actions button:disabled:hover {
+  color: var(--text-muted);
+  background: var(--surface-raised);
+}
+
+.changes-header-actions .sandbox-undo:not(:disabled) {
+  color: #b8d8eb;
+}
+
 .changes-header-actions .sandbox-reset {
   margin-left: 3px;
   border-color: rgb(202 86 88 / 22%);
