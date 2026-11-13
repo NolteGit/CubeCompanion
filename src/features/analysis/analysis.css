@@ -1,12 +1,12 @@
 .analysis-view {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .analysis-heading {
   display: flex;
-  min-height: 60px;
+  min-height: 54px;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -19,7 +19,7 @@
 
 .analysis-heading h2 {
   margin-top: 2px;
-  font-size: 1.5rem;
+  font-size: 1.42rem;
   letter-spacing: -0.035em;
 }
 
@@ -27,40 +27,21 @@
 .analysis-panel p {
   margin: 3px 0 0;
   color: var(--text-muted);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
 }
 
 .analysis-eyebrow {
   color: #80d9a1;
-  font-size: 0.67rem;
+  font-size: 0.64rem;
   font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.analysis-snapshot {
-  display: grid;
-  justify-items: end;
-  gap: 2px;
-}
-
-.analysis-snapshot span {
-  color: var(--text-faint);
-  font-size: 0.67rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.analysis-snapshot strong {
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-}
-
 .analysis-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 7px;
 }
 
 .analysis-metric,
@@ -74,58 +55,58 @@
   display: grid;
   gap: 2px;
   min-width: 0;
-  padding: 12px 14px;
+  padding: 10px 13px;
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 8px;
 }
 
 .analysis-metric::before {
   position: absolute;
   inset: 0 auto 0 0;
   width: 2px;
-  background: rgb(74 222 128 / 52%);
+  background: rgb(74 222 128 / 46%);
   content: "";
 }
 
 .analysis-metric span {
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.67rem;
 }
 
 .analysis-metric strong {
   margin-top: 1px;
-  font-size: 1.28rem;
+  font-size: 1.2rem;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
 
 .analysis-metric small {
   color: var(--text-faint);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
 }
 
 .analysis-panel {
   min-width: 0;
-  padding: 14px;
-  border-radius: 10px;
+  padding: 12px 13px;
+  border-radius: 9px;
 }
 
 .panel-heading {
   display: flex;
-  min-height: 38px;
+  min-height: 34px;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 
 .analysis-panel h3 {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   letter-spacing: -0.015em;
 }
 
 .mana-panel {
-  min-height: 410px;
+  min-height: 360px;
 }
 
 .curve-heading {
@@ -134,20 +115,20 @@
 
 .curve-mode {
   display: flex;
-  gap: 3px;
-  padding: 3px;
+  gap: 2px;
+  padding: 2px;
   border: 1px solid var(--border);
   border-radius: 7px;
   background: rgb(8 13 17 / 48%);
 }
 
 .curve-mode button {
-  padding: 5px 9px;
+  padding: 4px 8px;
   border: 0;
   border-radius: 5px;
   color: var(--text-muted);
   background: transparent;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -167,24 +148,24 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 7px 14px;
-  min-height: 22px;
-  margin: 2px 0 10px;
+  gap: 6px 13px;
+  min-height: 18px;
+  margin: 0 0 5px;
   color: var(--text-muted);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
 }
 
 .chart-legend span,
 .donut-list span {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .chart-legend i,
 .donut-list i {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   flex: 0 0 auto;
   border-radius: 2px;
 }
@@ -192,18 +173,18 @@
 .section-curve {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(8, minmax(42px, 1fr));
+  grid-template-columns: repeat(8, minmax(44px, 1fr));
   align-items: end;
-  gap: 10px;
-  height: 318px;
-  padding-top: 10px;
+  gap: 7px;
+  height: 270px;
+  padding: 4px 6px 0;
 }
 
 .section-curve::before {
   position: absolute;
-  inset: 30px 0 29px;
+  inset: 0 6px 24px;
   background:
-    linear-gradient(to bottom, rgb(255 255 255 / 5%) 1px, transparent 1px) 0 0 / 100% 25%;
+    linear-gradient(to bottom, rgb(255 255 255 / 4.5%) 1px, transparent 1px) 0 0 / 100% 25%;
   pointer-events: none;
   content: "";
 }
@@ -212,44 +193,39 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-rows: 20px 1fr 20px;
-  gap: 5px;
+  grid-template-rows: 1fr 20px;
+  gap: 4px;
   height: 100%;
   text-align: center;
-}
-
-.curve-bucket > strong {
-  color: var(--text-muted);
-  font-size: 0.66rem;
-  font-variant-numeric: tabular-nums;
 }
 
 .curve-bucket > span {
   display: grid;
   place-items: center;
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
 }
 
 .curve-track {
   position: relative;
   display: flex;
-  min-height: 160px;
+  min-height: 150px;
   align-items: flex-end;
-  overflow: hidden;
-  border-radius: 4px;
-  background: rgb(255 255 255 / 2.5%);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 2%);
+  justify-content: center;
+  background: transparent;
 }
 
 .stacked-bar {
   display: flex;
-  width: 100%;
+  width: min(62%, 92px);
+  min-width: 18px;
   min-height: 2px;
   flex-direction: column-reverse;
   overflow: hidden;
-  border-radius: 4px 4px 2px 2px;
-  box-shadow: inset 0 1px rgb(255 255 255 / 14%);
+  border-radius: 3px 3px 1px 1px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 5%),
+    0 3px 10px rgb(0 0 0 / 12%);
 }
 
 .stacked-bar i {
@@ -258,12 +234,12 @@
 }
 
 .grouped-track {
-  padding: 0 4px;
+  padding: 0 6px;
 }
 
 .grouped-bars {
   display: flex;
-  width: 100%;
+  width: min(88%, 126px);
   height: 100%;
   align-items: flex-end;
   justify-content: center;
@@ -271,7 +247,7 @@
 }
 
 .grouped-bars i {
-  width: min(10px, calc((100% - 12px) / 7));
+  width: min(9px, calc((100% - 12px) / 7));
   min-width: 2px;
   border-radius: 2px 2px 0 0;
   opacity: 0.94;
@@ -284,30 +260,30 @@
 }
 
 .donut-panel {
-  min-height: 300px;
+  min-height: 250px;
 }
 
 .donut-layout {
   display: grid;
-  grid-template-columns: minmax(180px, 0.8fr) minmax(220px, 1.2fr);
+  grid-template-columns: minmax(150px, 0.7fr) minmax(210px, 1.3fr);
   align-items: center;
-  gap: 22px;
-  min-height: 230px;
-  padding: 4px 8px 4px 12px;
+  gap: 14px;
+  min-height: 190px;
+  padding: 0 4px;
 }
 
 .donut-chart {
   position: relative;
-  width: min(220px, 100%);
+  width: min(176px, 100%);
   aspect-ratio: 1;
   justify-self: center;
   border-radius: 50%;
-  box-shadow: 0 8px 28px rgb(0 0 0 / 18%);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 15%);
 }
 
 .donut-chart::after {
   position: absolute;
-  inset: 26%;
+  inset: 31%;
   border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--surface);
@@ -317,34 +293,35 @@
 .donut-hole {
   position: absolute;
   z-index: 1;
-  inset: 26%;
+  inset: 31%;
   display: grid;
   place-content: center;
   text-align: center;
 }
 
 .donut-hole strong {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-variant-numeric: tabular-nums;
 }
 
 .donut-hole span {
   color: var(--text-faint);
-  font-size: 0.62rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .donut-list {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .donut-list > div {
   display: grid;
-  grid-template-columns: minmax(100px, 1fr) 34px 38px;
+  grid-template-columns: minmax(100px, 1fr) 30px 34px;
   align-items: center;
-  gap: 8px;
-  font-size: 0.69rem;
+  gap: 7px;
+  font-size: 0.66rem;
 }
 
 .donut-list span {
@@ -356,13 +333,14 @@
 }
 
 .donut-list strong {
+  font-size: 0.66rem;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
 .donut-list small {
   color: var(--text-faint);
-  font-size: 0.61rem;
+  font-size: 0.58rem;
   text-align: right;
 }
 
@@ -372,7 +350,7 @@
   }
 
   .donut-chart {
-    width: 190px;
+    width: 165px;
   }
 }
 
@@ -383,17 +361,13 @@
   }
 
   .section-curve {
-    gap: 5px;
+    gap: 4px;
   }
 }
 
 @media (max-width: 700px) {
   .analysis-heading {
     align-items: flex-start;
-  }
-
-  .analysis-snapshot {
-    display: none;
   }
 
   .analysis-stats,

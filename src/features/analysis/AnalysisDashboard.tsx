@@ -77,32 +77,51 @@ function Legend({
   )
 }
 
+function donutGradient(
+  buckets: readonly CountBucket[],
+  colors: Readonly<Record<string, string>>,
+): string {
+  const total = buckets.reduce((sum, bucket) => sum + bucket.count, 0)
+  if (total === 0) return 'var(--surface-subtle)'
+
+  const { stops } = buckets.reduce(
+    (state, bucket) => {
+      const share = (bucket.count / total) * 100
+      const end = state.offset + share
+      return {
+        offset: end,
+        stops: [
+          ...state.stops,
+          `${colors[bucket.key] ?? colors.other} ${state.offset}% ${end}%`,
+        ],
+      }
+    },
+    { offset: 0, stops: [] as string[] },
+  )
+
+  return `conic-gradient(${stops.join(', ')})`
+}
+
 function DonutChart({
   buckets,
   colors,
+  centerLabel,
 }: {
   buckets: readonly CountBucket[]
   colors: Readonly<Record<string, string>>
+  centerLabel: string
 }) {
   const total = buckets.reduce((sum, bucket) => sum + bucket.count, 0)
-  let cursor = 0
-  const stops = buckets.map((bucket) => {
-    const start = cursor
-    cursor += total === 0 ? 0 : (bucket.count / total) * 100
-    return `${colors[bucket.key] ?? colors.other} ${start}% ${cursor}%`
-  })
   const style = {
-    background: total === 0
-      ? 'var(--surface-subtle)'
-      : `conic-gradient(${stops.join(', ')})`,
+    background: donutGradient(buckets, colors),
   } satisfies CSSProperties
 
   return (
     <div className="donut-layout">
       <div className="donut-chart" style={style} aria-hidden="true">
         <div className="donut-hole">
-          <strong>{total}</strong>
-          <span>cards</span>
+          <strong>{buckets.length}</strong>
+          <span>{centerLabel}</span>
         </div>
       </div>
       <div className="donut-list">
@@ -132,8 +151,10 @@ function StackedCurve({
     <div className="section-curve">
       {curve.map((bucket) => (
         <div className="curve-bucket" key={bucket.key}>
-          <strong>{bucket.total}</strong>
-          <div className="curve-track">
+          <div
+            className="curve-track"
+            title={`${bucket.total} cards at mana value ${bucket.label}`}
+          >
             <div
               className="stacked-bar"
               style={{ height: `${(bucket.total / maximum) * 100}%` }}
@@ -169,8 +190,10 @@ function GroupedCurve({
     <div className="section-curve grouped">
       {curve.map((bucket) => (
         <div className="curve-bucket" key={bucket.key}>
-          <strong>{bucket.total}</strong>
-          <div className="curve-track grouped-track">
+          <div
+            className="curve-track grouped-track"
+            title={`${bucket.total} cards at mana value ${bucket.label}`}
+          >
             <div className="grouped-bars">
               {bucket.sections.map((section) => (
                 <i
@@ -214,10 +237,6 @@ export function AnalysisDashboard() {
           <span className="analysis-eyebrow">Analytics</span>
           <h2>Cube analysis</h2>
           <p>Draft pool · current snapshot</p>
-        </div>
-        <div className="analysis-snapshot">
-          <span>Draft pool</span>
-          <strong>{draftCards.length} cards</strong>
         </div>
       </header>
 
@@ -272,10 +291,10 @@ export function AnalysisDashboard() {
           <header className="panel-heading">
             <div>
               <h3>Cube sections</h3>
-              <p>Workbook allocation, not color identity</p>
+              <p>Workbook allocation</p>
             </div>
           </header>
-          <DonutChart buckets={sections} colors={SECTION_COLORS} />
+          <DonutChart buckets={sections} colors={SECTION_COLORS} centerLabel="sections" />
         </section>
 
         <section className="analysis-panel donut-panel">
@@ -285,7 +304,7 @@ export function AnalysisDashboard() {
               <p>Each card counted once</p>
             </div>
           </header>
-          <DonutChart buckets={types} colors={TYPE_COLORS} />
+          <DonutChart buckets={types} colors={TYPE_COLORS} centerLabel="types" />
         </section>
       </div>
     </section>
