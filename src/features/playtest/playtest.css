@@ -1,10 +1,11 @@
 .playtest-view {
   display: grid;
-  gap: 20px;
+  gap: 10px;
+  min-width: 0;
 }
 
 .playtest-heading,
-.playtest-panel > header,
+.playtest-panel-heading,
 .pack-caption {
   display: flex;
   align-items: center;
@@ -12,126 +13,251 @@
   gap: 18px;
 }
 
-.playtest-heading p,
-.playtest-panel header p {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.78rem;
+.playtest-heading {
+  min-height: 62px;
+}
+
+.playtest-eyebrow {
+  color: #80d9a1;
+  font-size: 0.64rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .playtest-heading h2,
 .playtest-panel h3 {
-  margin: 3px 0 0;
+  margin: 0;
 }
 
 .playtest-heading h2 {
-  font-size: 1.5rem;
+  margin-top: 2px;
+  font-size: 1.42rem;
+  letter-spacing: -0.035em;
 }
 
-.playtest-heading > span {
+.playtest-heading p,
+.playtest-panel-heading p {
+  margin: 3px 0 0;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
+}
+
+.new-deal-button,
+.playtest-panel-heading button {
+  min-height: 31px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.new-deal-button {
+  border-color: rgb(74 222 128 / 26%);
+  color: #d9f8e4;
+  background: rgb(22 101 52 / 24%);
+}
+
+.new-deal-button:hover,
+.playtest-panel-heading button:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.playtest-meta {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgb(18 25 31 / 74%);
+  color: var(--text-muted);
+  font-size: 0.62rem;
+}
+
+.playtest-meta > span:not(.playtest-meta-note) {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  white-space: nowrap;
+}
+
+.playtest-meta strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.playtest-meta-note {
+  margin-left: auto;
+  color: var(--text-faint);
 }
 
 .playtest-panel {
   display: grid;
-  gap: 16px;
-  padding: 17px;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 13px 13px;
   border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface);
+  border-radius: 9px;
+  background: rgb(18 25 31 / 82%);
 }
 
-.playtest-panel > header {
-  padding-bottom: 13px;
+.playtest-panel-heading {
+  min-height: 40px;
+  padding-bottom: 9px;
   border-bottom: 1px solid var(--border);
 }
 
 .playtest-panel h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
 }
 
-.playtest-panel button,
-.pack-tabs button {
-  border: 1px solid var(--border);
-  color: var(--text);
-  background: var(--surface-raised);
-  cursor: pointer;
-}
-
-.playtest-panel > header button {
-  flex: 0 0 auto;
-  padding: 8px 11px;
-  border-radius: 9px;
-  font-size: 0.82rem;
-  font-weight: 650;
-}
-
-.playtest-panel button:hover,
-.playtest-panel button:focus-visible {
-  background: var(--surface-hover);
-}
-
-.commander-deal .card-grid {
+.commander-pack .card-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.commander-pack .image-card-name {
+  margin-top: 4px;
+  font-size: 0.68rem;
 }
 
 .pack-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgb(8 13 17 / 42%);
 }
 
 .pack-tabs button {
-  padding: 8px 10px;
-  border-radius: 9px;
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 6px;
   color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 650;
+  background: transparent;
+  font-size: 0.69rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pack-tabs button:hover {
+  color: var(--text);
+  background: var(--surface-hover);
 }
 
 .pack-tabs button.active {
-  color: var(--text);
-  background: var(--surface-subtle);
+  color: #d9f8e4;
+  background: rgb(22 101 52 / 28%);
 }
 
-.pack-tabs span {
-  margin-left: 4px;
+.pack-tabs small {
   color: var(--text-faint);
-  font-size: 0.78em;
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .pack-caption {
-  color: var(--text-muted);
-  font-size: 0.82rem;
+  min-height: 28px;
+  color: var(--text-faint);
+  font-size: 0.62rem;
+}
+
+.pack-caption > div {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .pack-caption strong {
   color: var(--text);
+  font-size: 0.72rem;
 }
 
-@media (max-width: 900px) {
-  .commander-deal .card-grid {
+.draft-pack-grid .card-grid {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.draft-pack-grid .image-card-name {
+  margin-top: 4px;
+  font-size: 0.65rem;
+}
+
+.draft-pack-grid .image-card img,
+.draft-pack-grid .image-placeholder,
+.commander-pack .image-card img,
+.commander-pack .image-placeholder {
+  box-shadow: 0 4px 14px rgb(0 0 0 / 20%);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.draft-pack-grid .image-card:hover img,
+.commander-pack .image-card:hover img {
+  position: relative;
+  z-index: 2;
+  transform: translateY(-2px);
+  box-shadow: 0 9px 24px rgb(0 0 0 / 34%);
+}
+
+@media (max-width: 1400px) {
+  .draft-pack-grid .card-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .commander-pack .card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .draft-pack-grid .card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 700px) {
   .playtest-heading,
-  .playtest-panel > header {
+  .playtest-panel-heading {
     align-items: flex-start;
     flex-direction: column;
+    gap: 8px;
   }
 
-  .playtest-panel > header button {
+  .new-deal-button,
+  .playtest-panel-heading button {
     width: 100%;
   }
 
-  .commander-deal .card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .playtest-meta {
+    flex-wrap: wrap;
+    padding-block: 7px;
+  }
+
+  .playtest-meta-note {
+    width: 100%;
+    margin-left: 0;
   }
 
   .pack-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .commander-pack .card-grid,
+  .draft-pack-grid .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

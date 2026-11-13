@@ -25,38 +25,58 @@ export function PlaytestTable() {
     setSelectedPack(0)
   }
 
+  function redealAll() {
+    setCommanderPack(dealCommanderPack(commanderCards))
+    setDraftPacks(dealDraftPacks(draftCards))
+    setSelectedPack(0)
+  }
+
   return (
     <section className="playtest-view" aria-label="Playtest packs">
       <header className="playtest-heading">
         <div>
-          <p>Current published snapshot</p>
-          <h2>Playtest packs</h2>
+          <span className="playtest-eyebrow">Playtest</span>
+          <h2>Test draft</h2>
+          <p>Generate disposable packs from the current published snapshot.</p>
         </div>
-        <span>Random deals are ephemeral and never change the cube.</span>
+        <button type="button" className="new-deal-button" onClick={redealAll}>
+          New deal
+        </button>
       </header>
 
+      <div className="playtest-meta">
+        <span><strong>{COMMANDER_PACK_SIZE}</strong> commanders</span>
+        <span><strong>{DRAFT_PACK_COUNT}</strong> draft packs</span>
+        <span><strong>{DRAFT_PACK_SIZE}</strong> cards per pack</span>
+        <span className="playtest-meta-note">No repeats across draft packs · session only</span>
+      </div>
+
       <section className="playtest-panel commander-deal">
-        <header>
+        <header className="playtest-panel-heading">
           <div>
             <h3>Commander pack</h3>
-            <p>{COMMANDER_PACK_SIZE} random commanders · keep up to 3</p>
+            <p>Random commander options · keep up to 3</p>
           </div>
-          <button type="button" onClick={() => setCommanderPack(dealCommanderPack(commanderCards))}>
-            New commander pack
+          <button
+            type="button"
+            onClick={() => setCommanderPack(dealCommanderPack(commanderCards))}
+          >
+            Redeal commanders
           </button>
         </header>
-        <CardCollection cards={commanderPack} view="images" />
+
+        <div className="commander-pack">
+          <CardCollection cards={commanderPack} view="images" />
+        </div>
       </section>
 
       <section className="playtest-panel draft-deal">
-        <header>
+        <header className="playtest-panel-heading">
           <div>
             <h3>Draft packs</h3>
-            <p>
-              {DRAFT_PACK_COUNT} packs × {DRAFT_PACK_SIZE} cards · no repeats across this deal
-            </p>
+            <p>{DRAFT_PACK_COUNT * DRAFT_PACK_SIZE} unique cards in the current deal</p>
           </div>
-          <button type="button" onClick={redealDraftPacks}>New 4-pack set</button>
+          <button type="button" onClick={redealDraftPacks}>Redeal draft packs</button>
         </header>
 
         <div className="pack-tabs" role="group" aria-label="Draft pack">
@@ -67,16 +87,23 @@ export function PlaytestTable() {
               key={`pack-${index + 1}`}
               onClick={() => setSelectedPack(index)}
             >
-              Pack {index + 1} <span>{pack.length}</span>
+              <span>Pack {index + 1}</span>
+              <small>{pack.length}</small>
             </button>
           ))}
         </div>
 
         <div className="pack-caption">
-          <strong>Pack {selectedPack + 1}</strong>
+          <div>
+            <span>Viewing</span>
+            <strong>Pack {selectedPack + 1}</strong>
+          </div>
           <span>{draftPacks[selectedPack]?.length ?? 0} cards</span>
         </div>
-        <CardCollection cards={draftPacks[selectedPack] ?? []} view="images" />
+
+        <div className="draft-pack-grid">
+          <CardCollection cards={draftPacks[selectedPack] ?? []} view="images" />
+        </div>
       </section>
     </section>
   )
