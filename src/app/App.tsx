@@ -17,7 +17,16 @@ import {
 } from './preferences'
 
 type AppPage = 'browse' | 'analysis' | 'sandbox' | 'customize' | 'playtest' | 'history' | 'archive'
-type NavIcon = 'cards' | 'analysis' | 'changes' | 'customize' | 'more'
+type NavIcon =
+  | 'cards'
+  | 'commanders'
+  | 'list'
+  | 'analysis'
+  | 'changes'
+  | 'customize'
+  | 'playtest'
+  | 'history'
+  | 'archive'
 
 interface NavItem {
   page: AppPage
@@ -25,8 +34,7 @@ interface NavItem {
   icon: NavIcon
 }
 
-const PRIMARY_NAV: readonly NavItem[] = [
-  { page: 'browse', label: 'Cards', icon: 'cards' },
+const WORKSPACE_NAV: readonly NavItem[] = [
   { page: 'analysis', label: 'Analysis', icon: 'analysis' },
   { page: 'sandbox', label: 'Changes', icon: 'changes' },
   { page: 'customize', label: 'Customize', icon: 'customize' },
@@ -47,6 +55,24 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <rect x="4" y="3.5" width="13" height="17" rx="2" />
         <path d="M8 7h5M8 10h5M19 6.5v11" />
+      </svg>
+    )
+  }
+  if (icon === 'commanders') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m5 9 3 2 4-6 4 6 3-2-1.5 9h-11L5 9Z" />
+        <path d="M7 15h10" />
+      </svg>
+    )
+  }
+  if (icon === 'list') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="5" cy="7" r="1" />
+        <circle cx="5" cy="12" r="1" />
+        <circle cx="5" cy="17" r="1" />
+        <path d="M9 7h10M9 12h10M9 17h10" />
       </svg>
     )
   }
@@ -74,33 +100,56 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
       </svg>
     )
   }
+  if (icon === 'playtest') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m9 7 8 5-8 5V7Z" />
+        <rect x="4" y="4" width="16" height="16" rx="2.5" />
+      </svg>
+    )
+  }
+  if (icon === 'history') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 8V4M5 4h4M5 4l2.5 2.5A7.5 7.5 0 1 1 5.3 12" />
+        <path d="M12 8v4l3 2" />
+      </svg>
+    )
+  }
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="6" cy="12" r="1.2" />
-      <circle cx="12" cy="12" r="1.2" />
-      <circle cx="18" cy="12" r="1.2" />
+      <path d="M5 8h14v11H5zM4 5h16v3H4z" />
+      <path d="M10 12h4" />
     </svg>
   )
 }
 
-function NavButton({
-  item,
+function SidebarNavButton({
+  label,
+  icon,
   active,
   onClick,
+  count,
 }: {
-  item: NavItem
+  label: string
+  icon: NavIcon
   active: boolean
   onClick: () => void
+  count?: number
 }) {
   return (
     <button
-      className={active ? 'active' : ''}
+      type="button"
+      className={`sidebar-nav-button${active ? ' active' : ''}`}
       aria-current={active ? 'page' : undefined}
-      title={item.label}
+      title={count === undefined ? label : `${label} · ${count}`}
       onClick={onClick}
     >
-      <NavGlyph icon={item.icon} />
-      <span>{item.label}</span>
+      <NavGlyph icon={icon} />
+      <span>{label}</span>
+      {count !== undefined && (
+        <small className={label === 'Changes list' && count > 0 ? 'pending' : ''}>{count}</small>
+      )}
     </button>
   )
 }
@@ -295,92 +344,67 @@ function App() {
 
       <div className="app-body">
         <aside className="app-sidebar">
-          <nav className="primary-nav" aria-label="Cube Companion sections">
-            {PRIMARY_NAV.map((item) => (
-              <div className="nav-group" key={item.page}>
-                <NavButton
-                  item={item}
+          <div className="sidebar-nav-stack">
+            <nav className="sidebar-nav-section" aria-label="Library">
+              <span className="sidebar-section-label">Library</span>
+              <SidebarNavButton
+                label="Cube"
+                icon="cards"
+                count={draftCards.length}
+                active={page === 'browse' && cardList === 'draft'}
+                onClick={() => openCardList('draft')}
+              />
+              <SidebarNavButton
+                label="Commanders"
+                icon="commanders"
+                count={commanderCards.length}
+                active={page === 'browse' && cardList === 'commanders'}
+                onClick={() => openCardList('commanders')}
+              />
+              <SidebarNavButton
+                label="Changes list"
+                icon="list"
+                count={pendingChangeCount}
+                active={page === 'browse' && cardList === 'changes'}
+                onClick={() => openCardList('changes')}
+              />
+            </nav>
+
+            <nav className="sidebar-nav-section" aria-label="Workspace">
+              <span className="sidebar-section-label">Workspace</span>
+              {WORKSPACE_NAV.map((item) => (
+                <SidebarNavButton
+                  key={item.page}
+                  label={item.label}
+                  icon={item.icon}
                   active={page === item.page}
                   onClick={() => setPage(item.page)}
                 />
-
-                {item.page === 'browse' && (
-                  <div className="sidebar-card-lists" aria-label="Card lists">
-                    <span className="sidebar-section-label">Lists</span>
-                    <button
-                      type="button"
-                      data-short="C"
-                      className={page === 'browse' && cardList === 'draft' ? 'active' : ''}
-                      aria-current={page === 'browse' && cardList === 'draft' ? 'page' : undefined}
-                      title={`Cube · ${draftCards.length} cards`}
-                      onClick={() => openCardList('draft')}
-                    >
-                      <span>Cube</span>
-                      <small>{draftCards.length}</small>
-                    </button>
-                    <button
-                      type="button"
-                      data-short="Cmd"
-                      className={page === 'browse' && cardList === 'commanders' ? 'active' : ''}
-                      aria-current={page === 'browse' && cardList === 'commanders' ? 'page' : undefined}
-                      title={`Commanders · ${commanderCards.length} cards`}
-                      onClick={() => openCardList('commanders')}
-                    >
-                      <span>Commanders</span>
-                      <small>{commanderCards.length}</small>
-                    </button>
-                    <button
-                      type="button"
-                      data-short="±"
-                      className={page === 'browse' && cardList === 'changes' ? 'active' : ''}
-                      aria-current={page === 'browse' && cardList === 'changes' ? 'page' : undefined}
-                      title={`Changes list · ${pendingChangeCount} pending`}
-                      onClick={() => openCardList('changes')}
-                    >
-                      <span>Changes list</span>
-                      <small className={pendingChangeCount > 0 ? 'pending' : ''}>
-                        {pendingChangeCount}
-                      </small>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
-
-          <div className="sidebar-tools" aria-label="Tools">
-            <span className="sidebar-section-label">Tools</span>
-            <button
-              type="button"
-              data-short="P"
-              className={page === 'playtest' ? 'active' : ''}
-              aria-current={page === 'playtest' ? 'page' : undefined}
-              title="Playtest"
-              onClick={() => setPage('playtest')}
-            >
-              Playtest
-            </button>
-            <button
-              type="button"
-              data-short="H"
-              className={page === 'history' ? 'active' : ''}
-              aria-current={page === 'history' ? 'page' : undefined}
-              title="History"
-              onClick={() => setPage('history')}
-            >
-              History
-            </button>
-            <button
-              type="button"
-              data-short="A"
-              className={page === 'archive' ? 'active' : ''}
-              aria-current={page === 'archive' ? 'page' : undefined}
-              title="Archive"
-              onClick={() => setPage('archive')}
-            >
-              Archive
-            </button>
+              ))}
+            </nav>
           </div>
+
+          <nav className="sidebar-nav-section sidebar-tools" aria-label="Tools">
+            <span className="sidebar-section-label">Tools</span>
+            <SidebarNavButton
+              label="Playtest"
+              icon="playtest"
+              active={page === 'playtest'}
+              onClick={() => setPage('playtest')}
+            />
+            <SidebarNavButton
+              label="History"
+              icon="history"
+              active={page === 'history'}
+              onClick={() => setPage('history')}
+            />
+            <SidebarNavButton
+              label="Archive"
+              icon="archive"
+              active={page === 'archive'}
+              onClick={() => setPage('archive')}
+            />
+          </nav>
         </aside>
 
         <main className="app-main">{renderPage()}</main>

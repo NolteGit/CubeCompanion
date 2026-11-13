@@ -1,122 +1,115 @@
 
-/* Global sidebar secondary navigation */
-.nav-group {
+/* Global sidebar navigation */
+.sidebar-nav-stack {
   display: grid;
-  gap: 2px;
+  gap: 14px;
 }
 
-.sidebar-card-lists {
+.sidebar-nav-section {
   display: grid;
-  gap: 2px;
-  margin: 1px 0 6px 30px;
-  padding: 5px 0 3px 9px;
-  border-left: 1px solid var(--border);
+  gap: 3px;
 }
 
 .sidebar-section-label {
-  padding: 1px 7px 4px;
+  padding: 0 10px 4px;
   color: var(--text-faint);
-  font-size: 0.56rem;
-  font-weight: 750;
-  letter-spacing: 0.08em;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.sidebar-card-lists button,
-.sidebar-tools button {
+.sidebar-nav-button {
+  display: grid;
   width: 100%;
-  border: 0;
-  border-radius: 6px;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
   color: var(--text-muted);
   background: transparent;
+  font-size: 0.76rem;
+  font-weight: 620;
+  text-align: left;
   cursor: pointer;
 }
 
-.sidebar-card-lists button {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 29px;
-  align-items: center;
-  gap: 6px;
-  padding: 0 7px;
-  font-size: 0.69rem;
-  font-weight: 600;
-  text-align: left;
+.sidebar-nav-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
 }
 
-.sidebar-card-lists button:hover,
-.sidebar-card-lists button.active,
-.sidebar-tools button:hover,
-.sidebar-tools button.active {
-  color: var(--text);
-  background: var(--surface-hover);
+.sidebar-nav-button > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.sidebar-card-lists button.active {
-  color: #dffbea;
-  background: rgb(35 121 76 / 18%);
-}
-
-.sidebar-card-lists button small {
+.sidebar-nav-button > small {
+  min-width: 22px;
   color: var(--text-faint);
   font-size: 0.58rem;
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
-.sidebar-card-lists button small.pending {
+.sidebar-nav-button > small.pending {
   color: #8adeaa;
 }
 
+.sidebar-nav-button:hover {
+  color: var(--text);
+  background: rgb(255 255 255 / 4%);
+}
+
+.sidebar-nav-button.active {
+  color: #e5f8ec;
+  border-color: rgb(74 222 128 / 12%);
+  background: rgb(35 121 76 / 17%);
+  box-shadow: inset 2px 0 rgb(74 222 128 / 68%);
+}
+
+.sidebar-nav-button.active > small {
+  color: #a6d9b8;
+}
+
 .sidebar-tools {
-  display: grid;
-  gap: 2px;
-  padding-top: 9px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
 }
 
-.sidebar-tools button {
-  min-height: 32px;
-  padding: 0 12px;
-  font-size: 0.76rem;
-  text-align: left;
-}
-
-.sidebar-tools button.active {
-  color: #dffbea;
-  background: rgb(35 121 76 / 24%);
-}
-
 @media (max-width: 900px) {
-  .sidebar-card-lists {
-    margin: 2px 0 6px;
-    padding: 3px 0;
-    border-left: 0;
+  .sidebar-nav-stack {
+    gap: 8px;
   }
 
-  .sidebar-card-lists .sidebar-section-label,
-  .sidebar-tools .sidebar-section-label {
+  .sidebar-section-label {
     display: none;
   }
 
-  .sidebar-card-lists button,
-  .sidebar-tools button {
-    display: grid;
-    min-height: 31px;
+  .sidebar-nav-button {
+    grid-template-columns: 1fr;
+    min-height: 36px;
     place-items: center;
     padding: 0;
-    font-size: 0;
   }
 
-  .sidebar-card-lists button span,
-  .sidebar-card-lists button small {
+  .sidebar-nav-button > span,
+  .sidebar-nav-button > small {
     display: none;
   }
 
-  .sidebar-card-lists button::before,
-  .sidebar-tools button::before {
-    content: attr(data-short);
-    font-size: 0.62rem;
-    font-weight: 750;
+  .sidebar-tools {
+    padding-top: 8px;
   }
 }
 
