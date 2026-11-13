@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
-import { commanderCards, draftCards } from './data'
+import { loadSandboxState } from '../sandbox/storage'
+import { sandboxChangeCount, sandboxDiff } from '../sandbox/state'
+import { commanderCards, draftCards, releaseInfo } from './data'
 import { CardCollection } from './CardCollection'
 import {
   CARD_TYPE_OPTIONS,
@@ -28,6 +30,8 @@ interface ColumnSection {
   label: string
   cards: BrowserCard[]
 }
+
+type LocalList = BrowserPool | 'changes'
 
 const GUILD_LABELS: Readonly<Record<string, string>> = {
   WU: 'Azorius',
@@ -141,17 +145,54 @@ function ToolGlyph({ name }: { name: 'list' | 'images' }) {
   )
 }
 
+
+function ChangeListSection({
+  title,
+  cards,
+  tone,
+}: {
+  title: string
+  cards: readonly BrowserCard[]
+  tone: 'added' | 'removed'
+}) {
+  if (cards.length === 0) return null
+
+  return (
+    <section className={`browser-change-section browser-change-section--${tone}`}>
+      <header>
+        <span>{title}</span>
+        <strong>{cards.length}</strong>
+      </header>
+      <CardCollection cards={cards} view="list" />
+    </section>
+  )
+}
+
 export function CubeBrowser({
   defaultPool = 'draft',
   defaultView = 'list',
 }: CubeBrowserProps) {
+  const [localList, setLocalList] = useState<LocalList>(defaultPool)
   const [pool, setPool] = useState<BrowserPool>(defaultPool)
+  const [sandboxState] = useState(() =>
+    loadSandboxState(
+      releaseInfo.snapshotId,
+      draftCards,
+      commanderCards,
+      window.sessionStorage,
+    ),
+  )
   const [query, setQuery] = useState('')
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
   const [sort, setSort] = useState<BrowserSort>('cube')
   const [view, setView] = useState<BrowserView>(defaultView)
 
+  const pendingDiff = useMemo(
+    () => sandboxDiff(sandboxState, draftCards, commanderCards),
+    [sandboxState],
+  )
+  const pendingChangeCount = sandboxChangeCount(pendingDiff)
   const sourceCards = pool === 'draft' ? draftCards : commanderCards
   const sectionOptions = pool === 'draft' ? DRAFT_SECTION_OPTIONS : COMMANDER_SECTION_OPTIONS
   const visibleCards = useMemo(
@@ -166,8 +207,10 @@ export function CubeBrowser({
   const denseColumns = view === 'list' && !hasFilters && sort === 'cube' && groups.length > 0
   const groupedFilteredResults = view === 'list' && hasFilters && sort === 'cube' && groups.length > 0
 
-  function changePool(nextPool: BrowserPool) {
-    setPool(nextPool)
+  function changeList(nextList: LocalList) {
+    setLocalList(nextList)
+    if (nextList !== 'changes') setPool(nextList)
+    setQuery('')
     setSection('all')
     setType('all')
     setSort('cube')
@@ -181,8 +224,73 @@ export function CubeBrowser({
   }
 
   return (
-    <section className="cube-browser" aria-label="Cube browser">
-      <div className="browser-toolbar">
+    <section className="cards-workspace" aria-label="Cards">
+      <aside className="cards-list-rail" aria-label="Card lists">
+        <header>
+          <span className="cards-list-icon" aria-hidden="true">☷</span>
+          <strong>Lists</strong>
+        </header>
+        <nav>
+          <button
+            type="button"
+            className={localList === 'draft' ? 'active' : ''}
+            aria-current={localList === 'draft' ? 'page' : undefined}
+            onClick={() => changeList('draft')}
+          >
+            <span>Cube</span>
+            <small>{draftCards.length}</small>
+          </button>
+          <button
+            type="button"
+            className={localList === 'commanders' ? 'active' : ''}
+            aria-current={localList === 'commanders' ? 'page' : undefined}
+            onClick={() => changeList('commanders')}
+          >
+            <span>Commanders</span>
+            <small>{commanderCards.length}</small>
+          </button>
+          <button
+            type="button"
+            className={localList === 'changes' ? 'active' : ''}
+            aria-current={localList === 'changes' ? 'page' : undefined}
+            onClick={() => changeList('changes')}
+          >
+            <span>Changes</span>
+            <small className={pendingChangeCount > 0 ? 'pending' : ''}>{pendingChangeCount}</small>
+          </button>
+        </nav>
+      </aside>
+
+      <div className="cube-browser">
+        {localList === 'changes' ? (
+          <section className="browser-changes" aria-label="Pending card changes">
+            <header className="browser-changes-heading">
+              <div>
+                <span>Working list</span>
+                <h2>Changes</h2>
+                <p>Read-only view of the current session diff. Edit cards in the Changes workspace.</p>
+              </div>
+              <strong>{pendingChangeCount} pending</strong>
+            </header>
+
+            {pendingChangeCount === 0 ? (
+              <div className="browser-changes-empty">
+                <span>±</span>
+                <strong>No pending changes</strong>
+                <p>Add or remove cards in the Changes workspace and they will appear here.</p>
+              </div>
+            ) : (
+              <div className="browser-change-groups">
+                <ChangeListSection title="Cube · Added" cards={pendingDiff.addedDraft} tone="added" />
+                <ChangeListSection title="Cube · Removed" cards={pendingDiff.removedDraft} tone="removed" />
+                <ChangeListSection title="Commanders · Added" cards={pendingDiff.addedCommanders} tone="added" />
+                <ChangeListSection title="Commanders · Removed" cards={pendingDiff.removedCommanders} tone="removed" />
+              </div>
+            )}
+          </section>
+        ) : (
+          <>
+            <div className="browser-toolbar">
         <div className="view-toggle" role="group" aria-label="Card view">
           <button
             title="Column view"
@@ -197,15 +305,6 @@ export function CubeBrowser({
             onClick={() => setView('images')}
           >
             <ToolGlyph name="images" />
-          </button>
-        </div>
-
-        <div className="pool-tabs" role="group" aria-label="Card pool">
-          <button className={pool === 'draft' ? 'active' : ''} onClick={() => changePool('draft')}>
-            Draft <span>{draftCards.length}</span>
-          </button>
-          <button className={pool === 'commanders' ? 'active' : ''} onClick={() => changePool('commanders')}>
-            Commanders <span>{commanderCards.length}</span>
           </button>
         </div>
 
@@ -367,6 +466,9 @@ export function CubeBrowser({
           <CardCollection cards={visibleCards} view={view} />
         </div>
       )}
+          </>
+        )}
+      </div>
     </section>
   )
 }
