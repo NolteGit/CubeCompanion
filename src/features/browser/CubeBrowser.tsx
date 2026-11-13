@@ -18,6 +18,11 @@ import type {
 } from './types'
 import './browser.css'
 
+interface CubeBrowserProps {
+  defaultPool?: BrowserPool
+  defaultView?: BrowserView
+}
+
 interface ColumnSection {
   key: string
   label: string
@@ -99,13 +104,16 @@ function ToolGlyph({ name }: { name: 'list' | 'images' }) {
   )
 }
 
-export function CubeBrowser() {
-  const [pool, setPool] = useState<BrowserPool>('draft')
+export function CubeBrowser({
+  defaultPool = 'draft',
+  defaultView = 'list',
+}: CubeBrowserProps) {
+  const [pool, setPool] = useState<BrowserPool>(defaultPool)
   const [query, setQuery] = useState('')
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
   const [sort, setSort] = useState<BrowserSort>('cube')
-  const [view, setView] = useState<BrowserView>('list')
+  const [view, setView] = useState<BrowserView>(defaultView)
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   const sourceCards = pool === 'draft' ? draftCards : commanderCards

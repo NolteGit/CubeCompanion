@@ -325,6 +325,15 @@
   box-shadow: inset 2px 0 rgb(var(--column-rgb));
 }
 
+html[data-card-density="comfortable"] .card-list-row {
+  min-height: 29px;
+  padding-block: 5px;
+}
+
+html[data-hover-previews="off"] .card-hover-preview {
+  display: none;
+}
+
 .card-hover-preview {
   position: fixed;
   z-index: 80;
