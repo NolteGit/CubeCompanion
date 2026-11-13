@@ -19,6 +19,7 @@ export function PlaytestTable() {
     dealCommanderPack(commanderCards),
   )
   const [selectedPack, setSelectedPack] = useState(0)
+  const [commandersLocked, setCommandersLocked] = useState(false)
 
   function redealDraftPacks() {
     setDraftPacks(dealDraftPacks(draftCards))
@@ -26,7 +27,9 @@ export function PlaytestTable() {
   }
 
   function redealAll() {
-    setCommanderPack(dealCommanderPack(commanderCards))
+    if (!commandersLocked) {
+      setCommanderPack(dealCommanderPack(commanderCards))
+    }
     setDraftPacks(dealDraftPacks(draftCards))
     setSelectedPack(0)
   }
@@ -48,6 +51,7 @@ export function PlaytestTable() {
         <span><strong>{COMMANDER_PACK_SIZE}</strong> commanders</span>
         <span><strong>{DRAFT_PACK_COUNT}</strong> draft packs</span>
         <span><strong>{DRAFT_PACK_SIZE}</strong> cards per pack</span>
+        {commandersLocked && <span className="playtest-lock-status">Commanders locked</span>}
         <span className="playtest-meta-note">No repeats across draft packs · session only</span>
       </div>
 
@@ -55,14 +59,29 @@ export function PlaytestTable() {
         <header className="playtest-panel-heading">
           <div>
             <h3>Commander pack</h3>
-            <p>Random commander options · keep up to 3</p>
+            <p>
+              {commandersLocked
+                ? 'Locked for repeated draft deals'
+                : 'Random commander options · keep up to 3'}
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setCommanderPack(dealCommanderPack(commanderCards))}
-          >
-            Redeal commanders
-          </button>
+          <div className="commander-actions">
+            <button
+              type="button"
+              className={`commander-lock${commandersLocked ? ' active' : ''}`}
+              aria-pressed={commandersLocked}
+              onClick={() => setCommandersLocked((locked) => !locked)}
+            >
+              {commandersLocked ? 'Unlock commanders' : 'Lock commanders'}
+            </button>
+            <button
+              type="button"
+              disabled={commandersLocked}
+              onClick={() => setCommanderPack(dealCommanderPack(commanderCards))}
+            >
+              Redeal commanders
+            </button>
+          </div>
         </header>
 
         <div className="commander-pack">

@@ -68,6 +68,16 @@
   background: var(--surface-hover);
 }
 
+.playtest-panel-heading button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.playtest-panel-heading button:disabled:hover {
+  color: var(--text-muted);
+  background: var(--surface-raised);
+}
+
 .playtest-meta {
   display: flex;
   min-height: 36px;
@@ -91,6 +101,11 @@
 .playtest-meta strong {
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+
+.playtest-lock-status {
+  color: #b8d8eb;
+  background: rgb(83 158 205 / 11%) !important;
 }
 
 .playtest-meta-note {
@@ -117,6 +132,18 @@
 .playtest-panel h3 {
   font-size: 0.9rem;
   letter-spacing: -0.01em;
+}
+
+.commander-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.commander-actions .commander-lock.active {
+  border-color: rgb(83 158 205 / 28%);
+  color: #c7e2f2;
+  background: rgb(83 158 205 / 12%);
 }
 
 .commander-pack .card-grid {
@@ -241,6 +268,11 @@
   .new-deal-button,
   .playtest-panel-heading button {
     width: 100%;
+  }
+
+  .commander-actions {
+    width: 100%;
+    flex-direction: column;
   }
 
   .playtest-meta {
