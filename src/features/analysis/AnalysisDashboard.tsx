@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type FocusEvent, type PointerEvent } from 'react'
 import { draftCards } from '../browser/data'
 import {
   averageManaValue,
@@ -11,6 +11,13 @@ import {
 import './analysis.css'
 
 type CurveMode = 'stacked' | 'grouped'
+
+interface ChartTooltipState {
+  label: string
+  value: string
+  x: number
+  y: number
+}
 
 const SECTION_COLORS: Readonly<Record<string, string>> = {
   white: '#d3cdad',
@@ -38,6 +45,48 @@ const TYPE_COLORS: Readonly<Record<string, string>> = {
 function percent(value: number, total: number): string {
   if (total === 0) return '0%'
   return `${Math.round((value / total) * 100)}%`
+}
+
+function pointerTooltip(
+  event: PointerEvent<Element>,
+  label: string,
+  value: string,
+): ChartTooltipState {
+  return {
+    label,
+    value,
+    x: Math.min(event.clientX + 14, window.innerWidth - 190),
+    y: Math.max(14, event.clientY - 18),
+  }
+}
+
+function focusTooltip(
+  event: FocusEvent<Element>,
+  label: string,
+  value: string,
+): ChartTooltipState {
+  const rect = event.currentTarget.getBoundingClientRect()
+  return {
+    label,
+    value,
+    x: Math.min(rect.right + 10, window.innerWidth - 190),
+    y: Math.max(14, rect.top + rect.height / 2),
+  }
+}
+
+function ChartTooltip({ tooltip }: { tooltip: ChartTooltipState | null }) {
+  if (!tooltip) return null
+
+  return (
+    <div
+      className="chart-tooltip"
+      style={{ left: tooltip.x, top: tooltip.y }}
+      role="tooltip"
+    >
+      <strong>{tooltip.label}</strong>
+      <span>{tooltip.value}</span>
+    </div>
+  )
 }
 
 function Metric({
@@ -77,31 +126,6 @@ function Legend({
   )
 }
 
-function donutGradient(
-  buckets: readonly CountBucket[],
-  colors: Readonly<Record<string, string>>,
-): string {
-  const total = buckets.reduce((sum, bucket) => sum + bucket.count, 0)
-  if (total === 0) return 'var(--surface-subtle)'
-
-  const { stops } = buckets.reduce(
-    (state, bucket) => {
-      const share = (bucket.count / total) * 100
-      const end = state.offset + share
-      return {
-        offset: end,
-        stops: [
-          ...state.stops,
-          `${colors[bucket.key] ?? colors.other} ${state.offset}% ${end}%`,
-        ],
-      }
-    },
-    { offset: 0, stops: [] as string[] },
-  )
-
-  return `conic-gradient(${stops.join(', ')})`
-}
-
 function DonutChart({
   buckets,
   colors,
@@ -111,14 +135,47 @@ function DonutChart({
   colors: Readonly<Record<string, string>>
   centerLabel: string
 }) {
+  const [tooltip, setTooltip] = useState<ChartTooltipState | null>(null)
   const total = buckets.reduce((sum, bucket) => sum + bucket.count, 0)
-  const style = {
-    background: donutGradient(buckets, colors),
-  } satisfies CSSProperties
+  let offset = 0
+
+  const segments = buckets.map((bucket) => {
+    const share = total === 0 ? 0 : (bucket.count / total) * 100
+    const segment = { bucket, offset, share }
+    offset += share
+    return segment
+  })
 
   return (
     <div className="donut-layout">
-      <div className="donut-chart" style={style} aria-hidden="true">
+      <div className="donut-chart">
+        <svg viewBox="0 0 100 100" aria-label={`${centerLabel} distribution`}>
+          {segments.map(({ bucket, offset: segmentOffset, share }) => {
+            const label = bucket.label
+            const value = `${bucket.count} cards · ${percent(bucket.count, total)}`
+            return (
+              <circle
+                className="donut-segment"
+                key={bucket.key}
+                cx="50"
+                cy="50"
+                r="40"
+                pathLength="100"
+                stroke={colors[bucket.key] ?? colors.other}
+                strokeDasharray={`${share} ${100 - share}`}
+                strokeDashoffset={-segmentOffset}
+                transform="rotate(-90 50 50)"
+                tabIndex={0}
+                aria-label={`${label}: ${value}`}
+                onPointerEnter={(event) => setTooltip(pointerTooltip(event, label, value))}
+                onPointerMove={(event) => setTooltip(pointerTooltip(event, label, value))}
+                onPointerLeave={() => setTooltip(null)}
+                onFocus={(event) => setTooltip(focusTooltip(event, label, value))}
+                onBlur={() => setTooltip(null)}
+              />
+            )
+          })}
+        </svg>
         <div className="donut-hole">
           <strong>{buckets.length}</strong>
           <span>{centerLabel}</span>
@@ -136,6 +193,7 @@ function DonutChart({
           </div>
         ))}
       </div>
+      <ChartTooltip tooltip={tooltip} />
     </div>
   )
 }
@@ -147,35 +205,50 @@ function StackedCurve({
   curve: readonly SectionManaBucket[]
   maximum: number
 }) {
+  const [tooltip, setTooltip] = useState<ChartTooltipState | null>(null)
+
   return (
-    <div className="section-curve">
-      {curve.map((bucket) => (
-        <div className="curve-bucket" key={bucket.key}>
-          <div
-            className="curve-track"
-            title={`${bucket.total} cards at mana value ${bucket.label}`}
-          >
+    <>
+      <div className="section-curve">
+        {curve.map((bucket) => (
+          <div className="curve-bucket" key={bucket.key}>
             <div
-              className="stacked-bar"
-              style={{ height: `${(bucket.total / maximum) * 100}%` }}
+              className="curve-track"
               aria-label={`${bucket.total} cards at mana value ${bucket.label}`}
             >
-              {bucket.sections.map((section) => section.count > 0 && (
-                <i
-                  key={section.key}
-                  title={`${section.label}: ${section.count}`}
-                  style={{
-                    background: SECTION_COLORS[section.key] ?? SECTION_COLORS.other,
-                    flexGrow: section.count,
-                  }}
-                />
-              ))}
+              <div
+                className="stacked-bar"
+                style={{ height: `${(bucket.total / maximum) * 100}%` }}
+              >
+                {bucket.sections.map((section) => {
+                  if (section.count === 0) return null
+                  const label = `${section.label} · MV ${bucket.label}`
+                  const value = `${section.count} card${section.count === 1 ? '' : 's'}`
+                  return (
+                    <i
+                      key={section.key}
+                      tabIndex={0}
+                      aria-label={`${label}: ${value}`}
+                      style={{
+                        background: SECTION_COLORS[section.key] ?? SECTION_COLORS.other,
+                        flexGrow: section.count,
+                      }}
+                      onPointerEnter={(event) => setTooltip(pointerTooltip(event, label, value))}
+                      onPointerMove={(event) => setTooltip(pointerTooltip(event, label, value))}
+                      onPointerLeave={() => setTooltip(null)}
+                      onFocus={(event) => setTooltip(focusTooltip(event, label, value))}
+                      onBlur={() => setTooltip(null)}
+                    />
+                  )
+                })}
+              </div>
             </div>
+            <span>{bucket.label}</span>
           </div>
-          <span>{bucket.label}</span>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <ChartTooltip tooltip={tooltip} />
+    </>
   )
 }
 
@@ -186,31 +259,52 @@ function GroupedCurve({
   curve: readonly SectionManaBucket[]
   maximum: number
 }) {
+  const [tooltip, setTooltip] = useState<ChartTooltipState | null>(null)
+
   return (
-    <div className="section-curve grouped">
-      {curve.map((bucket) => (
-        <div className="curve-bucket" key={bucket.key}>
-          <div
-            className="curve-track grouped-track"
-            title={`${bucket.total} cards at mana value ${bucket.label}`}
-          >
-            <div className="grouped-bars">
-              {bucket.sections.map((section) => (
-                <i
-                  key={section.key}
-                  title={`${section.label}: ${section.count}`}
-                  style={{
-                    background: SECTION_COLORS[section.key] ?? SECTION_COLORS.other,
-                    height: `${(section.count / maximum) * 100}%`,
-                  }}
-                />
-              ))}
+    <>
+      <div className="section-curve grouped">
+        {curve.map((bucket) => (
+          <div className="curve-bucket" key={bucket.key}>
+            <div
+              className="curve-track grouped-track"
+              aria-label={`${bucket.total} cards at mana value ${bucket.label}`}
+            >
+              <div className="grouped-bars">
+                {bucket.sections.map((section) => {
+                  const label = `${section.label} · MV ${bucket.label}`
+                  const value = `${section.count} card${section.count === 1 ? '' : 's'}`
+                  return (
+                    <i
+                      key={section.key}
+                      tabIndex={section.count > 0 ? 0 : -1}
+                      aria-label={`${label}: ${value}`}
+                      style={{
+                        background: SECTION_COLORS[section.key] ?? SECTION_COLORS.other,
+                        height: `${(section.count / maximum) * 100}%`,
+                      }}
+                      onPointerEnter={(event) => {
+                        if (section.count > 0) setTooltip(pointerTooltip(event, label, value))
+                      }}
+                      onPointerMove={(event) => {
+                        if (section.count > 0) setTooltip(pointerTooltip(event, label, value))
+                      }}
+                      onPointerLeave={() => setTooltip(null)}
+                      onFocus={(event) => {
+                        if (section.count > 0) setTooltip(focusTooltip(event, label, value))
+                      }}
+                      onBlur={() => setTooltip(null)}
+                    />
+                  )
+                })}
+              </div>
             </div>
+            <span>{bucket.label}</span>
           </div>
-          <span>{bucket.label}</span>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <ChartTooltip tooltip={tooltip} />
+    </>
   )
 }
 
