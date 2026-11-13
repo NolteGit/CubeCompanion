@@ -137,14 +137,16 @@ function DonutChart({
 }) {
   const [tooltip, setTooltip] = useState<ChartTooltipState | null>(null)
   const total = buckets.reduce((sum, bucket) => sum + bucket.count, 0)
-  let offset = 0
-
-  const segments = buckets.map((bucket) => {
+  const segments = buckets.reduce<Array<{
+    bucket: CountBucket
+    offset: number
+    share: number
+  }>>((currentSegments, bucket) => {
+    const previous = currentSegments[currentSegments.length - 1]
+    const offset = previous ? previous.offset + previous.share : 0
     const share = total === 0 ? 0 : (bucket.count / total) * 100
-    const segment = { bucket, offset, share }
-    offset += share
-    return segment
-  })
+    return [...currentSegments, { bucket, offset, share }]
+  }, [])
 
   return (
     <div className="donut-layout">

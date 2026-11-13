@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { loadSandboxState } from '../sandbox/storage'
 import { sandboxChangeCount, sandboxDiff } from '../sandbox/state'
 import { commanderCards, draftCards, releaseInfo } from './data'
@@ -25,6 +25,13 @@ export type BrowserList = BrowserPool | 'changes'
 interface CubeBrowserProps {
   list: BrowserList
   defaultView?: BrowserView
+  onOpenChanges?: () => void
+}
+
+interface CubeBrowserContentProps {
+  list: BrowserList
+  view: BrowserView
+  onViewChange: (view: BrowserView) => void
   onOpenChanges?: () => void
 }
 
@@ -175,6 +182,25 @@ export function CubeBrowser({
   defaultView = 'list',
   onOpenChanges,
 }: CubeBrowserProps) {
+  const [view, setView] = useState<BrowserView>(defaultView)
+
+  return (
+    <CubeBrowserContent
+      key={list}
+      list={list}
+      view={view}
+      onViewChange={setView}
+      onOpenChanges={onOpenChanges}
+    />
+  )
+}
+
+function CubeBrowserContent({
+  list,
+  view,
+  onViewChange,
+  onOpenChanges,
+}: CubeBrowserContentProps) {
   const pool: BrowserPool = list === 'commanders' ? 'commanders' : 'draft'
   const [sandboxState] = useState(() =>
     loadSandboxState(
@@ -188,7 +214,6 @@ export function CubeBrowser({
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
   const [sort, setSort] = useState<BrowserSort>('cube')
-  const [view, setView] = useState<BrowserView>(defaultView)
 
   const pendingDiff = useMemo(
     () => sandboxDiff(sandboxState, draftCards, commanderCards),
@@ -208,13 +233,6 @@ export function CubeBrowser({
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all' || sort !== 'cube')
   const denseColumns = view === 'list' && !hasFilters && sort === 'cube' && groups.length > 0
   const groupedFilteredResults = view === 'list' && hasFilters && sort === 'cube' && groups.length > 0
-
-  useEffect(() => {
-    setQuery('')
-    setSection('all')
-    setType('all')
-    setSort('cube')
-  }, [list])
 
   function clearFilters() {
     setQuery('')
@@ -265,14 +283,14 @@ export function CubeBrowser({
           <button
             title="Column view"
             className={view === 'list' ? 'active' : ''}
-            onClick={() => setView('list')}
+            onClick={() => onViewChange('list')}
           >
             <ToolGlyph name="list" />
           </button>
           <button
             title="Image view"
             className={view === 'images' ? 'active' : ''}
-            onClick={() => setView('images')}
+            onClick={() => onViewChange('images')}
           >
             <ToolGlyph name="images" />
           </button>
