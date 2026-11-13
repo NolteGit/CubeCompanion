@@ -50,12 +50,19 @@ describe('cube browser selectors', () => {
     }).map((entry) => entry.name)).toEqual(['First', 'Second'])
   })
 
-  it('groups commanders by exact color identity', () => {
+  it('groups commanders by exact color identity with familiar color names', () => {
     const groups = groupCards([
       card({ oracleId: 'w', name: 'White', colorIdentity: ['W'] }),
       card({ oracleId: 'wu', name: 'Azorius', colorIdentity: ['U', 'W'] }),
+      card({ oracleId: 'wg', name: 'Selesnya', colorIdentity: ['G', 'W'] }),
+      card({ oracleId: 'wub', name: 'Esper', colorIdentity: ['B', 'U', 'W'] }),
     ], 'commanders')
 
-    expect(groups.map((group) => group.label)).toEqual(['W', 'WU'])
+    expect(groups.map((group) => group.label)).toEqual([
+      'White',
+      'Azorius',
+      'Selesnya',
+      'Esper',
+    ])
   })
 })

@@ -40,6 +40,41 @@ export const CARD_TYPE_OPTIONS: readonly { value: CardTypeFilter; label: string 
   { value: 'land', label: 'Land' },
 ]
 
+const COMMANDER_IDENTITY_LABELS: Readonly<Record<string, string>> = {
+  C: 'Colorless',
+  W: 'White',
+  U: 'Blue',
+  B: 'Black',
+  R: 'Red',
+  G: 'Green',
+  WU: 'Azorius',
+  UB: 'Dimir',
+  BR: 'Rakdos',
+  RG: 'Gruul',
+  WG: 'Selesnya',
+  WB: 'Orzhov',
+  UR: 'Izzet',
+  BG: 'Golgari',
+  WR: 'Boros',
+  UG: 'Simic',
+  WUB: 'Esper',
+  WUR: 'Jeskai',
+  WUG: 'Bant',
+  WBR: 'Mardu',
+  WBG: 'Abzan',
+  WRG: 'Naya',
+  UBR: 'Grixis',
+  UBG: 'Sultai',
+  URG: 'Temur',
+  BRG: 'Jund',
+  WUBR: 'Four-color · no Green',
+  WUBG: 'Four-color · no Red',
+  WURG: 'Four-color · no Black',
+  WBRG: 'Four-color · no Blue',
+  UBRG: 'Four-color · no White',
+  WUBRG: 'Five-color',
+}
+
 function matchesSection(card: BrowserCard, pool: BrowserPool, section: string): boolean {
   if (section === 'all') return true
 
@@ -109,11 +144,11 @@ function draftGroup(card: BrowserCard): { key: string; label: string } {
 
 function commanderGroup(card: BrowserCard): { key: string; label: string } {
   const size = colorIdentitySize(card.colorIdentity)
-  if (size === 0) return { key: '0-color', label: 'Colorless' }
-  if (size === 1) return { key: `1-${colorIdentityKey(card.colorIdentity)}`, label: colorIdentityKey(card.colorIdentity) }
-  if (size === 2) return { key: `2-${colorIdentityKey(card.colorIdentity)}`, label: colorIdentityKey(card.colorIdentity) }
-  if (size === 3) return { key: `3-${colorIdentityKey(card.colorIdentity)}`, label: colorIdentityKey(card.colorIdentity) }
-  return { key: `${size}-${colorIdentityKey(card.colorIdentity)}`, label: colorIdentityKey(card.colorIdentity) }
+  const identity = colorIdentityKey(card.colorIdentity)
+  return {
+    key: size === 0 ? '0-color' : `${size}-${identity}`,
+    label: COMMANDER_IDENTITY_LABELS[identity] ?? identity,
+  }
 }
 
 export function groupCards(cards: readonly BrowserCard[], pool: BrowserPool): CardGroup[] {

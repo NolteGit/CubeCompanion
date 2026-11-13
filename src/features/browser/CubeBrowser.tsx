@@ -83,7 +83,7 @@ function splitColumn(group: CardGroup, pool: BrowserPool): ColumnSection[] {
   return [
     { key: 'creature', label: 'Creature', cards: creatures },
     { key: 'noncreature', label: 'Noncreature', cards: noncreatures },
-  ].filter((section) => section.cards.length > 0)
+  ].filter((columnSection) => columnSection.cards.length > 0)
 }
 
 function ToolGlyph({ name }: { name: 'list' | 'images' }) {
@@ -114,7 +114,6 @@ export function CubeBrowser({
   const [type, setType] = useState<CardTypeFilter>('all')
   const [sort, setSort] = useState<BrowserSort>('cube')
   const [view, setView] = useState<BrowserView>(defaultView)
-  const [filtersOpen, setFiltersOpen] = useState(false)
 
   const sourceCards = pool === 'draft' ? draftCards : commanderCards
   const sectionOptions = pool === 'draft' ? DRAFT_SECTION_OPTIONS : COMMANDER_SECTION_OPTIONS
@@ -123,11 +122,12 @@ export function CubeBrowser({
     [pool, query, section, sort, sourceCards, type],
   )
   const groups = useMemo(
-    () => (section === 'all' && sort === 'cube' ? groupCards(visibleCards, pool) : []),
-    [pool, section, sort, visibleCards],
+    () => groupCards(visibleCards, pool),
+    [pool, visibleCards],
   )
-  const denseColumns = view === 'list' && groups.length > 0
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all' || sort !== 'cube')
+  const denseColumns = view === 'list' && !hasFilters && sort === 'cube' && groups.length > 0
+  const groupedFilteredResults = view === 'list' && hasFilters && sort === 'cube' && groups.length > 0
 
   function changePool(nextPool: BrowserPool) {
     setPool(nextPool)
@@ -184,54 +184,53 @@ export function CubeBrowser({
             aria-label="Search cards"
           />
         </label>
-
-        <button
-          className={`filter-button${filtersOpen || hasFilters ? ' active' : ''}`}
-          onClick={() => setFiltersOpen((current) => !current)}
-          aria-expanded={filtersOpen}
-        >
-          Filters{hasFilters ? ' •' : ''}
-        </button>
-
-        {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
       </div>
 
-      {filtersOpen && (
-        <div className="filters">
-          <label>
-            <span>Section</span>
-            <select value={section} onChange={(event) => setSection(event.target.value)}>
-              {sectionOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <span>Type</span>
-            <select value={type} onChange={(event) => setType(event.target.value as CardTypeFilter)}>
-              {CARD_TYPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            <span>Sort</span>
-            <select value={sort} onChange={(event) => setSort(event.target.value as BrowserSort)}>
-              <option value="cube">Cube order</option>
-              <option value="name">Name</option>
-              <option value="mana">Mana value</option>
-            </select>
-          </label>
-          <span className="filter-result">{visibleCards.length} of {sourceCards.length} cards</span>
+      <div className={`filters${hasFilters ? ' active' : ''}`}>
+        <label>
+          <span>Section</span>
+          <select value={section} onChange={(event) => setSection(event.target.value)}>
+            {sectionOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Type</span>
+          <select value={type} onChange={(event) => setType(event.target.value as CardTypeFilter)}>
+            {CARD_TYPE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Sort</span>
+          <select value={sort} onChange={(event) => setSort(event.target.value as BrowserSort)}>
+            <option value="cube">Cube order</option>
+            <option value="name">Name</option>
+            <option value="mana">Mana value</option>
+          </select>
+        </label>
+
+        <div className="filter-status">
+          <span><strong>{visibleCards.length}</strong> of {sourceCards.length} cards</span>
+          {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
         </div>
-      )}
+      </div>
 
       {visibleCards.length === 0 ? (
-        <div className="empty-state">No cards match these filters.</div>
+        <div className="empty-state">
+          <strong>No cards found</strong>
+          <span>Try changing the search or filters.</span>
+          <button type="button" onClick={clearFilters}>Reset filters</button>
+        </div>
       ) : denseColumns ? (
         <div className="cube-columns">
           {groups.map((group) => (
-            <section className={`cube-column cube-column--${group.key}`} key={group.key}>
+            <section
+              className={`cube-column cube-column--${group.key} cube-theme cube-theme--${group.key}`}
+              key={group.key}
+            >
               <header className="column-heading">
                 <span className="section-dot" aria-hidden="true" />
                 <h2>{group.label}</h2>
@@ -251,10 +250,40 @@ export function CubeBrowser({
             </section>
           ))}
         </div>
+      ) : groupedFilteredResults ? (
+        <div className="filtered-results">
+          <div className="filtered-results-heading">
+            <div>
+              <strong>{visibleCards.length}</strong>
+              <span>matching cards</span>
+            </div>
+            <span>Grouped by section</span>
+          </div>
+
+          <div className="filtered-groups">
+            {groups.map((group) => (
+              <section
+                className={`filtered-group cube-theme cube-theme--${group.key}`}
+                key={group.key}
+              >
+                <header>
+                  <span className="section-dot" aria-hidden="true" />
+                  <h2>{group.label}</h2>
+                  <span>{group.cards.length}</span>
+                </header>
+                <CardCollection cards={group.cards} view="list" />
+              </section>
+            ))}
+          </div>
+        </div>
       ) : (
         <div className="filtered-results">
-          <div className="browser-summary">
-            <strong>{visibleCards.length}</strong> of {sourceCards.length} cards
+          <div className="filtered-results-heading">
+            <div>
+              <strong>{visibleCards.length}</strong>
+              <span>matching cards</span>
+            </div>
+            <span>{sort === 'name' ? 'Sorted by name' : sort === 'mana' ? 'Sorted by mana value' : 'Image view'}</span>
           </div>
           <CardCollection cards={visibleCards} view={view} />
         </div>
