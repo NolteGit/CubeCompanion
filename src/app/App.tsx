@@ -91,7 +91,12 @@ function NavButton({
   onClick: () => void
 }) {
   return (
-    <button className={active ? 'active' : ''} onClick={onClick}>
+    <button
+      className={active ? 'active' : ''}
+      aria-current={active ? 'page' : undefined}
+      title={item.label}
+      onClick={onClick}
+    >
       <NavGlyph icon={item.icon} />
       <span>{item.label}</span>
     </button>
@@ -227,6 +232,7 @@ function App() {
     loadWorkspacePreferences(window.localStorage),
   )
   const totalCards = draftCards.length + commanderCards.length
+  const secondaryActive = page === 'playtest' || page === 'history' || page === 'archive'
 
   useEffect(() => {
     saveWorkspacePreferences(preferences, window.localStorage)
@@ -280,18 +286,33 @@ function App() {
           </nav>
 
           <details className="sidebar-more">
-            <summary>
+            <summary className={secondaryActive ? 'active' : ''}>
               <NavGlyph icon="more" />
               <span>More</span>
             </summary>
             <div>
-              <button className={page === 'playtest' ? 'active' : ''} onClick={() => setPage('playtest')}>
+              <button
+                className={page === 'playtest' ? 'active' : ''}
+                aria-current={page === 'playtest' ? 'page' : undefined}
+                title="Playtest"
+                onClick={() => setPage('playtest')}
+              >
                 Playtest
               </button>
-              <button className={page === 'history' ? 'active' : ''} onClick={() => setPage('history')}>
+              <button
+                className={page === 'history' ? 'active' : ''}
+                aria-current={page === 'history' ? 'page' : undefined}
+                title="History"
+                onClick={() => setPage('history')}
+              >
                 History
               </button>
-              <button className={page === 'archive' ? 'active' : ''} onClick={() => setPage('archive')}>
+              <button
+                className={page === 'archive' ? 'active' : ''}
+                aria-current={page === 'archive' ? 'page' : undefined}
+                title="Archive"
+                onClick={() => setPage('archive')}
+              >
                 Archive
               </button>
             </div>

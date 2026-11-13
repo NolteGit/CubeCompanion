@@ -1,5 +1,6 @@
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at 0 100%, rgb(39 140 87 / 12%), transparent 30rem),
     radial-gradient(circle at 100% 0, rgb(69 104 145 / 8%), transparent 34rem),
@@ -88,6 +89,7 @@
   display: grid;
   grid-template-columns: 172px minmax(0, 1fr);
   min-height: calc(100vh - 58px);
+  min-height: calc(100dvh - 58px);
 }
 
 .app-sidebar {
@@ -95,6 +97,7 @@
   top: 58px;
   display: flex;
   height: calc(100vh - 58px);
+  height: calc(100dvh - 58px);
   flex-direction: column;
   justify-content: space-between;
   padding: 10px 9px 14px;
@@ -133,12 +136,14 @@
 
 .primary-nav button:hover,
 .primary-nav button.active,
-.sidebar-more summary:hover {
+.sidebar-more summary:hover,
+.sidebar-more summary.active {
   color: var(--text);
   background: var(--surface-hover);
 }
 
-.primary-nav button.active {
+.primary-nav button.active,
+.sidebar-more summary.active {
   color: #dffbea;
   background: linear-gradient(90deg, rgb(35 121 76 / 54%), rgb(35 121 76 / 28%));
 }
@@ -185,6 +190,11 @@
 .sidebar-more button.active {
   color: var(--text);
   background: var(--surface-hover);
+}
+
+.sidebar-more button.active {
+  color: #dffbea;
+  background: rgb(35 121 76 / 24%);
 }
 
 .app-main {
