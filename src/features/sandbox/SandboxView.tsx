@@ -17,6 +17,21 @@ import type { SandboxPool, SandboxState } from './types'
 import './sandbox.css'
 
 type EditorMode = 'add' | 'remove'
+type EditorNoticeTone = 'success' | 'warning' | 'error' | 'info'
+
+interface EditorNotice {
+  tone: EditorNoticeTone
+  message: string
+}
+
+function validationMessage(valid: boolean, issueCount: number): string {
+  if (valid) return 'Cube is valid.'
+  return `${issueCount} validation issue${issueCount === 1 ? '' : 's'}.`
+}
+
+function poolLabel(pool: SandboxPool): string {
+  return pool === 'draft' ? 'Draft' : 'Commanders'
+}
 
 function downloadText(filename: string, content: string): void {
   const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }))
@@ -71,7 +86,7 @@ export function SandboxView() {
   const [editorMode, setEditorMode] = useState<EditorMode>('add')
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
-  const [addStatus, setAddStatus] = useState('')
+  const [editorNotice, setEditorNotice] = useState<EditorNotice | null>(null)
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -104,7 +119,7 @@ export function SandboxView() {
   async function addCard(event: FormEvent) {
     event.preventDefault()
     setAdding(true)
-    setAddStatus('')
+    setEditorNotice(null)
     try {
       const resolved = await lookupSandboxCard(addName)
       const official =
@@ -112,21 +127,69 @@ export function SandboxView() {
           ? draftCards.find((card) => card.oracleId === resolved.oracleId)
           : commanderCards.find((card) => card.oracleId === resolved.oracleId)
       const card = official ?? resolved
-      setState((current) => applySandboxCard(current, card, addPool))
+      const nextState = applySandboxCard(state, card, addPool)
+
+      if (nextState === state) {
+        setEditorNotice({
+          tone: 'warning',
+          message: `${card.name} is already in ${poolLabel(addPool)}. No change made.`,
+        })
+        return
+      }
+
+      const nextValidation = validateCube({
+        draftCards: nextState.draftCards,
+        commanders: nextState.commanders,
+      })
+      setState(nextState)
       setAddName('')
-      setAddStatus(`Added ${card.name}. Cube rules revalidated.`)
+      setEditorNotice({
+        tone: 'success',
+        message: `Added ${card.name} to ${poolLabel(addPool)}. ${validationMessage(
+          nextValidation.valid,
+          nextValidation.issues.length,
+        )}`,
+      })
     } catch (error) {
-      setAddStatus(error instanceof Error ? error.message : String(error))
+      setEditorNotice({
+        tone: 'error',
+        message: error instanceof Error ? error.message : String(error),
+      })
     } finally {
       setAdding(false)
     }
+  }
+
+  function removeCard(card: BrowserCard, pool: SandboxPool) {
+    const nextState = removeSandboxCard(state, pool, card.oracleId)
+    const nextValidation = validateCube({
+      draftCards: nextState.draftCards,
+      commanders: nextState.commanders,
+    })
+    setState(nextState)
+    setEditorNotice({
+      tone: 'success',
+      message: `Removed ${card.name} from ${poolLabel(pool)}. ${validationMessage(
+        nextValidation.valid,
+        nextValidation.issues.length,
+      )}`,
+    })
+  }
+
+  function changeEditorMode(mode: EditorMode) {
+    setEditorMode(mode)
+    setEditorNotice(null)
   }
 
   function resetSandbox() {
     if (!window.confirm('Reset all pending changes to the current official snapshot?')) return
     setState(createSandboxState(releaseInfo.snapshotId, draftCards, commanderCards))
     setSearch('')
-    setAddStatus('Changes reset to the current snapshot.')
+    setAddName('')
+    setEditorNotice({
+      tone: 'info',
+      message: 'Pending changes reset to the current snapshot.',
+    })
   }
 
   return (
@@ -223,18 +286,36 @@ export function SandboxView() {
             <button
               type="button"
               className={editorMode === 'add' ? 'active' : ''}
-              onClick={() => setEditorMode('add')}
+              onClick={() => changeEditorMode('add')}
             >
               Add
             </button>
             <button
               type="button"
               className={editorMode === 'remove' ? 'active' : ''}
-              onClick={() => setEditorMode('remove')}
+              onClick={() => changeEditorMode('remove')}
             >
               Remove
             </button>
           </div>
+
+          {editorNotice && (
+            <div
+              className={`editor-notice editor-notice--${editorNotice.tone}`}
+              role={editorNotice.tone === 'error' ? 'alert' : 'status'}
+            >
+              <span aria-hidden="true">
+                {editorNotice.tone === 'success'
+                  ? '✓'
+                  : editorNotice.tone === 'warning'
+                    ? '!'
+                    : editorNotice.tone === 'error'
+                      ? '×'
+                      : 'i'}
+              </span>
+              <p>{editorNotice.message}</p>
+            </div>
+          )}
 
           {editorMode === 'add' ? (
             <div className="editor-content">
@@ -243,7 +324,10 @@ export function SandboxView() {
                   <span>Card name</span>
                   <input
                     value={addName}
-                    onChange={(event) => setAddName(event.target.value)}
+                    onChange={(event) => {
+                      setAddName(event.target.value)
+                      setEditorNotice(null)
+                    }}
                     placeholder="Search Scryfall by name…"
                   />
                 </label>
@@ -251,7 +335,10 @@ export function SandboxView() {
                   <span>Pool</span>
                   <select
                     value={addPool}
-                    onChange={(event) => setAddPool(event.target.value as SandboxPool)}
+                    onChange={(event) => {
+                      setAddPool(event.target.value as SandboxPool)
+                      setEditorNotice(null)
+                    }}
                   >
                     <option value="draft">Draft</option>
                     <option value="commander">Commander</option>
@@ -261,7 +348,6 @@ export function SandboxView() {
                   {adding ? 'Looking up…' : 'Add card'}
                 </button>
               </form>
-              {addStatus && <p className="sandbox-status">{addStatus}</p>}
             </div>
           ) : (
             <div className="editor-content">
@@ -269,7 +355,10 @@ export function SandboxView() {
                 <span>Current cards</span>
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value)
+                    setEditorNotice(null)
+                  }}
                   placeholder="Search by card name…"
                 />
               </label>
@@ -288,7 +377,7 @@ export function SandboxView() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => setState((current) => removeSandboxCard(current, pool, card.oracleId))}
+                        onClick={() => removeCard(card, pool)}
                       >
                         Remove
                       </button>
@@ -300,7 +389,7 @@ export function SandboxView() {
           )}
 
           <footer className="editor-footnote">
-            Scryfall resolves additions. Duplicate cards in the same pool are ignored.
+            Scryfall resolves additions. Existing cards in the selected pool are left unchanged.
           </footer>
         </aside>
       </div>
