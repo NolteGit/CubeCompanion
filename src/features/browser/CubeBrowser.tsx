@@ -47,6 +47,43 @@ function primaryType(card: BrowserCard): string {
   return order.find((type) => card.typeLine.includes(type)) ?? 'Other'
 }
 
+function filteredSubgroups(
+  cards: readonly BrowserCard[],
+  activeType: CardTypeFilter,
+): ColumnSection[] {
+  if (activeType === 'all') {
+    const order = ['Creature', 'Planeswalker', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Land', 'Other']
+    const groups = new Map<string, BrowserCard[]>()
+
+    for (const card of cards) {
+      const key = primaryType(card)
+      const group = groups.get(key) ?? []
+      group.push(card)
+      groups.set(key, group)
+    }
+
+    return order
+      .filter((key) => groups.has(key))
+      .map((key) => ({ key: `type-${key}`, label: key, cards: groups.get(key) ?? [] }))
+  }
+
+  const groups = new Map<string, BrowserCard[]>()
+  for (const card of cards) {
+    const key = card.manaValue >= 7 ? '7+' : String(card.manaValue)
+    const group = groups.get(key) ?? []
+    group.push(card)
+    groups.set(key, group)
+  }
+
+  return [...groups.entries()]
+    .sort(([left], [right]) => {
+      if (left === '7+') return 1
+      if (right === '7+') return -1
+      return Number(left) - Number(right)
+    })
+    .map(([key, group]) => ({ key: `mv-${key}`, label: `MV ${key}`, cards: group }))
+}
+
 function splitColumn(group: CardGroup, pool: BrowserPool): ColumnSection[] {
   if (pool === 'commanders') {
     return [{ key: 'commanders', label: 'Commanders', cards: group.cards }]
@@ -186,35 +223,65 @@ export function CubeBrowser({
         </label>
       </div>
 
-      <div className={`filters${hasFilters ? ' active' : ''}`}>
-        <label>
-          <span>Section</span>
-          <select value={section} onChange={(event) => setSection(event.target.value)}>
+      <div className={`filter-dock${hasFilters ? ' active' : ''}`}>
+        <div className="filter-row">
+          <span className="filter-row-label">{pool === 'draft' ? 'Section' : 'Color'}</span>
+          <div
+            className="filter-chips section-chips"
+            role="group"
+            aria-label={pool === 'draft' ? 'Draft section' : 'Commander color'}
+          >
             {sectionOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <button
+                type="button"
+                className={`filter-chip${section === option.value ? ' active' : ''}${option.value === 'all' ? '' : ` cube-theme cube-theme--${option.value}`}`}
+                key={option.value}
+                onClick={() => setSection(option.value)}
+              >
+                {option.value !== 'all' && <span className="filter-chip-dot" aria-hidden="true" />}
+                {option.label}
+              </button>
             ))}
-          </select>
-        </label>
-        <label>
-          <span>Type</span>
-          <select value={type} onChange={(event) => setType(event.target.value as CardTypeFilter)}>
-            {CARD_TYPE_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>Sort</span>
-          <select value={sort} onChange={(event) => setSort(event.target.value as BrowserSort)}>
-            <option value="cube">Cube order</option>
-            <option value="name">Name</option>
-            <option value="mana">Mana value</option>
-          </select>
-        </label>
+          </div>
 
-        <div className="filter-status">
-          <span><strong>{visibleCards.length}</strong> of {sourceCards.length} cards</span>
-          {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
+          <div className="filter-status">
+            <span><strong>{visibleCards.length}</strong> of {sourceCards.length} cards</span>
+            {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
+          </div>
+        </div>
+
+        <div className="filter-row filter-row-secondary">
+          <span className="filter-row-label">Type</span>
+          <div className="filter-chips type-chips" role="group" aria-label="Card type">
+            {CARD_TYPE_OPTIONS.map((option) => (
+              <button
+                type="button"
+                className={`filter-chip${type === option.value ? ' active' : ''}`}
+                key={option.value}
+                onClick={() => setType(option.value)}
+              >
+                {option.label.replace('All card types', 'All')}
+              </button>
+            ))}
+          </div>
+
+          <div className="sort-control" role="group" aria-label="Sort cards">
+            <span>Sort</span>
+            {([
+              ['cube', 'Cube'],
+              ['name', 'Name'],
+              ['mana', 'Mana'],
+            ] as const).map(([value, label]) => (
+              <button
+                type="button"
+                className={sort === value ? 'active' : ''}
+                key={value}
+                onClick={() => setSort(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -257,7 +324,9 @@ export function CubeBrowser({
               <strong>{visibleCards.length}</strong>
               <span>matching cards</span>
             </div>
-            <span>Grouped by section</span>
+            <span>
+              Grouped by {pool === 'draft' ? 'section' : 'color identity'} · then {type === 'all' ? 'type' : 'mana value'}
+            </span>
           </div>
 
           <div className="filtered-groups">
@@ -271,7 +340,17 @@ export function CubeBrowser({
                   <h2>{group.label}</h2>
                   <span>{group.cards.length}</span>
                 </header>
-                <CardCollection cards={group.cards} view="list" />
+                <div className="filtered-subgroups">
+                  {filteredSubgroups(group.cards, type).map((subgroup) => (
+                    <section className="filtered-subgroup" key={subgroup.key}>
+                      <header>
+                        <strong>{subgroup.label}</strong>
+                        <span>{subgroup.cards.length}</span>
+                      </header>
+                      <CardCollection cards={subgroup.cards} view="list" />
+                    </section>
+                  ))}
+                </div>
               </section>
             ))}
           </div>

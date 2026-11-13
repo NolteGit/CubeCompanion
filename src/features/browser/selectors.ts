@@ -21,12 +21,14 @@ export const DRAFT_SECTION_OPTIONS: readonly SectionOption[] = [
 ]
 
 export const COMMANDER_SECTION_OPTIONS: readonly SectionOption[] = [
-  { value: 'all', label: 'All commanders' },
-  { value: 'mono', label: 'Mono-color' },
-  { value: 'dual', label: 'Two-color' },
-  { value: 'triple', label: 'Three-color' },
+  { value: 'all', label: 'All colors' },
+  { value: 'white', label: 'White' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'black', label: 'Black' },
+  { value: 'red', label: 'Red' },
+  { value: 'green', label: 'Green' },
+  { value: 'multicolor', label: 'Multicolor' },
   { value: 'colorless', label: 'Colorless' },
-  { value: 'four-plus', label: 'Four / five-color' },
 ]
 
 export const CARD_TYPE_OPTIONS: readonly { value: CardTypeFilter; label: string }[] = [
@@ -83,11 +85,18 @@ function matchesSection(card: BrowserCard, pool: BrowserPool, section: string): 
   }
 
   const size = colorIdentitySize(card.colorIdentity)
+  const identity = colorIdentityKey(card.colorIdentity)
   if (section === 'colorless') return size === 0
-  if (section === 'mono') return size === 1
-  if (section === 'dual') return size === 2
-  if (section === 'triple') return size === 3
-  return section === 'four-plus' && size >= 4
+  if (section === 'multicolor') return size >= 2
+
+  const monoSections: Readonly<Record<string, string>> = {
+    white: 'W',
+    blue: 'U',
+    black: 'B',
+    red: 'R',
+    green: 'G',
+  }
+  return size === 1 && monoSections[section] === identity
 }
 
 function matchesType(card: BrowserCard, type: CardTypeFilter): boolean {

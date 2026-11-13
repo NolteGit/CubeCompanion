@@ -50,6 +50,35 @@ describe('cube browser selectors', () => {
     }).map((entry) => entry.name)).toEqual(['First', 'Second'])
   })
 
+  it('filters commanders into mono-color, multicolor, and colorless sections', () => {
+    const white = card({ oracleId: 'w-filter', name: 'White', colorIdentity: ['W'] })
+    const azorius = card({ oracleId: 'wu-filter', name: 'Azorius', colorIdentity: ['U', 'W'] })
+    const selesnya = card({ oracleId: 'wg-filter', name: 'Selesnya', colorIdentity: ['G', 'W'] })
+    const colorless = card({ oracleId: 'c-filter', name: 'Colorless', colorIdentity: [] })
+    const cards = [white, azorius, selesnya, colorless]
+
+    expect(filterAndSortCards(cards, 'commanders', {
+      query: '',
+      section: 'white',
+      type: 'all',
+      sort: 'cube',
+    })).toEqual([white])
+
+    expect(filterAndSortCards(cards, 'commanders', {
+      query: '',
+      section: 'multicolor',
+      type: 'all',
+      sort: 'cube',
+    })).toEqual([azorius, selesnya])
+
+    expect(filterAndSortCards(cards, 'commanders', {
+      query: '',
+      section: 'colorless',
+      type: 'all',
+      sort: 'cube',
+    })).toEqual([colorless])
+  })
+
   it('groups commanders by exact color identity with familiar color names', () => {
     const groups = groupCards([
       card({ oracleId: 'w', name: 'White', colorIdentity: ['W'] }),
