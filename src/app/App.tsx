@@ -10,13 +10,18 @@ import { loadSandboxState } from '../features/sandbox/storage'
 import { sandboxChangeCount, sandboxDiff } from '../features/sandbox/state'
 import './app.css'
 import {
+  hashForPage,
+  pageFromHash,
+  pageTitle,
+  type AppPage,
+} from './navigation'
+import {
   applyWorkspacePreferences,
   loadWorkspacePreferences,
   saveWorkspacePreferences,
   type WorkspacePreferences,
 } from './preferences'
 
-type AppPage = 'browse' | 'analysis' | 'sandbox' | 'customize' | 'playtest' | 'history' | 'archive'
 type NavIcon =
   | 'cards'
   | 'commanders'
@@ -288,7 +293,7 @@ function initialPendingChangeCount(): number {
 }
 
 function App() {
-  const [page, setPage] = useState<AppPage>('browse')
+  const [page, setPage] = useState<AppPage>(() => pageFromHash(window.location.hash))
   const [preferences, setPreferences] = useState<WorkspacePreferences>(() =>
     loadWorkspacePreferences(window.localStorage),
   )
@@ -301,9 +306,35 @@ function App() {
     applyWorkspacePreferences(preferences, document.documentElement)
   }, [preferences])
 
+  useEffect(() => {
+    function syncPageFromUrl() {
+      setPage(pageFromHash(window.location.hash))
+    }
+
+    window.addEventListener('popstate', syncPageFromUrl)
+    window.addEventListener('hashchange', syncPageFromUrl)
+    return () => {
+      window.removeEventListener('popstate', syncPageFromUrl)
+      window.removeEventListener('hashchange', syncPageFromUrl)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.title = pageTitle(page)
+  }, [page])
+
+  function navigate(nextPage: AppPage) {
+    if (nextPage === page) return
+    window.history.pushState(null, '', hashForPage(nextPage))
+    setPage(nextPage)
+  }
+
   function openCardList(nextList: BrowserList) {
     setCardList(nextList)
-    setPage('browse')
+    if (page !== 'browse') {
+      window.history.pushState(null, '', hashForPage('browse'))
+      setPage('browse')
+    }
   }
 
   function renderPage(): ReactNode {
@@ -312,7 +343,7 @@ function App() {
         <CubeBrowser
           list={cardList}
           defaultView={preferences.defaultView}
-          onOpenChanges={() => setPage('sandbox')}
+          onOpenChanges={() => navigate('sandbox')}
         />
       )
     }
@@ -378,7 +409,7 @@ function App() {
                   label={item.label}
                   icon={item.icon}
                   active={page === item.page}
-                  onClick={() => setPage(item.page)}
+                  onClick={() => navigate(item.page)}
                 />
               ))}
             </nav>
@@ -390,19 +421,19 @@ function App() {
               label="Playtest"
               icon="playtest"
               active={page === 'playtest'}
-              onClick={() => setPage('playtest')}
+              onClick={() => navigate('playtest')}
             />
             <SidebarNavButton
               label="History"
               icon="history"
               active={page === 'history'}
-              onClick={() => setPage('history')}
+              onClick={() => navigate('history')}
             />
             <SidebarNavButton
               label="Archive"
               icon="archive"
               active={page === 'archive'}
-              onClick={() => setPage('archive')}
+              onClick={() => navigate('archive')}
             />
           </nav>
         </aside>
