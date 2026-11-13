@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { CubeCard, CubeSnapshot } from '../../src/domain'
+import type { ColorCode, CubeCard, CubeSnapshot } from '../../src/domain'
 import {
   buildArchiveRecords,
   filterArchiveRecords,
@@ -9,11 +9,12 @@ function card(
   oracleId: string,
   name: string,
   poolSection?: CubeCard['draftAllocation'],
+  colorIdentity: readonly ColorCode[] = [],
 ): CubeCard {
   return {
     oracleId,
     name,
-    colorIdentity: [],
+    colorIdentity,
     isLand: false,
     draftAllocation: poolSection,
   }
@@ -70,6 +71,24 @@ describe('archive records', () => {
       ]),
     )
     expect(records.filter((record) => record.name === 'Current Card')).toHaveLength(1)
+  })
+
+  it('uses familiar color identity names for commanders recovered from history', () => {
+    const records = buildArchiveRecords(
+      [],
+      [snapshot([], [card('azorius', 'Former Commander', undefined, ['U', 'W'])])],
+      [],
+      [],
+    )
+
+    expect(records).toEqual([
+      expect.objectContaining({
+        name: 'Former Commander',
+        pool: 'commander',
+        sections: ['Azorius'],
+        sources: ['history'],
+      }),
+    ])
   })
 
   it('filters by query, pool, and source', () => {

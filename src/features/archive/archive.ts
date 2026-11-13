@@ -48,9 +48,43 @@ function draftSection(card: CubeCard): string {
   return allocation.guild ? `${section} · ${allocation.guild}` : section
 }
 
+const COMMANDER_IDENTITY_LABELS: Readonly<Record<string, string>> = {
+  W: 'White',
+  U: 'Blue',
+  B: 'Black',
+  R: 'Red',
+  G: 'Green',
+  WU: 'Azorius',
+  UB: 'Dimir',
+  BR: 'Rakdos',
+  RG: 'Gruul',
+  WG: 'Selesnya',
+  WB: 'Orzhov',
+  UR: 'Izzet',
+  BG: 'Golgari',
+  WR: 'Boros',
+  UG: 'Simic',
+  WUB: 'Esper',
+  WUR: 'Jeskai',
+  WUG: 'Bant',
+  WBR: 'Mardu',
+  WBG: 'Abzan',
+  WRG: 'Naya',
+  UBR: 'Grixis',
+  UBG: 'Sultai',
+  URG: 'Temur',
+  BRG: 'Jund',
+  WUBR: 'Four-color · no Green',
+  WUBG: 'Four-color · no Red',
+  WURG: 'Four-color · no Black',
+  WBRG: 'Four-color · no Blue',
+  UBRG: 'Four-color · no White',
+  WUBRG: 'Five-color',
+}
+
 function commanderSection(card: CubeCard): string {
   const key = colorIdentityKey(card.colorIdentity)
-  return key || 'Colorless'
+  return key ? COMMANDER_IDENTITY_LABELS[key] ?? key : 'Colorless'
 }
 
 function addRecord(

@@ -10,6 +10,18 @@ import {
 import { workbookArchiveEntries } from './data'
 import './archive.css'
 
+const POOL_OPTIONS: readonly { value: ArchivePoolFilter; label: string }[] = [
+  { value: 'all', label: 'All pools' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'commander', label: 'Commanders' },
+]
+
+const SOURCE_OPTIONS: readonly { value: ArchiveSourceFilter; label: string }[] = [
+  { value: 'all', label: 'All sources' },
+  { value: 'workbook', label: 'Workbook' },
+  { value: 'history', label: 'Published history' },
+]
+
 export function ArchiveBrowser() {
   const [query, setQuery] = useState('')
   const [pool, setPool] = useState<ArchivePoolFilter>('all')
@@ -27,72 +39,124 @@ export function ArchiveBrowser() {
     () => filterArchiveRecords(records, { query, pool, source }),
     [pool, query, records, source],
   )
+  const workbookCount = records.filter((record) => record.sources.includes('workbook')).length
+  const historyCount = records.filter((record) => record.sources.includes('history')).length
+  const activeCount = records.filter((record) => record.active).length
+  const hasFilters = Boolean(query || pool !== 'all' || source !== 'all')
+
+  function clearFilters() {
+    setQuery('')
+    setPool('all')
+    setSource('all')
+  }
 
   return (
     <section className="archive-view" aria-label="Cube archive">
       <header className="archive-heading">
         <div>
-          <p>Historical reference</p>
+          <span className="archive-eyebrow">Historical reference</span>
           <h2>Archive</h2>
+          <p>Look up cards recorded in workbook archives or recovered from published snapshots.</p>
         </div>
-        <span>{records.length} known historical entries</span>
       </header>
 
-      <div className="archive-note">
-        Workbook archive names are preserved exactly as recorded. Published history contributes
-        cards that no longer belong to the current pool.
+      <div className="archive-summary-strip">
+        <div>
+          <span>Known entries</span>
+          <strong>{records.length}</strong>
+        </div>
+        <div>
+          <span>Workbook</span>
+          <strong>{workbookCount}</strong>
+        </div>
+        <div>
+          <span>Published history</span>
+          <strong>{historyCount}</strong>
+        </div>
+        <div>
+          <span>Still active</span>
+          <strong>{activeCount}</strong>
+        </div>
+        <p>
+          Workbook names and sections are preserved exactly as recorded.
+        </p>
       </div>
 
-      <div className="archive-filters">
+      <div className={`archive-filter-dock${hasFilters ? ' active' : ''}`}>
         <label className="archive-search">
-          <span>Search</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Card name or historical section…"
+            placeholder="Search card name or historical section…"
+            aria-label="Search archive"
           />
         </label>
-        <label>
-          <span>Pool</span>
-          <select
-            value={pool}
-            onChange={(event) => setPool(event.target.value as ArchivePoolFilter)}
-          >
-            <option value="all">All pools</option>
-            <option value="draft">Draft</option>
-            <option value="commander">Commanders</option>
-          </select>
-        </label>
-        <label>
-          <span>Source</span>
-          <select
-            value={source}
-            onChange={(event) => setSource(event.target.value as ArchiveSourceFilter)}
-          >
-            <option value="all">All sources</option>
-            <option value="workbook">Workbook archive</option>
-            <option value="history">Published history</option>
-          </select>
-        </label>
-      </div>
 
-      <div className="archive-summary">
-        <strong>{visible.length}</strong> of {records.length} entries
+        <div className="archive-filter-group">
+          <span>Pool</span>
+          <div className="archive-filter-chips" role="group" aria-label="Archive pool">
+            {POOL_OPTIONS.map((option) => (
+              <button
+                type="button"
+                className={pool === option.value ? 'active' : ''}
+                key={option.value}
+                onClick={() => setPool(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="archive-filter-group">
+          <span>Source</span>
+          <div className="archive-filter-chips" role="group" aria-label="Archive source">
+            {SOURCE_OPTIONS.map((option) => (
+              <button
+                type="button"
+                className={source === option.value ? 'active' : ''}
+                key={option.value}
+                onClick={() => setSource(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="archive-filter-status">
+          <span><strong>{visible.length}</strong> of {records.length}</span>
+          {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
+        </div>
       </div>
 
       {visible.length > 0 ? (
         <div className="archive-results">
+          <header className="archive-results-header" aria-hidden="true">
+            <span>Card</span>
+            <span>Historical section</span>
+            <span>Source</span>
+          </header>
+
           {visible.map((record) => (
             <article className="archive-row" key={record.key}>
-              <div>
+              <div className="archive-card">
                 <strong>{record.name}</strong>
-                <span>{record.pool === 'draft' ? 'Draft' : 'Commander'}</span>
+                <span className={`archive-pool archive-pool--${record.pool}`}>
+                  {record.pool === 'draft' ? 'Draft' : 'Commander'}
+                </span>
               </div>
+
               <div className="archive-sections">
                 {record.sections.map((section) => <span key={section}>{section}</span>)}
               </div>
+
               <div className="archive-sources">
-                {record.active && <span className="active-card">Currently active</span>}
+                {record.active && <span className="active-card">Active</span>}
                 {record.sources.map((entrySource) => (
                   <span key={entrySource}>
                     {entrySource === 'workbook' ? 'Workbook' : 'History'}
@@ -103,7 +167,11 @@ export function ArchiveBrowser() {
           ))}
         </div>
       ) : (
-        <div className="archive-empty">No archive entries match these filters.</div>
+        <div className="archive-empty">
+          <strong>No archive entries found</strong>
+          <span>Try changing the search or filters.</span>
+          <button type="button" onClick={clearFilters}>Reset filters</button>
+        </div>
       )}
     </section>
   )
