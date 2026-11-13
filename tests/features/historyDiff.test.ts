@@ -31,7 +31,7 @@ function snapshot(
 }
 
 describe('history diffs', () => {
-  it('detects draft additions, removals, reallocations, and commander changes', () => {
+  it('detects draft and commander additions and removals', () => {
     const previous = snapshot(
       'previous',
       [card('keep', 'Keep', 'blue'), card('remove', 'Remove', 'white')],
@@ -47,11 +47,8 @@ describe('history diffs', () => {
 
     expect(diff.addedDraft.map((entry) => entry.name)).toEqual(['Add'])
     expect(diff.removedDraft.map((entry) => entry.name)).toEqual(['Remove'])
-    expect(diff.reallocatedDraft).toEqual([
-      expect.objectContaining({ card: expect.objectContaining({ name: 'Keep' }), from: 'Blue', to: 'Colorless' }),
-    ])
     expect(diff.addedCommanders.map((entry) => entry.name)).toEqual(['New Commander'])
     expect(diff.removedCommanders.map((entry) => entry.name)).toEqual(['Old Commander'])
-    expect(totalChanges(diff)).toBe(5)
+    expect(totalChanges(diff)).toBe(4)
   })
 })

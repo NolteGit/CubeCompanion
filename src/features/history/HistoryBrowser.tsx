@@ -11,63 +11,87 @@ function formatDate(value: string): string {
   }).format(new Date(value))
 }
 
-function ChangeList({
+function ChangeColumn({
   title,
-  items,
+  added,
+  removed,
 }: {
   title: string
-  items: readonly { name: string }[]
+  added: readonly { name: string }[]
+  removed: readonly { name: string }[]
 }) {
   return (
-    <section className="change-list">
-      <header><h3>{title}</h3><span>{items.length}</span></header>
-      {items.length > 0 ? (
-        <ul>{items.map((item) => <li key={item.name}>{item.name}</li>)}</ul>
-      ) : (
-        <p>None</p>
-      )}
+    <section className="history-change-column">
+      <header>
+        <div>
+          <h3>{title}</h3>
+          <p>{added.length + removed.length} changes</p>
+        </div>
+      </header>
+
+      <div className="history-change-block history-change-block--added">
+        <div className="history-change-label">
+          <span>Added</span>
+          <strong>{added.length}</strong>
+        </div>
+        {added.length > 0 ? (
+          added.map((item) => (
+            <div className="history-change-row" key={item.name}>
+              <span>+</span>
+              <strong>{item.name}</strong>
+            </div>
+          ))
+        ) : (
+          <p className="history-change-empty">No additions</p>
+        )}
+      </div>
+
+      <div className="history-change-block history-change-block--removed">
+        <div className="history-change-label">
+          <span>Removed</span>
+          <strong>{removed.length}</strong>
+        </div>
+        {removed.length > 0 ? (
+          removed.map((item) => (
+            <div className="history-change-row" key={item.name}>
+              <span>−</span>
+              <strong>{item.name}</strong>
+            </div>
+          ))
+        ) : (
+          <p className="history-change-empty">No removals</p>
+        )}
+      </div>
     </section>
   )
 }
 
 function DiffView({ diff }: { diff: SnapshotDiff }) {
+  const added = diff.addedDraft.length + diff.addedCommanders.length
+  const removed = diff.removedDraft.length + diff.removedCommanders.length
+
   return (
-    <>
-      <div className="history-change-summary">
-        <span><strong>{diff.addedDraft.length}</strong> draft added</span>
-        <span><strong>{diff.removedDraft.length}</strong> draft removed</span>
-        <span><strong>{diff.reallocatedDraft.length}</strong> reallocated</span>
-        <span><strong>{diff.addedCommanders.length + diff.removedCommanders.length}</strong> commander changes</span>
-      </div>
+    <section className="history-comparison">
+      <header className="history-comparison-heading">
+        <div>
+          <h3>Changes from previous snapshot</h3>
+          <p>Only card additions and removals are tracked.</p>
+        </div>
+        <div className="history-diff-pills">
+          <span className="added">+{added} added</span>
+          <span className="removed">−{removed} removed</span>
+        </div>
+      </header>
 
       <div className="history-diff-grid">
-        <ChangeList title="Draft added" items={diff.addedDraft} />
-        <ChangeList title="Draft removed" items={diff.removedDraft} />
-        <section className="change-list">
-          <header><h3>Reallocated</h3><span>{diff.reallocatedDraft.length}</span></header>
-          {diff.reallocatedDraft.length > 0 ? (
-            <ul>
-              {diff.reallocatedDraft.map((change) => (
-                <li key={change.card.oracleId}>
-                  <strong>{change.card.name}</strong>
-                  <small>{change.from} → {change.to}</small>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>None</p>
-          )}
-        </section>
-        <ChangeList
-          title="Commanders added"
-          items={diff.addedCommanders}
-        />
-        <ChangeList
-          title="Commanders removed"
-          items={diff.removedCommanders}
+        <ChangeColumn title="Draft" added={diff.addedDraft} removed={diff.removedDraft} />
+        <ChangeColumn
+          title="Commanders"
+          added={diff.addedCommanders}
+          removed={diff.removedCommanders}
         />
       </div>
-    </>
+    </section>
   )
 }
 
@@ -90,12 +114,17 @@ export function HistoryBrowser() {
     <section className="history-view" aria-label="Cube history">
       <header className="history-heading">
         <div>
-          <p>Immutable published states</p>
+          <span className="history-eyebrow">Published snapshots</span>
           <h2>Version history</h2>
+          <p>Browse immutable cube states and compare each release with the one before it.</p>
         </div>
-        <label>
+
+        <label className="snapshot-picker">
           <span>Snapshot</span>
-          <select value={selected.id} onChange={(event: ChangeEvent<HTMLSelectElement>) => setSelectedId(event.target.value)}>
+          <select
+            value={selected.id}
+            onChange={(event: ChangeEvent<HTMLSelectElement>) => setSelectedId(event.target.value)}
+          >
             {historySnapshots.map((snapshot, index) => (
               <option key={snapshot.id} value={snapshot.id}>
                 {index + 1}. {new Date(snapshot.createdAt).toLocaleDateString()} · {snapshot.id.slice(0, 8)}
@@ -105,28 +134,42 @@ export function HistoryBrowser() {
         </label>
       </header>
 
-      <section className="snapshot-card">
-        <div>
-          <span className="snapshot-kicker">
-            Snapshot {selected.id.slice(0, 8)}
-            {selected.id === releaseInfo.snapshotId && <em>Current</em>}
+      <div className="snapshot-summary">
+        <div className="snapshot-identity">
+          <span>
+            {selected.id === releaseInfo.snapshotId ? 'Current snapshot' : 'Published snapshot'}
           </span>
           <strong>{formatDate(selected.createdAt)}</strong>
+          <small>{selected.id.slice(0, 12)}</small>
         </div>
-        <dl>
-          <div><dt>Draft</dt><dd>{selected.draftCards.length}</dd></div>
-          <div><dt>Commanders</dt><dd>{selected.commanders.length}</dd></div>
-          <div><dt>Rules</dt><dd>v{selected.rulesRevision}</dd></div>
-          <div><dt>Changes</dt><dd>{diff ? totalChanges(diff) : '—'}</dd></div>
-        </dl>
-      </section>
+
+        <div className="snapshot-stat">
+          <span>Draft</span>
+          <strong>{selected.draftCards.length}</strong>
+        </div>
+        <div className="snapshot-stat">
+          <span>Commanders</span>
+          <strong>{selected.commanders.length}</strong>
+        </div>
+        <div className="snapshot-stat">
+          <span>Rules</span>
+          <strong>v{selected.rulesRevision}</strong>
+        </div>
+        <div className="snapshot-stat">
+          <span>Changes</span>
+          <strong>{diff ? totalChanges(diff) : '—'}</strong>
+        </div>
+      </div>
 
       {diff ? (
         <DiffView diff={diff} />
       ) : (
         <div className="history-first-state">
-          <strong>First published state</strong>
-          <p>There is no earlier official snapshot to compare against yet. Future releases appear here automatically once their generated history files are committed.</p>
+          <span>01</span>
+          <div>
+            <strong>First published state</strong>
+            <p>There is no earlier official snapshot to compare with this release.</p>
+          </div>
         </div>
       )}
     </section>
