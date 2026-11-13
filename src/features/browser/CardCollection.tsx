@@ -13,6 +13,11 @@ interface PreviewState {
   top: number
 }
 
+const PREVIEW_WIDTH = 286
+const PREVIEW_HEIGHT = 468
+const PREVIEW_MARGIN = 14
+const APP_HEADER_HEIGHT = 58
+
 function CardLink({
   card,
   className,
@@ -51,17 +56,21 @@ function CardLink({
 }
 
 function previewPosition(event: MouseEvent<HTMLElement>): { left: number; top: number } {
-  const width = 320
-  const height = 430
-  const margin = 16
-  const preferredLeft = event.clientX + 18
-  const left = preferredLeft + width > window.innerWidth - margin
-    ? Math.max(margin, event.clientX - width - 18)
+  const anchor = event.currentTarget.getBoundingClientRect()
+  const preferredLeft = anchor.right + 12
+  const left = preferredLeft + PREVIEW_WIDTH > window.innerWidth - PREVIEW_MARGIN
+    ? Math.max(PREVIEW_MARGIN, anchor.left - PREVIEW_WIDTH - 12)
     : preferredLeft
-  const top = Math.min(
-    Math.max(margin + 58, event.clientY - 90),
-    Math.max(margin + 58, window.innerHeight - height - margin),
+  const minimumTop = APP_HEADER_HEIGHT + PREVIEW_MARGIN
+  const maximumTop = Math.max(
+    minimumTop,
+    window.innerHeight - PREVIEW_HEIGHT - PREVIEW_MARGIN,
   )
+  const top = Math.min(
+    Math.max(minimumTop, anchor.top - 42),
+    maximumTop,
+  )
+
   return { left, top }
 }
 
@@ -79,9 +88,11 @@ function CardPreview({ preview }: { preview: PreviewState }) {
         <div className="preview-image-placeholder">No image available</div>
       )}
       <div className="preview-details">
-        <strong>{preview.card.name}</strong>
-        <span>{preview.card.typeLine}</span>
-        {preview.card.manaCost && <span className="preview-mana">{preview.card.manaCost}</span>}
+        <div className="preview-title-row">
+          <strong>{preview.card.name}</strong>
+          {preview.card.manaCost && <span className="preview-mana">{preview.card.manaCost}</span>}
+        </div>
+        <span className="preview-type">{preview.card.typeLine}</span>
       </div>
     </aside>
   )

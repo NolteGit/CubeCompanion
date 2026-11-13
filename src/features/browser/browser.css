@@ -721,10 +721,10 @@ html[data-hover-previews="off"] .card-hover-preview {
 .card-hover-preview {
   position: fixed;
   z-index: 80;
-  width: 300px;
+  width: 286px;
   overflow: hidden;
   border: 1px solid #4a5861;
-  border-radius: 12px;
+  border-radius: 11px;
   background: #0f151a;
   box-shadow: 0 18px 48px rgb(0 0 0 / 48%);
   pointer-events: none;
@@ -750,22 +750,40 @@ html[data-hover-previews="off"] .card-hover-preview {
 
 .preview-details {
   display: grid;
-  gap: 2px;
-  padding: 10px 12px 11px;
+  gap: 4px;
+  padding: 9px 11px 10px;
+  border-top: 1px solid rgb(255 255 255 / 6%);
 }
 
-.preview-details strong {
-  font-size: 0.86rem;
+.preview-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.preview-details span {
+.preview-title-row strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-type {
+  overflow: hidden;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .preview-mana {
-  margin-top: 3px;
+  flex: 0 0 auto;
+  color: #d7e2e8;
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.66rem;
 }
 
 .filtered-results {
