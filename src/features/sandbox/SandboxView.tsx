@@ -16,6 +16,8 @@ import { loadSandboxState, saveSandboxState } from './storage'
 import type { SandboxPool, SandboxState } from './types'
 import './sandbox.css'
 
+type EditorMode = 'add' | 'remove'
+
 function downloadText(filename: string, content: string): void {
   const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }))
   const link = document.createElement('a')
@@ -34,18 +36,39 @@ function initialState(): SandboxState {
   )
 }
 
-function ChangeNames({ title, cards }: { title: string; cards: readonly BrowserCard[] }) {
+function DiffSection({
+  title,
+  cards,
+  tone,
+  pool,
+}: {
+  title: string
+  cards: readonly BrowserCard[]
+  tone: 'added' | 'removed'
+  pool: string
+}) {
   if (cards.length === 0) return null
+
   return (
-    <div className="sandbox-change-group">
-      <strong>{title}</strong>
-      <span>{cards.map((card) => card.name).join(', ')}</span>
-    </div>
+    <section className={`diff-section diff-section--${tone}`}>
+      <header>
+        <span>{title}</span>
+        <strong>{cards.length}</strong>
+      </header>
+      {cards.map((card) => (
+        <div className="diff-row" key={card.oracleId}>
+          <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
+          <strong>{card.name}</strong>
+          <small>{pool === 'Draft' ? allocationLabel(card.draftAllocation) : pool}</small>
+        </div>
+      ))}
+    </section>
   )
 }
 
 export function SandboxView() {
   const [state, setState] = useState<SandboxState>(initialState)
+  const [editorMode, setEditorMode] = useState<EditorMode>('add')
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
   const [addStatus, setAddStatus] = useState('')
@@ -65,6 +88,8 @@ export function SandboxView() {
     [state],
   )
   const changeCount = sandboxChangeCount(diff)
+  const addedCount = diff.addedDraft.length + diff.addedCommanders.length
+  const removedCount = diff.removedDraft.length + diff.removedCommanders.length
   const searchResults = useMemo(() => {
     const query = search.trim().toLocaleLowerCase('en-US')
     if (!query) return []
@@ -89,7 +114,7 @@ export function SandboxView() {
       const card = official ?? resolved
       setState((current) => applySandboxCard(current, card, addPool))
       setAddName('')
-      setAddStatus(`Added ${card.name}. Cube rules are validated below.`)
+      setAddStatus(`Added ${card.name}. Cube rules revalidated.`)
     } catch (error) {
       setAddStatus(error instanceof Error ? error.message : String(error))
     } finally {
@@ -98,124 +123,187 @@ export function SandboxView() {
   }
 
   function resetSandbox() {
-    if (!window.confirm('Reset the sandbox to the current official snapshot?')) return
+    if (!window.confirm('Reset all pending changes to the current official snapshot?')) return
     setState(createSandboxState(releaseInfo.snapshotId, draftCards, commanderCards))
     setSearch('')
-    setAddStatus('Sandbox reset to the official cube.')
+    setAddStatus('Changes reset to the current snapshot.')
   }
 
   return (
-    <section className="sandbox-view" aria-label="Cube sandbox">
-      <header className="sandbox-heading">
+    <section className="sandbox-view" aria-label="Cube changes">
+      <header className="changes-heading">
         <div>
-          <p>Session-only experiment</p>
-          <h2>Sandbox</h2>
+          <span className="changes-eyebrow">Workspace</span>
+          <h2>Changes</h2>
+          <p>Build and validate a working diff against the current cube.</p>
         </div>
-        <span>Changes survive refreshes, not a closed browser session.</span>
+
+        <div className="changes-header-actions">
+          <button
+            type="button"
+            onClick={() => downloadText('cube-sandbox-diff.txt', sandboxDiffText(diff))}
+          >
+            Export diff
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadText('cube-sandbox-full.txt', sandboxFullListText(state))}
+          >
+            Export list
+          </button>
+          <button type="button" className="sandbox-reset" onClick={resetSandbox}>
+            Reset
+          </button>
+        </div>
       </header>
 
-      <div className="sandbox-overview">
-        <div><span>Changes</span><strong>{changeCount}</strong></div>
-        <div><span>Draft</span><strong>{state.draftCards.length}</strong></div>
-        <div><span>Commanders</span><strong>{state.commanders.length}</strong></div>
-        <div className={validation.valid ? 'sandbox-valid' : 'sandbox-invalid'}>
-          <span>Validation</span><strong>{validation.valid ? 'Valid' : `${validation.issues.length} issues`}</strong>
-        </div>
+      <div className="changes-meta">
+        <span className="meta-pill strong">
+          <b>{changeCount}</b> pending
+        </span>
+        <span className="meta-pill added">+{addedCount} added</span>
+        <span className="meta-pill removed">−{removedCount} removed</span>
+        <span className="meta-divider" aria-hidden="true" />
+        <span className="meta-text">Draft {state.draftCards.length}</span>
+        <span className="meta-text">Commanders {state.commanders.length}</span>
+        <span className={`validation-pill ${validation.valid ? 'valid' : 'invalid'}`}>
+          {validation.valid ? '✓ Valid' : `! ${validation.issues.length} issues`}
+        </span>
+        <span className="session-note">Session only</span>
       </div>
 
-      <div className="sandbox-actions">
-        <button type="button" onClick={() => downloadText('cube-sandbox-diff.txt', sandboxDiffText(diff))}>
-          Export diff.txt
-        </button>
-        <button type="button" onClick={() => downloadText('cube-sandbox-full.txt', sandboxFullListText(state))}>
-          Export full list
-        </button>
-        <button type="button" className="sandbox-reset" onClick={resetSandbox}>Reset to official</button>
-      </div>
+      <div className="changes-layout">
+        <section className="working-diff">
+          <header className="workspace-panel-heading">
+            <div>
+              <h3>Working diff</h3>
+              <p>Compared with the current official snapshot</p>
+            </div>
+          </header>
 
-      {!validation.valid && (
-        <section className="sandbox-panel validation-panel">
-          <header><h3>Live validation</h3><span>{validation.issues.length} issues</span></header>
-          <ul>
-            {validation.issues.map((issue, index) => (
-              <li key={`${issue.code}-${index}`}>{issue.message}</li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <section className="sandbox-panel">
-        <header>
-          <div><h3>Changes from official</h3><p>Only additions and removals are tracked.</p></div>
-          <span>{changeCount}</span>
-        </header>
-        {changeCount === 0 ? (
-          <p className="sandbox-empty">No sandbox changes yet.</p>
-        ) : (
-          <div className="sandbox-change-list">
-            <ChangeNames title="Draft added" cards={diff.addedDraft} />
-            <ChangeNames title="Draft removed" cards={diff.removedDraft} />
-            <ChangeNames title="Commanders added" cards={diff.addedCommanders} />
-            <ChangeNames title="Commanders removed" cards={diff.removedCommanders} />
-          </div>
-        )}
-      </section>
-
-      <section className="sandbox-panel">
-        <header>
-          <div>
-            <h3>Add a card</h3>
-            <p>Scryfall resolves the card; cube rules validate the resulting pool.</p>
-          </div>
-        </header>
-        <form className="sandbox-add-form" onSubmit={addCard}>
-          <label className="sandbox-name-field">
-            <span>Card name</span>
-            <input value={addName} onChange={(event) => setAddName(event.target.value)} placeholder="e.g. Lightning Bolt" />
-          </label>
-          <label>
-            <span>Pool</span>
-            <select value={addPool} onChange={(event) => setAddPool(event.target.value as SandboxPool)}>
-              <option value="draft">Draft</option>
-              <option value="commander">Commander</option>
-            </select>
-          </label>
-          <button type="submit" disabled={adding}>{adding ? 'Looking up…' : 'Add card'}</button>
-        </form>
-        {addStatus && <p className="sandbox-status">{addStatus}</p>}
-      </section>
-
-      <section className="sandbox-panel">
-        <header>
-          <div>
-            <h3>Manage current cards</h3>
-            <p>Search and remove cards; cube rules revalidate immediately.</p>
-          </div>
-        </header>
-        <label className="sandbox-manage-search">
-          <span>Search current sandbox</span>
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Start typing a card name…" />
-        </label>
-        {!search.trim() ? (
-          <p className="sandbox-empty">Search for a current draft card or commander to remove it.</p>
-        ) : searchResults.length === 0 ? (
-          <p className="sandbox-empty">No current sandbox cards match that name.</p>
-        ) : (
-          <div className="sandbox-card-results">
-            {searchResults.map(({ card, pool }) => (
-              <div className="sandbox-card-row" key={`${pool}-${card.oracleId}`}>
-                <div>
-                  <strong>{card.name}</strong>
-                  <span>{pool === 'draft' ? allocationLabel(card.draftAllocation) : 'Commander'}</span>
-                </div>
-                <button type="button" onClick={() => setState((current) => removeSandboxCard(current, pool, card.oracleId))}>
-                  Remove
-                </button>
+          {!validation.valid && (
+            <div className="inline-validation">
+              <header>
+                <strong>Validation</strong>
+                <span>{validation.issues.length} issue{validation.issues.length === 1 ? '' : 's'}</span>
+              </header>
+              <div>
+                {validation.issues.map((issue, index) => (
+                  <p key={`${issue.code}-${index}`}>{issue.message}</p>
+                ))}
               </div>
-            ))}
+            </div>
+          )}
+
+          {changeCount === 0 ? (
+            <div className="diff-empty">
+              <span>±</span>
+              <strong>No pending changes</strong>
+              <p>Use the editor to add or remove cards.</p>
+            </div>
+          ) : (
+            <div className="diff-list">
+              <DiffSection title="Draft · Added" cards={diff.addedDraft} tone="added" pool="Draft" />
+              <DiffSection title="Draft · Removed" cards={diff.removedDraft} tone="removed" pool="Draft" />
+              <DiffSection title="Commanders · Added" cards={diff.addedCommanders} tone="added" pool="Commander" />
+              <DiffSection title="Commanders · Removed" cards={diff.removedCommanders} tone="removed" pool="Commander" />
+            </div>
+          )}
+        </section>
+
+        <aside className="edit-cube">
+          <header className="workspace-panel-heading edit-heading">
+            <div>
+              <h3>Edit cube</h3>
+              <p>Changes validate immediately</p>
+            </div>
+          </header>
+
+          <div className="editor-tabs" role="group" aria-label="Edit cube mode">
+            <button
+              type="button"
+              className={editorMode === 'add' ? 'active' : ''}
+              onClick={() => setEditorMode('add')}
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              className={editorMode === 'remove' ? 'active' : ''}
+              onClick={() => setEditorMode('remove')}
+            >
+              Remove
+            </button>
           </div>
-        )}
-      </section>
+
+          {editorMode === 'add' ? (
+            <div className="editor-content">
+              <form className="sandbox-add-form" onSubmit={addCard}>
+                <label className="sandbox-name-field">
+                  <span>Card name</span>
+                  <input
+                    value={addName}
+                    onChange={(event) => setAddName(event.target.value)}
+                    placeholder="Search Scryfall by name…"
+                  />
+                </label>
+                <label>
+                  <span>Pool</span>
+                  <select
+                    value={addPool}
+                    onChange={(event) => setAddPool(event.target.value as SandboxPool)}
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="commander">Commander</option>
+                  </select>
+                </label>
+                <button className="primary-action" type="submit" disabled={adding || !addName.trim()}>
+                  {adding ? 'Looking up…' : 'Add card'}
+                </button>
+              </form>
+              {addStatus && <p className="sandbox-status">{addStatus}</p>}
+            </div>
+          ) : (
+            <div className="editor-content">
+              <label className="sandbox-manage-search">
+                <span>Current cards</span>
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search by card name…"
+                />
+              </label>
+
+              {!search.trim() ? (
+                <p className="sandbox-empty">Search the working cube to remove a card.</p>
+              ) : searchResults.length === 0 ? (
+                <p className="sandbox-empty">No cards match that search.</p>
+              ) : (
+                <div className="sandbox-card-results">
+                  {searchResults.map(({ card, pool }) => (
+                    <div className="sandbox-card-row" key={`${pool}-${card.oracleId}`}>
+                      <div>
+                        <strong>{card.name}</strong>
+                        <span>{pool === 'draft' ? allocationLabel(card.draftAllocation) : 'Commander'}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setState((current) => removeSandboxCard(current, pool, card.oracleId))}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <footer className="editor-footnote">
+            Scryfall resolves additions. Duplicate cards in the same pool are ignored.
+          </footer>
+        </aside>
+      </div>
     </section>
   )
 }
