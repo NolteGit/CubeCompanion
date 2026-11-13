@@ -66,7 +66,7 @@ export function PlaytestTable() {
         </header>
 
         <div className="commander-pack">
-          <CardCollection cards={commanderPack} view="images" />
+          <CardCollection cards={commanderPack} view="images" linkCards={false} />
         </div>
       </section>
 
@@ -102,7 +102,7 @@ export function PlaytestTable() {
         </div>
 
         <div className="draft-pack-grid">
-          <CardCollection cards={draftPacks[selectedPack] ?? []} view="images" />
+          <CardCollection cards={draftPacks[selectedPack] ?? []} view="images" linkCards={false} />
         </div>
       </section>
     </section>

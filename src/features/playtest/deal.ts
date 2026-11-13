@@ -1,5 +1,5 @@
 export const DRAFT_PACK_COUNT = 4
-export const DRAFT_PACK_SIZE = 18
+export const DRAFT_PACK_SIZE = 15
 export const COMMANDER_PACK_SIZE = 5
 
 export type RandomSource = () => number

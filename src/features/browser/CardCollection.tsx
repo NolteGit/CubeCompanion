@@ -4,6 +4,7 @@ import type { BrowserCard, BrowserView } from './types'
 interface CardCollectionProps {
   cards: readonly BrowserCard[]
   view: BrowserView
+  linkCards?: boolean
 }
 
 interface PreviewState {
@@ -16,16 +17,18 @@ function CardLink({
   card,
   className,
   children,
+  linked,
   onMouseEnter,
   onMouseLeave,
 }: {
   card: BrowserCard
   className: string
   children: ReactNode
+  linked: boolean
   onMouseEnter?: (event: MouseEvent<HTMLElement>) => void
   onMouseLeave?: () => void
 }) {
-  if (!card.scryfallUri) {
+  if (!linked || !card.scryfallUri) {
     return (
       <div className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         {children}
@@ -84,14 +87,19 @@ function CardPreview({ preview }: { preview: PreviewState }) {
   )
 }
 
-export function CardCollection({ cards, view }: CardCollectionProps) {
+export function CardCollection({ cards, view, linkCards = true }: CardCollectionProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
 
   if (view === 'images') {
     return (
       <div className="card-grid">
         {cards.map((card) => (
-          <CardLink card={card} className="image-card" key={card.oracleId}>
+          <CardLink
+            card={card}
+            className="image-card"
+            key={card.oracleId}
+            linked={linkCards}
+          >
             {card.imageUri ? (
               <img src={card.imageUri} alt={card.name} loading="lazy" />
             ) : (
@@ -112,6 +120,7 @@ export function CardCollection({ cards, view }: CardCollectionProps) {
             card={card}
             className="card-list-row"
             key={card.oracleId}
+            linked={linkCards}
             onMouseEnter={(event) => {
               const position = previewPosition(event)
               setPreview({ card, ...position })

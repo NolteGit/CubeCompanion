@@ -11,7 +11,7 @@ import {
 const fixedRandom = () => 0.37
 
 describe('playtest dealing', () => {
-  it('deals four 18-card draft packs without repeats across the deal', () => {
+  it('deals four 15-card draft packs without repeats across the deal', () => {
     const source = Array.from({ length: 100 }, (_, index) => `card-${index}`)
     const packs = dealDraftPacks(source, fixedRandom)
     const dealt = packs.flat()

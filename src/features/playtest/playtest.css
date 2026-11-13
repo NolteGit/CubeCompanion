@@ -120,7 +120,8 @@
 }
 
 .commander-pack .card-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 220px));
+  justify-content: start;
   gap: 10px;
 }
 
