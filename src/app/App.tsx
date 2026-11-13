@@ -1,11 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { AnalysisDashboard } from '../features/analysis/AnalysisDashboard'
 import { ArchiveBrowser } from '../features/archive/ArchiveBrowser'
-import { CubeBrowser } from '../features/browser/CubeBrowser'
+import { CubeBrowser, type BrowserList } from '../features/browser/CubeBrowser'
 import { commanderCards, draftCards, releaseInfo } from '../features/browser/data'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import { SandboxView } from '../features/sandbox/SandboxView'
+import { loadSandboxState } from '../features/sandbox/storage'
+import { sandboxChangeCount, sandboxDiff } from '../features/sandbox/state'
 import './app.css'
 import {
   applyWorkspacePreferences,
@@ -226,30 +228,49 @@ function CustomizeView({
   )
 }
 
+function initialPendingChangeCount(): number {
+  const state = loadSandboxState(
+    releaseInfo.snapshotId,
+    draftCards,
+    commanderCards,
+    window.sessionStorage,
+  )
+  return sandboxChangeCount(sandboxDiff(state, draftCards, commanderCards))
+}
+
 function App() {
   const [page, setPage] = useState<AppPage>('browse')
   const [preferences, setPreferences] = useState<WorkspacePreferences>(() =>
     loadWorkspacePreferences(window.localStorage),
   )
+  const [cardList, setCardList] = useState<BrowserList>(() => preferences.defaultPool)
+  const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
   const totalCards = draftCards.length + commanderCards.length
-  const secondaryActive = page === 'playtest' || page === 'history' || page === 'archive'
 
   useEffect(() => {
     saveWorkspacePreferences(preferences, window.localStorage)
     applyWorkspacePreferences(preferences, document.documentElement)
   }, [preferences])
 
+  function openCardList(nextList: BrowserList) {
+    setCardList(nextList)
+    setPage('browse')
+  }
+
   function renderPage(): ReactNode {
     if (page === 'browse') {
       return (
         <CubeBrowser
-          defaultPool={preferences.defaultPool}
+          list={cardList}
           defaultView={preferences.defaultView}
+          onOpenChanges={() => setPage('sandbox')}
         />
       )
     }
     if (page === 'analysis') return <AnalysisDashboard />
-    if (page === 'sandbox') return <SandboxView />
+    if (page === 'sandbox') {
+      return <SandboxView onChangeCount={setPendingChangeCount} />
+    }
     if (page === 'customize') {
       return <CustomizeView preferences={preferences} onChange={setPreferences} />
     }
@@ -276,47 +297,90 @@ function App() {
         <aside className="app-sidebar">
           <nav className="primary-nav" aria-label="Cube Companion sections">
             {PRIMARY_NAV.map((item) => (
-              <NavButton
-                key={item.page}
-                item={item}
-                active={page === item.page}
-                onClick={() => setPage(item.page)}
-              />
+              <div className="nav-group" key={item.page}>
+                <NavButton
+                  item={item}
+                  active={page === item.page}
+                  onClick={() => setPage(item.page)}
+                />
+
+                {item.page === 'browse' && (
+                  <div className="sidebar-card-lists" aria-label="Card lists">
+                    <span className="sidebar-section-label">Lists</span>
+                    <button
+                      type="button"
+                      data-short="C"
+                      className={page === 'browse' && cardList === 'draft' ? 'active' : ''}
+                      aria-current={page === 'browse' && cardList === 'draft' ? 'page' : undefined}
+                      title={`Cube · ${draftCards.length} cards`}
+                      onClick={() => openCardList('draft')}
+                    >
+                      <span>Cube</span>
+                      <small>{draftCards.length}</small>
+                    </button>
+                    <button
+                      type="button"
+                      data-short="Cmd"
+                      className={page === 'browse' && cardList === 'commanders' ? 'active' : ''}
+                      aria-current={page === 'browse' && cardList === 'commanders' ? 'page' : undefined}
+                      title={`Commanders · ${commanderCards.length} cards`}
+                      onClick={() => openCardList('commanders')}
+                    >
+                      <span>Commanders</span>
+                      <small>{commanderCards.length}</small>
+                    </button>
+                    <button
+                      type="button"
+                      data-short="±"
+                      className={page === 'browse' && cardList === 'changes' ? 'active' : ''}
+                      aria-current={page === 'browse' && cardList === 'changes' ? 'page' : undefined}
+                      title={`Changes list · ${pendingChangeCount} pending`}
+                      onClick={() => openCardList('changes')}
+                    >
+                      <span>Changes list</span>
+                      <small className={pendingChangeCount > 0 ? 'pending' : ''}>
+                        {pendingChangeCount}
+                      </small>
+                    </button>
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
 
-          <details className="sidebar-more">
-            <summary className={secondaryActive ? 'active' : ''}>
-              <NavGlyph icon="more" />
-              <span>More</span>
-            </summary>
-            <div>
-              <button
-                className={page === 'playtest' ? 'active' : ''}
-                aria-current={page === 'playtest' ? 'page' : undefined}
-                title="Playtest"
-                onClick={() => setPage('playtest')}
-              >
-                Playtest
-              </button>
-              <button
-                className={page === 'history' ? 'active' : ''}
-                aria-current={page === 'history' ? 'page' : undefined}
-                title="History"
-                onClick={() => setPage('history')}
-              >
-                History
-              </button>
-              <button
-                className={page === 'archive' ? 'active' : ''}
-                aria-current={page === 'archive' ? 'page' : undefined}
-                title="Archive"
-                onClick={() => setPage('archive')}
-              >
-                Archive
-              </button>
-            </div>
-          </details>
+          <div className="sidebar-tools" aria-label="Tools">
+            <span className="sidebar-section-label">Tools</span>
+            <button
+              type="button"
+              data-short="P"
+              className={page === 'playtest' ? 'active' : ''}
+              aria-current={page === 'playtest' ? 'page' : undefined}
+              title="Playtest"
+              onClick={() => setPage('playtest')}
+            >
+              Playtest
+            </button>
+            <button
+              type="button"
+              data-short="H"
+              className={page === 'history' ? 'active' : ''}
+              aria-current={page === 'history' ? 'page' : undefined}
+              title="History"
+              onClick={() => setPage('history')}
+            >
+              History
+            </button>
+            <button
+              type="button"
+              data-short="A"
+              className={page === 'archive' ? 'active' : ''}
+              aria-current={page === 'archive' ? 'page' : undefined}
+              title="Archive"
+              onClick={() => setPage('archive')}
+            >
+              Archive
+            </button>
+          </div>
         </aside>
 
         <main className="app-main">{renderPage()}</main>

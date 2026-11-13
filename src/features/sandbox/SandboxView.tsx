@@ -81,7 +81,11 @@ function DiffSection({
   )
 }
 
-export function SandboxView() {
+interface SandboxViewProps {
+  onChangeCount?: (count: number) => void
+}
+
+export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
   const [state, setState] = useState<SandboxState>(initialState)
   const [editorMode, setEditorMode] = useState<EditorMode>('add')
   const [addName, setAddName] = useState('')
@@ -92,7 +96,9 @@ export function SandboxView() {
 
   useEffect(() => {
     saveSandboxState(state, window.sessionStorage)
-  }, [state])
+    const currentDiff = sandboxDiff(state, draftCards, commanderCards)
+    onChangeCount?.(sandboxChangeCount(currentDiff))
+  }, [onChangeCount, state])
 
   const validation = useMemo(
     () => validateCube({ draftCards: state.draftCards, commanders: state.commanders }),

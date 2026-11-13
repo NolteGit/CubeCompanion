@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { loadSandboxState } from '../sandbox/storage'
 import { sandboxChangeCount, sandboxDiff } from '../sandbox/state'
 import { commanderCards, draftCards, releaseInfo } from './data'
@@ -20,9 +20,12 @@ import type {
 } from './types'
 import './browser.css'
 
+export type BrowserList = BrowserPool | 'changes'
+
 interface CubeBrowserProps {
-  defaultPool?: BrowserPool
+  list: BrowserList
   defaultView?: BrowserView
+  onOpenChanges?: () => void
 }
 
 interface ColumnSection {
@@ -31,7 +34,6 @@ interface ColumnSection {
   cards: BrowserCard[]
 }
 
-type LocalList = BrowserPool | 'changes'
 
 const GUILD_LABELS: Readonly<Record<string, string>> = {
   WU: 'Azorius',
@@ -169,11 +171,11 @@ function ChangeListSection({
 }
 
 export function CubeBrowser({
-  defaultPool = 'draft',
+  list,
   defaultView = 'list',
+  onOpenChanges,
 }: CubeBrowserProps) {
-  const [localList, setLocalList] = useState<LocalList>(defaultPool)
-  const [pool, setPool] = useState<BrowserPool>(defaultPool)
+  const pool: BrowserPool = list === 'commanders' ? 'commanders' : 'draft'
   const [sandboxState] = useState(() =>
     loadSandboxState(
       releaseInfo.snapshotId,
@@ -207,14 +209,12 @@ export function CubeBrowser({
   const denseColumns = view === 'list' && !hasFilters && sort === 'cube' && groups.length > 0
   const groupedFilteredResults = view === 'list' && hasFilters && sort === 'cube' && groups.length > 0
 
-  function changeList(nextList: LocalList) {
-    setLocalList(nextList)
-    if (nextList !== 'changes') setPool(nextList)
+  useEffect(() => {
     setQuery('')
     setSection('all')
     setType('all')
     setSort('cube')
-  }
+  }, [list])
 
   function clearFilters() {
     setQuery('')
@@ -224,45 +224,8 @@ export function CubeBrowser({
   }
 
   return (
-    <section className="cards-workspace" aria-label="Cards">
-      <aside className="cards-list-rail" aria-label="Card lists">
-        <header>
-          <span className="cards-list-icon" aria-hidden="true">☷</span>
-          <strong>Lists</strong>
-        </header>
-        <nav>
-          <button
-            type="button"
-            className={localList === 'draft' ? 'active' : ''}
-            aria-current={localList === 'draft' ? 'page' : undefined}
-            onClick={() => changeList('draft')}
-          >
-            <span>Cube</span>
-            <small>{draftCards.length}</small>
-          </button>
-          <button
-            type="button"
-            className={localList === 'commanders' ? 'active' : ''}
-            aria-current={localList === 'commanders' ? 'page' : undefined}
-            onClick={() => changeList('commanders')}
-          >
-            <span>Commanders</span>
-            <small>{commanderCards.length}</small>
-          </button>
-          <button
-            type="button"
-            className={localList === 'changes' ? 'active' : ''}
-            aria-current={localList === 'changes' ? 'page' : undefined}
-            onClick={() => changeList('changes')}
-          >
-            <span>Changes</span>
-            <small className={pendingChangeCount > 0 ? 'pending' : ''}>{pendingChangeCount}</small>
-          </button>
-        </nav>
-      </aside>
-
-      <div className="cube-browser">
-        {localList === 'changes' ? (
+    <section className="cube-browser" aria-label="Cards">
+      {list === 'changes' ? (
           <section className="browser-changes" aria-label="Pending card changes">
             <header className="browser-changes-heading">
               <div>
@@ -270,7 +233,14 @@ export function CubeBrowser({
                 <h2>Changes</h2>
                 <p>Read-only view of the current session diff. Edit cards in the Changes workspace.</p>
               </div>
-              <strong>{pendingChangeCount} pending</strong>
+              <div className="browser-changes-actions">
+                <strong>{pendingChangeCount} pending</strong>
+                {onOpenChanges && (
+                  <button type="button" onClick={onOpenChanges}>
+                    Open Changes
+                  </button>
+                )}
+              </div>
             </header>
 
             {pendingChangeCount === 0 ? (
@@ -466,9 +436,8 @@ export function CubeBrowser({
           <CardCollection cards={visibleCards} view={view} />
         </div>
       )}
-          </>
-        )}
-      </div>
+        </>
+      )}
     </section>
   )
 }
