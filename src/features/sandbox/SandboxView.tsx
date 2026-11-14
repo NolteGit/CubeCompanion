@@ -63,6 +63,29 @@ interface DiffEntry {
   pool: SandboxPool
 }
 
+const DIFF_COLOR_GROUPS = [
+  ['white', 'White'],
+  ['blue', 'Blue'],
+  ['black', 'Black'],
+  ['red', 'Red'],
+  ['green', 'Green'],
+  ['multicolor', 'Multicolor'],
+  ['colorless', 'Colorless'],
+  ['land', 'Lands'],
+] as const
+
+function colorDiffGroups(entries: readonly DiffEntry[]) {
+  return DIFF_COLOR_GROUPS
+    .map(([key, label]) => ({
+      key,
+      label,
+      entries: entries
+        .filter((entry) => cardTint(entry.card) === key)
+        .sort((left, right) => left.card.name.localeCompare(right.card.name)),
+    }))
+    .filter((group) => group.entries.length > 0)
+}
+
 function DiffSection({
   title,
   entries,
@@ -98,26 +121,43 @@ function DiffSection({
                 <span>{group.label}</span>
                 <strong>{group.entries.length}</strong>
               </header>
-              <div className="change-card-list">
-                {group.entries.map((entry) => (
-                  <HoverCard
-                    card={entry.card}
-                    className={`change-card change-card--${cardTint(entry.card)}`}
-                    key={`${entry.pool}-${entry.card.oracleId}`}
+
+              <div className="diff-color-groups">
+                {colorDiffGroups(group.entries).map((colorGroup) => (
+                  <section
+                    className={`diff-color-group diff-color-group--${colorGroup.key}`}
+                    key={colorGroup.key}
                   >
-                    <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
-                    <div className="change-card-copy">
-                      <strong>{entry.card.name}</strong>
+                    <header>
+                      <span className="diff-color-dot" aria-hidden="true" />
+                      <strong>{colorGroup.label}</strong>
+                      <span>{colorGroup.entries.length}</span>
+                    </header>
+                    <div className="change-card-list">
+                      {colorGroup.entries.map((entry) => (
+                        <HoverCard
+                          card={entry.card}
+                          className={`change-card change-card--${cardTint(entry.card)}`}
+                          key={`${entry.pool}-${entry.card.oracleId}`}
+                        >
+                          <span className="diff-sign" aria-hidden="true">
+                            {tone === 'added' ? '+' : '−'}
+                          </span>
+                          <div className="change-card-copy">
+                            <strong>{entry.card.name}</strong>
+                          </div>
+                          <button
+                            type="button"
+                            className="change-revert"
+                            onClick={() => onRevert(entry, tone)}
+                            title={`Revert ${entry.card.name}`}
+                          >
+                            Revert
+                          </button>
+                        </HoverCard>
+                      ))}
                     </div>
-                    <button
-                      type="button"
-                      className="change-revert"
-                      onClick={() => onRevert(entry, tone)}
-                      title={`Revert ${entry.card.name}`}
-                    >
-                      Revert
-                    </button>
-                  </HoverCard>
+                  </section>
                 ))}
               </div>
             </section>

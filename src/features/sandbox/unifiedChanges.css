@@ -136,6 +136,49 @@
   text-transform: uppercase;
 }
 
+.diff-color-groups {
+  display: grid;
+  gap: 8px;
+  padding-top: 7px;
+}
+
+.diff-color-group {
+  --diff-color-rgb: 153 164 174;
+}
+
+.diff-color-group--white { --diff-color-rgb: 211 205 173; }
+.diff-color-group--blue { --diff-color-rgb: 83 158 205; }
+.diff-color-group--black { --diff-color-rgb: 123 105 137; }
+.diff-color-group--red { --diff-color-rgb: 202 86 88; }
+.diff-color-group--green { --diff-color-rgb: 68 161 105; }
+.diff-color-group--multicolor { --diff-color-rgb: 212 174 67; }
+.diff-color-group--colorless { --diff-color-rgb: 153 164 174; }
+.diff-color-group--land { --diff-color-rgb: 155 104 74; }
+
+.diff-color-group > header {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  min-height: 24px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 2px;
+  color: var(--text-faint);
+}
+
+.diff-color-group > header strong,
+.diff-color-group > header > span:last-child {
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.diff-color-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(var(--diff-color-rgb));
+}
+
 .meta-pill.added b,
 .meta-pill.removed b {
   margin-right: 3px;
