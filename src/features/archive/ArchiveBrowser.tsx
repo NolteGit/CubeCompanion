@@ -1,10 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
+import { cardTint } from '../browser/cardTint'
 import { commanderCards, draftCards } from '../browser/data'
+import { HoverCard } from '../browser/HoverCard'
+import type { BrowserCard } from '../browser/types'
 import { historySnapshots } from '../history/data'
 import {
   buildArchiveRecords,
   filterArchiveRecords,
   type ArchivePoolFilter,
+  type ArchiveRecord,
   type ArchiveSourceFilter,
 } from './archive'
 import { workbookArchiveEntries } from './data'
@@ -12,15 +16,64 @@ import './archive.css'
 
 const POOL_OPTIONS: readonly { value: ArchivePoolFilter; label: string }[] = [
   { value: 'all', label: 'All pools' },
-  { value: 'draft', label: 'Draft' },
+  { value: 'draft', label: 'Cube' },
   { value: 'commander', label: 'Commanders' },
 ]
 
 const SOURCE_OPTIONS: readonly { value: ArchiveSourceFilter; label: string }[] = [
   { value: 'all', label: 'All sources' },
   { value: 'workbook', label: 'Workbook' },
-  { value: 'history', label: 'Published history' },
+  { value: 'history', label: 'History' },
 ]
+
+function normalizedName(value: string): string {
+  return value.trim().toLocaleLowerCase('en-US')
+}
+
+function currentCardKey(pool: 'draft' | 'commander', name: string): string {
+  return `${pool}:${normalizedName(name)}`
+}
+
+function ArchiveRow({
+  record,
+  card,
+}: {
+  record: ArchiveRecord
+  card?: BrowserCard
+}) {
+  const className = `archive-row${card ? ` archive-row--${cardTint(card)}` : ''}`
+  const content: ReactNode = (
+    <>
+      <div className="archive-card">
+        <strong>{record.name}</strong>
+        <small>{record.pool === 'draft' ? 'Cube' : 'Commander'}</small>
+      </div>
+
+      <div className="archive-sections">
+        {record.sections.map((section) => <span key={section}>{section}</span>)}
+      </div>
+
+      <div className="archive-sources">
+        {record.active && <span className="active-card">Active</span>}
+        {record.sources.map((entrySource) => (
+          <span key={entrySource}>
+            {entrySource === 'workbook' ? 'Workbook' : 'History'}
+          </span>
+        ))}
+      </div>
+    </>
+  )
+
+  if (!card) {
+    return <article className={className}>{content}</article>
+  }
+
+  return (
+    <HoverCard card={card} className={className}>
+      {content}
+    </HoverCard>
+  )
+}
 
 export function ArchiveBrowser() {
   const [query, setQuery] = useState('')
@@ -35,6 +88,16 @@ export function ArchiveBrowser() {
     ),
     [],
   )
+  const currentCards = useMemo(() => {
+    const cards = new Map<string, BrowserCard>()
+    for (const card of draftCards) {
+      cards.set(currentCardKey('draft', card.name), card)
+    }
+    for (const card of commanderCards) {
+      cards.set(currentCardKey('commander', card.name), card)
+    }
+    return cards
+  }, [])
   const visible = useMemo(
     () => filterArchiveRecords(records, { query, pool, source }),
     [pool, query, records, source],
@@ -56,30 +119,18 @@ export function ArchiveBrowser() {
         <div>
           <span className="archive-eyebrow">Historical reference</span>
           <h2>Archive</h2>
-          <p>Look up cards recorded in workbook archives or recovered from published snapshots.</p>
+          <p>Search cards recorded in the workbook archive and published cube history.</p>
         </div>
       </header>
 
-      <div className="archive-summary-strip">
-        <div>
-          <span>Known entries</span>
-          <strong>{records.length}</strong>
+      <div className="archive-summary-line">
+        <div className="archive-summary-stats">
+          <span><strong>{records.length}</strong> known</span>
+          <span><strong>{workbookCount}</strong> workbook</span>
+          <span><strong>{historyCount}</strong> history</span>
+          <span className="active"><strong>{activeCount}</strong> active</span>
         </div>
-        <div>
-          <span>Workbook</span>
-          <strong>{workbookCount}</strong>
-        </div>
-        <div>
-          <span>Published history</span>
-          <strong>{historyCount}</strong>
-        </div>
-        <div>
-          <span>Still active</span>
-          <strong>{activeCount}</strong>
-        </div>
-        <p>
-          Workbook names and sections are preserved exactly as recorded.
-        </p>
+        <p>Workbook names and historical sections are preserved as recorded.</p>
       </div>
 
       <div className={`archive-filter-dock${hasFilters ? ' active' : ''}`}>
@@ -91,7 +142,7 @@ export function ArchiveBrowser() {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search card name or historical section…"
+            placeholder="Search card or historical section…"
             aria-label="Search archive"
           />
         </label>
@@ -139,31 +190,15 @@ export function ArchiveBrowser() {
           <header className="archive-results-header" aria-hidden="true">
             <span>Card</span>
             <span>Historical section</span>
-            <span>Source</span>
+            <span>Status / source</span>
           </header>
 
           {visible.map((record) => (
-            <article className="archive-row" key={record.key}>
-              <div className="archive-card">
-                <strong>{record.name}</strong>
-                <span className={`archive-pool archive-pool--${record.pool}`}>
-                  {record.pool === 'draft' ? 'Draft' : 'Commander'}
-                </span>
-              </div>
-
-              <div className="archive-sections">
-                {record.sections.map((section) => <span key={section}>{section}</span>)}
-              </div>
-
-              <div className="archive-sources">
-                {record.active && <span className="active-card">Active</span>}
-                {record.sources.map((entrySource) => (
-                  <span key={entrySource}>
-                    {entrySource === 'workbook' ? 'Workbook' : 'History'}
-                  </span>
-                ))}
-              </div>
-            </article>
+            <ArchiveRow
+              record={record}
+              card={currentCards.get(currentCardKey(record.pool, record.name))}
+              key={record.key}
+            />
           ))}
         </div>
       ) : (
