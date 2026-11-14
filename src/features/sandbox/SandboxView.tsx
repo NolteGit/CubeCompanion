@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { validateCube } from '../../domain'
 import { commanderCards, draftCards, releaseInfo } from '../browser/data'
+import { HoverCard } from '../browser/HoverCard'
 import type { BrowserCard } from '../browser/types'
 import { sandboxDiffText, sandboxFullListText } from './export'
 import { lookupSandboxCard } from './scryfall'
@@ -16,7 +17,6 @@ import { loadSandboxState, saveSandboxState } from './storage'
 import type { SandboxPool, SandboxState } from './types'
 import './sandbox.css'
 
-type EditorMode = 'add' | 'remove'
 type EditorNoticeTone = 'success' | 'warning' | 'error' | 'info'
 
 interface EditorNotice {
@@ -35,7 +35,7 @@ function validationMessage(valid: boolean, issueCount: number): string {
 }
 
 function poolLabel(pool: SandboxPool): string {
-  return pool === 'draft' ? 'Draft' : 'Commanders'
+  return pool === 'draft' ? 'Cube' : 'Commanders'
 }
 
 function downloadText(filename: string, content: string): void {
@@ -56,32 +56,57 @@ function initialState(): SandboxState {
   )
 }
 
+interface DiffEntry {
+  card: BrowserCard
+  pool: SandboxPool
+}
+
 function DiffSection({
   title,
-  cards,
+  entries,
   tone,
-  pool,
+  onRevert,
 }: {
   title: string
-  cards: readonly BrowserCard[]
+  entries: readonly DiffEntry[]
   tone: 'added' | 'removed'
-  pool: string
+  onRevert: (entry: DiffEntry, tone: 'added' | 'removed') => void
 }) {
-  if (cards.length === 0) return null
+  if (entries.length === 0) return null
 
   return (
     <section className={`diff-section diff-section--${tone}`}>
       <header>
         <span>{title}</span>
-        <strong>{cards.length}</strong>
+        <strong>{entries.length}</strong>
       </header>
-      {cards.map((card) => (
-        <div className="diff-row" key={card.oracleId}>
-          <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
-          <strong>{card.name}</strong>
-          <small>{pool === 'Draft' ? allocationLabel(card.draftAllocation) : pool}</small>
-        </div>
-      ))}
+      <div className="change-card-list">
+        {entries.map((entry) => (
+          <HoverCard
+            card={entry.card}
+            className="change-card"
+            key={`${entry.pool}-${entry.card.oracleId}`}
+          >
+            <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
+            <div className="change-card-copy">
+              <strong>{entry.card.name}</strong>
+              <small>
+                {entry.pool === 'draft'
+                  ? `Cube · ${allocationLabel(entry.card.draftAllocation)}`
+                  : 'Commanders'}
+              </small>
+            </div>
+            <button
+              type="button"
+              className="change-revert"
+              onClick={() => onRevert(entry, tone)}
+              title={`Revert ${entry.card.name}`}
+            >
+              Revert
+            </button>
+          </HoverCard>
+        ))}
+      </div>
     </section>
   )
 }
@@ -92,7 +117,6 @@ interface SandboxViewProps {
 
 export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
   const [state, setState] = useState<SandboxState>(initialState)
-  const [editorMode, setEditorMode] = useState<EditorMode>('add')
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
   const [editorNotice, setEditorNotice] = useState<EditorNotice | null>(null)
@@ -201,9 +225,20 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
     })
   }
 
-  function changeEditorMode(mode: EditorMode) {
-    setEditorMode(mode)
-    setEditorNotice(null)
+  function revertChange(entry: DiffEntry, tone: 'added' | 'removed') {
+    const nextState = tone === 'added'
+      ? removeSandboxCard(state, entry.pool, entry.card.oracleId)
+      : applySandboxCard(state, entry.card, entry.pool)
+
+    setUndoEntry({
+      state,
+      label: `Revert ${tone === 'added' ? 'addition of' : 'removal of'} ${entry.card.name}`,
+    })
+    setState(nextState)
+    setEditorNotice({
+      tone: 'info',
+      message: `Reverted ${entry.card.name}.`,
+    })
   }
 
   function resetSandbox() {
@@ -262,7 +297,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
         <span className="meta-pill added">+{addedCount} added</span>
         <span className="meta-pill removed">−{removedCount} removed</span>
         <span className="meta-divider" aria-hidden="true" />
-        <span className="meta-text">Draft {state.draftCards.length}</span>
+        <span className="meta-text">Cube {state.draftCards.length}</span>
         <span className="meta-text">Commanders {state.commanders.length}</span>
         <span className={`validation-pill ${validation.valid ? 'valid' : 'invalid'}`}>
           {validation.valid ? '✓ Valid' : `! ${validation.issues.length} issues`}
@@ -297,14 +332,28 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
             <div className="diff-empty">
               <span>±</span>
               <strong>No pending changes</strong>
-              <p>Use the editor to add or remove cards.</p>
+              <p>Add or remove cards with Quick edit. Changes appear here immediately.</p>
             </div>
           ) : (
-            <div className="diff-list">
-              <DiffSection title="Draft · Added" cards={diff.addedDraft} tone="added" pool="Draft" />
-              <DiffSection title="Draft · Removed" cards={diff.removedDraft} tone="removed" pool="Draft" />
-              <DiffSection title="Commanders · Added" cards={diff.addedCommanders} tone="added" pool="Commander" />
-              <DiffSection title="Commanders · Removed" cards={diff.removedCommanders} tone="removed" pool="Commander" />
+            <div className="diff-board">
+              <DiffSection
+                title="Added"
+                entries={[
+                  ...diff.addedDraft.map((card) => ({ card, pool: 'draft' as const })),
+                  ...diff.addedCommanders.map((card) => ({ card, pool: 'commander' as const })),
+                ]}
+                tone="added"
+                onRevert={revertChange}
+              />
+              <DiffSection
+                title="Removed"
+                entries={[
+                  ...diff.removedDraft.map((card) => ({ card, pool: 'draft' as const })),
+                  ...diff.removedCommanders.map((card) => ({ card, pool: 'commander' as const })),
+                ]}
+                tone="removed"
+                onRevert={revertChange}
+              />
             </div>
           )}
         </section>
@@ -312,27 +361,10 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
         <aside className="edit-cube">
           <header className="workspace-panel-heading edit-heading">
             <div>
-              <h3>Edit cube</h3>
-              <p>Changes validate immediately</p>
+              <h3>Quick edit</h3>
+              <p>Add and remove without switching modes</p>
             </div>
           </header>
-
-          <div className="editor-tabs" role="group" aria-label="Edit cube mode">
-            <button
-              type="button"
-              className={editorMode === 'add' ? 'active' : ''}
-              onClick={() => changeEditorMode('add')}
-            >
-              Add
-            </button>
-            <button
-              type="button"
-              className={editorMode === 'remove' ? 'active' : ''}
-              onClick={() => changeEditorMode('remove')}
-            >
-              Remove
-            </button>
-          </div>
 
           {editorNotice && (
             <div
@@ -352,79 +384,101 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
             </div>
           )}
 
-          {editorMode === 'add' ? (
-            <div className="editor-content">
-              <form className="sandbox-add-form" onSubmit={addCard}>
-                <label className="sandbox-name-field">
-                  <span>Card name</span>
-                  <input
-                    value={addName}
-                    onChange={(event) => {
-                      setAddName(event.target.value)
-                      setEditorNotice(null)
-                    }}
-                    placeholder="Search Scryfall by name…"
-                  />
-                </label>
-                <label>
-                  <span>Pool</span>
-                  <select
-                    value={addPool}
-                    onChange={(event) => {
-                      setAddPool(event.target.value as SandboxPool)
-                      setEditorNotice(null)
-                    }}
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="commander">Commander</option>
-                  </select>
-                </label>
-                <button className="primary-action" type="submit" disabled={adding || !addName.trim()}>
-                  {adding ? 'Looking up…' : 'Add card'}
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="editor-content">
-              <label className="sandbox-manage-search">
-                <span>Current cards</span>
+          <section className="quick-edit-section">
+            <header>
+              <span>+</span>
+              <div>
+                <strong>Add card</strong>
+                <small>Resolve a card through Scryfall</small>
+              </div>
+            </header>
+
+            <form className="sandbox-add-form" onSubmit={addCard}>
+              <label className="sandbox-name-field">
+                <span>Card name</span>
                 <input
-                  value={search}
+                  value={addName}
                   onChange={(event) => {
-                    setSearch(event.target.value)
+                    setAddName(event.target.value)
                     setEditorNotice(null)
                   }}
-                  placeholder="Search by card name…"
+                  placeholder="Search Scryfall by name…"
                 />
               </label>
+              <label>
+                <span>Library</span>
+                <select
+                  value={addPool}
+                  onChange={(event) => {
+                    setAddPool(event.target.value as SandboxPool)
+                    setEditorNotice(null)
+                  }}
+                >
+                  <option value="draft">Cube</option>
+                  <option value="commander">Commanders</option>
+                </select>
+              </label>
+              <button className="primary-action" type="submit" disabled={adding || !addName.trim()}>
+                {adding ? 'Looking up…' : 'Add card'}
+              </button>
+            </form>
+          </section>
 
-              {!search.trim() ? (
-                <p className="sandbox-empty">Search the working cube to remove a card.</p>
-              ) : searchResults.length === 0 ? (
-                <p className="sandbox-empty">No cards match that search.</p>
-              ) : (
-                <div className="sandbox-card-results">
-                  {searchResults.map(({ card, pool }) => (
-                    <div className="sandbox-card-row" key={`${pool}-${card.oracleId}`}>
-                      <div>
-                        <strong>{card.name}</strong>
-                        <span>{pool === 'draft' ? allocationLabel(card.draftAllocation) : 'Commander'}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => removeCard(card, pool)}
-                      >
-                        Remove
-                      </button>
+          <section className="quick-edit-section quick-edit-remove">
+            <header>
+              <span>−</span>
+              <div>
+                <strong>Remove card</strong>
+                <small>Search the current working cube</small>
+              </div>
+            </header>
+
+            <label className="sandbox-manage-search">
+              <span>Current cards</span>
+              <input
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value)
+                  setEditorNotice(null)
+                }}
+                placeholder="Search by card name…"
+              />
+            </label>
+
+            {!search.trim() ? (
+              <p className="sandbox-empty">Type a card name to find it.</p>
+            ) : searchResults.length === 0 ? (
+              <p className="sandbox-empty">No cards match that search.</p>
+            ) : (
+              <div className="sandbox-card-results">
+                {searchResults.map(({ card, pool }) => (
+                  <HoverCard
+                    card={card}
+                    className="sandbox-card-row"
+                    key={`${pool}-${card.oracleId}`}
+                  >
+                    <div>
+                      <strong>{card.name}</strong>
+                      <span>
+                        {pool === 'draft'
+                          ? `Cube · ${allocationLabel(card.draftAllocation)}`
+                          : 'Commanders'}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    <button
+                      type="button"
+                      onClick={() => removeCard(card, pool)}
+                    >
+                      Remove
+                    </button>
+                  </HoverCard>
+                ))}
+              </div>
+            )}
+          </section>
 
           <footer className="editor-footnote">
-            Scryfall resolves additions. Existing cards in the selected pool are left unchanged.
+            Changes are session-only until exported or applied to the source workbook.
           </footer>
         </aside>
       </div>
