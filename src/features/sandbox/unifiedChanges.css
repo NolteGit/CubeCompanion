@@ -143,6 +143,20 @@
   letter-spacing: 0.04em;
 }
 
+/* Denser review rows: group headers and tint already carry pool/color context. */
+.change-card {
+  min-height: 40px;
+  padding-block: 5px;
+}
+
+.change-card-copy {
+  gap: 0;
+}
+
+.change-card-copy strong {
+  font-size: 0.75rem;
+}
+
 @media (max-width: 980px) {
   .changes-layout {
     grid-template-columns: 1fr;

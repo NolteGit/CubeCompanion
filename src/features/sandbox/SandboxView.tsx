@@ -108,11 +108,6 @@ function DiffSection({
                     <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
                     <div className="change-card-copy">
                       <strong>{entry.card.name}</strong>
-                      <small>
-                        {entry.pool === 'draft'
-                          ? `Cube · ${allocationLabel(entry.card.draftAllocation)}`
-                          : 'Commanders'}
-                      </small>
                     </div>
                     <button
                       type="button"
