@@ -29,8 +29,15 @@ export interface ExtractedArchiveEntry {
   cell: string
 }
 
+export interface ExtractedIdeaEntry {
+  name: string
+  pool: WorkbookPool
+  cell: string
+}
+
 export interface ExtractedWorkbook {
   draftCards: ExtractedCard[]
   commanders: ExtractedCard[]
   archive: ExtractedArchiveEntry[]
+  ideas: ExtractedIdeaEntry[]
 }

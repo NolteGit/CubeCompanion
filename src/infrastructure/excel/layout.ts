@@ -1,5 +1,5 @@
 import { GUILD_KEYS, type DraftAllocation, type DraftSection } from '../../domain'
-import type { WorkbookSection } from './types'
+import type { WorkbookPool, WorkbookSection } from './types'
 
 export interface ActiveSectionLayout {
   section: WorkbookSection
@@ -19,9 +19,18 @@ export interface ArchiveSectionLayout {
   startRow: number
 }
 
+export interface IdeaSectionLayout {
+  pool: WorkbookPool
+  labelCell: string
+  expectedLabel: string
+  cardColumn: string
+  startRow: number
+}
+
 export const WORKBOOK_PATH = 'source/CubeUebersicht.xlsx'
 export const CUBE_SHEET = 'Cube'
 export const ARCHIVE_SHEET = 'Archive'
+export const IDEAS_SHEET = 'Cut-Watch-Interest'
 
 export const DRAFT_SECTIONS: ActiveSectionLayout[] = [
   { section: 'white', labelCell: 'A2', expectedLabel: 'White', cardColumn: 'B', startRow: 4, endRow: 76, stopAtBlank: false },
@@ -89,4 +98,21 @@ export const ARCHIVE_COMMANDER_SECTIONS: ArchiveSectionLayout[] = [
   { section: 'green', labelCell: 'N2', expectedLabel: 'Green', cardColumn: 'N', startRow: 3 },
   { section: 'dual', labelCell: 'O2', expectedLabel: 'Dualcolor', cardColumn: 'O', startRow: 3 },
   { section: 'multicolor', labelCell: 'P2', expectedLabel: 'Multicolor', cardColumn: 'P', startRow: 3 },
+]
+
+export const IDEA_SECTIONS: IdeaSectionLayout[] = [
+  {
+    pool: 'draft',
+    labelCell: 'A1',
+    expectedLabel: 'Interesting Main Cube',
+    cardColumn: 'A',
+    startRow: 2,
+  },
+  {
+    pool: 'commander',
+    labelCell: 'C1',
+    expectedLabel: 'Interesting Commander',
+    cardColumn: 'C',
+    startRow: 2,
+  },
 ]

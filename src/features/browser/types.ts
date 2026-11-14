@@ -53,6 +53,18 @@ export interface MetadataFile {
   cards: CardMetadataView[]
 }
 
+export interface IdeaSourceEntry {
+  name: string
+  pool: 'draft' | 'commander'
+  cell: string
+  oracleId?: string
+}
+
+export interface IdeasFile {
+  version: 1
+  cards: IdeaSourceEntry[]
+}
+
 export interface SectionOption {
   value: string
   label: string

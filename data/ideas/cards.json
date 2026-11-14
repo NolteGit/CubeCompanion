@@ -1,0 +1,473 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "name": "Secure the Wastes",
+      "pool": "draft",
+      "cell": "A3",
+      "oracleId": "b2347910-d6c6-4681-8316-7ef27056485c"
+    },
+    {
+      "name": "Enduring Innocence",
+      "pool": "draft",
+      "cell": "A4",
+      "oracleId": "98a389f4-2905-47f3-b60e-3d4afb3e5cb0"
+    },
+    {
+      "name": "Danitha Capashen, Paragon",
+      "pool": "draft",
+      "cell": "A5",
+      "oracleId": "4b6377da-83e7-4519-9582-16a9c16b8faa"
+    },
+    {
+      "name": "Jacked Rabbit",
+      "pool": "draft",
+      "cell": "A6",
+      "oracleId": "5a343a5f-3f9b-43c3-8532-8391de7a5443"
+    },
+    {
+      "name": "Pensive Professor",
+      "pool": "draft",
+      "cell": "A7",
+      "oracleId": "4b8736e2-fc41-4a25-bb6c-7351afc40981"
+    },
+    {
+      "name": "Great Gilded Boat",
+      "pool": "draft",
+      "cell": "A8",
+      "oracleId": "d4607026-80b2-4fa6-99d5-694cd3b43868"
+    },
+    {
+      "name": "Icetill Explorer",
+      "pool": "draft",
+      "cell": "A9",
+      "oracleId": "109cdefd-e8cc-4ac7-b6ba-2cfdef8d780f"
+    },
+    {
+      "name": "Forgotten Ancient",
+      "pool": "draft",
+      "cell": "A10",
+      "oracleId": "2ef75cf3-30dc-4852-a6d1-1d6391fad022"
+    },
+    {
+      "name": "Emptiness",
+      "pool": "draft",
+      "cell": "A11",
+      "oracleId": "dc5dd7f7-375e-4d51-85cb-1abf16ca3854"
+    },
+    {
+      "name": "Ocelot Pride",
+      "pool": "draft",
+      "cell": "A13",
+      "oracleId": "b4ce2c8f-a19c-461e-8a2e-0ec2bd3ebca3"
+    },
+    {
+      "name": "Bejeweled Warg",
+      "pool": "draft",
+      "cell": "A14",
+      "oracleId": "051ff7e0-dd00-4467-8796-a5d1c21934ed"
+    },
+    {
+      "name": "Garruk's Uprising",
+      "pool": "draft",
+      "cell": "A15",
+      "oracleId": "3127ae9b-a7a7-43ec-89d7-688f8445b33d"
+    },
+    {
+      "name": "Razorkin Needlehead",
+      "pool": "draft",
+      "cell": "A16",
+      "oracleId": "a78f981a-bf8a-42a4-b171-d655cc2cc1a2"
+    },
+    {
+      "name": "Pollywog Prodigy",
+      "pool": "draft",
+      "cell": "A17",
+      "oracleId": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb"
+    },
+    {
+      "name": "Mockingbird",
+      "pool": "draft",
+      "cell": "A18",
+      "oracleId": "b9df2cdf-397c-458d-89cf-911568737ffa"
+    },
+    {
+      "name": "Siren Stormtamer",
+      "pool": "draft",
+      "cell": "A19",
+      "oracleId": "59c7496b-19a2-478b-b28f-6f153c2458ae"
+    },
+    {
+      "name": "Bilbo, Thief in the Night",
+      "pool": "draft",
+      "cell": "A20",
+      "oracleId": "72a9a85d-7cfc-4b3c-82db-9d35be6c0982"
+    },
+    {
+      "name": "Phelia, Exuberant Shepherd",
+      "pool": "draft",
+      "cell": "A23",
+      "oracleId": "5d86a59a-ba1f-45f7-b829-dca6f9f3e624"
+    },
+    {
+      "name": "The Wandering Emperor",
+      "pool": "draft",
+      "cell": "A24",
+      "oracleId": "0c7f18d5-36cb-4bc6-a358-443b97666215"
+    },
+    {
+      "name": "Mockingbird",
+      "pool": "draft",
+      "cell": "A25",
+      "oracleId": "b9df2cdf-397c-458d-89cf-911568737ffa"
+    },
+    {
+      "name": "Spectral Sailor",
+      "pool": "draft",
+      "cell": "A26",
+      "oracleId": "a8fdbcdf-479d-4582-9ad5-9fbd4c740c29"
+    },
+    {
+      "name": "Azure Beastbinder",
+      "pool": "draft",
+      "cell": "A27",
+      "oracleId": "7bb51602-60e8-4730-b11c-2870d6b42e20"
+    },
+    {
+      "name": "Drake Hatcher",
+      "pool": "draft",
+      "cell": "A28",
+      "oracleId": "4de0ccab-bb5d-4c7c-827e-36aa1d00b182"
+    },
+    {
+      "name": "Kitsa, Otterball Elite",
+      "pool": "draft",
+      "cell": "A29",
+      "oracleId": "16414460-11ce-481d-ab54-6f0e0ea7d83d"
+    },
+    {
+      "name": "Malcolm, Alluring Scoundrel",
+      "pool": "draft",
+      "cell": "A30",
+      "oracleId": "3bba3b36-f8d7-4fd6-892a-797226210b6e"
+    },
+    {
+      "name": "Sphinx of False Conclusions",
+      "pool": "draft",
+      "cell": "A31",
+      "oracleId": "9f004382-c57b-4fde-af97-0c85516c3cf4"
+    },
+    {
+      "name": "Careful Study",
+      "pool": "draft",
+      "cell": "A32",
+      "oracleId": "32e9aa23-fc0a-4b82-82f9-1659c304428c"
+    },
+    {
+      "name": "Into the Flood Maw",
+      "pool": "draft",
+      "cell": "A33",
+      "oracleId": "8cb36a67-9206-4665-a03f-64f52ba559c4"
+    },
+    {
+      "name": "Serum Visions",
+      "pool": "draft",
+      "cell": "A34",
+      "oracleId": "56956afd-db53-4542-816b-490c8b0bbcf7"
+    },
+    {
+      "name": "Kaito, Cunning Infiltrator",
+      "pool": "draft",
+      "cell": "A35",
+      "oracleId": "f6d3f145-00e0-47cd-91d8-0381c19a000d"
+    },
+    {
+      "name": "Three Steps Ahead",
+      "pool": "draft",
+      "cell": "A36",
+      "oracleId": "282dfeaa-6243-4f92-838a-5cb54fa85184"
+    },
+    {
+      "name": "The Theorist, Jace Beleren",
+      "pool": "draft",
+      "cell": "A37",
+      "oracleId": "89a6e876-0b00-4671-9652-766fd7ef9bf2"
+    },
+    {
+      "name": "Changeling Outcast",
+      "pool": "draft",
+      "cell": "A38",
+      "oracleId": "a61ef0cc-1da9-49f9-b0dc-01cf9f6205be"
+    },
+    {
+      "name": "Nethergoyf",
+      "pool": "draft",
+      "cell": "A39",
+      "oracleId": "040cbd8a-a9e5-454b-a5ae-9b66bb66b8e9"
+    },
+    {
+      "name": "Tinybones, the Pickpocket",
+      "pool": "draft",
+      "cell": "A40",
+      "oracleId": "7bc4c7e2-6758-4a85-84e7-03ab93981106"
+    },
+    {
+      "name": "Barrowgoyf",
+      "pool": "draft",
+      "cell": "A41",
+      "oracleId": "74c0164c-130f-4572-9066-626c77f6e2ff"
+    },
+    {
+      "name": "Darklight Phoenix",
+      "pool": "draft",
+      "cell": "A42",
+      "oracleId": "e4b51c2d-7e56-435b-89d6-85e33df65879"
+    },
+    {
+      "name": "Avacyn, Angel of Horror",
+      "pool": "draft",
+      "cell": "A43",
+      "oracleId": "4af61d45-7114-4eb4-a905-9e03caf87454"
+    },
+    {
+      "name": "Lich's Relic",
+      "pool": "draft",
+      "cell": "A44",
+      "oracleId": "0540eaca-0e03-4831-955a-192ae2b87d35"
+    },
+    {
+      "name": "Reanimate",
+      "pool": "draft",
+      "cell": "A45",
+      "oracleId": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0"
+    },
+    {
+      "name": "Bitter Triumph",
+      "pool": "draft",
+      "cell": "A46",
+      "oracleId": "776341cb-d2ec-423f-9250-92dc8bd8d503"
+    },
+    {
+      "name": "Come Back Wrong",
+      "pool": "draft",
+      "cell": "A47",
+      "oracleId": "2a9783c5-084b-4cd3-b7fa-ae9d7fed51d1"
+    },
+    {
+      "name": "Dismember",
+      "pool": "draft",
+      "cell": "A48",
+      "oracleId": "fd74f8eb-0253-42dd-8277-186d4934da38"
+    },
+    {
+      "name": "Dragon's Rage Channeler",
+      "pool": "draft",
+      "cell": "A49",
+      "oracleId": "0c016ccc-a341-4b76-87ba-69c639d2746d"
+    },
+    {
+      "name": "Inti, Seneschal of the Sun",
+      "pool": "draft",
+      "cell": "A50",
+      "oracleId": "176f5ba8-6e7b-4234-a298-b6164f51656f"
+    },
+    {
+      "name": "Samut, Hazoret's Champion",
+      "pool": "draft",
+      "cell": "A51",
+      "oracleId": "add02a36-8811-438b-a8e1-f5c8a8146b4e"
+    },
+    {
+      "name": "Stingcaster Mage",
+      "pool": "draft",
+      "cell": "A52",
+      "oracleId": "056b651e-e0e2-4333-9235-d1ffe8fcca29"
+    },
+    {
+      "name": "Broadside Bombardiers",
+      "pool": "draft",
+      "cell": "A53",
+      "oracleId": "e0c00a74-bdf8-4fee-8042-42c5878e9e3c"
+    },
+    {
+      "name": "Craterclaw Colossus",
+      "pool": "draft",
+      "cell": "A54",
+      "oracleId": "71355b51-e70e-47b0-8460-933af3567141"
+    },
+    {
+      "name": "Abrade",
+      "pool": "draft",
+      "cell": "A55",
+      "oracleId": "f9db72dc-9a5b-48a4-a86e-7464d9a2166a"
+    },
+    {
+      "name": "Demand Answers",
+      "pool": "draft",
+      "cell": "A56",
+      "oracleId": "c11e84a1-dbda-429b-8cd6-fd0deaefc689"
+    },
+    {
+      "name": "Fiery Confluence",
+      "pool": "draft",
+      "cell": "A57",
+      "oracleId": "3c22e031-4804-4c31-bd3c-c3f29d456b34"
+    },
+    {
+      "name": "Goldvein Hydra",
+      "pool": "draft",
+      "cell": "A58",
+      "oracleId": "2b62543f-a475-457a-a96b-b5d070383d3c"
+    },
+    {
+      "name": "Enduring Vitality",
+      "pool": "draft",
+      "cell": "A59",
+      "oracleId": "3577c47e-76d3-4659-b922-31c4b74be3a0"
+    },
+    {
+      "name": "Simulacrum Shaper",
+      "pool": "draft",
+      "cell": "A60",
+      "oracleId": "9e45e2da-7064-4ec0-8d09-55fc7d1aeaa8"
+    },
+    {
+      "name": "Six",
+      "pool": "draft",
+      "cell": "A61",
+      "oracleId": "dbcbdf37-c40f-4068-b4a7-a849cab1056c"
+    },
+    {
+      "name": "Questing Beast",
+      "pool": "draft",
+      "cell": "A62",
+      "oracleId": "b685757b-521e-4353-a233-97052359723d"
+    },
+    {
+      "name": "Verdurous Gearhulk",
+      "pool": "draft",
+      "cell": "A63",
+      "oracleId": "3765e8bb-e70d-4503-b8dc-1e684e434c18"
+    },
+    {
+      "name": "Nissa, Ascended Animist",
+      "pool": "draft",
+      "cell": "A64",
+      "oracleId": "9c8845d6-fa65-4731-b348-dc724fc2d285"
+    },
+    {
+      "name": "Ral, Crackling Wit",
+      "pool": "draft",
+      "cell": "A65",
+      "oracleId": "3c970f43-17da-4187-a084-efd53b579067"
+    },
+    {
+      "name": "Ornithopter of Paradise",
+      "pool": "draft",
+      "cell": "A66",
+      "oracleId": "3a940dfa-a026-4969-8981-ef90cdfbe9ef"
+    },
+    {
+      "name": "Tezzeret, Cruel Captain",
+      "pool": "draft",
+      "cell": "A67",
+      "oracleId": "0eb11b2d-a397-48da-a0f3-9f0f83f42282"
+    },
+    {
+      "name": "Anim Pakal, Thousandth Moon",
+      "pool": "commander",
+      "cell": "C2",
+      "oracleId": "05551d91-50c6-46d1-86a4-cd3d177d0923"
+    },
+    {
+      "name": "Dyadrine, Synthesis Amalgam",
+      "pool": "commander",
+      "cell": "C3",
+      "oracleId": "618a2272-62e0-4d0e-834d-7b81719eba12"
+    },
+    {
+      "name": "Shalai and Hallar",
+      "pool": "commander",
+      "cell": "C4",
+      "oracleId": "e7604cd9-d00d-4957-82c9-46a7cdb88209"
+    },
+    {
+      "name": "Betor, Ancestor's Voice",
+      "pool": "commander",
+      "cell": "C5",
+      "oracleId": "990b5e12-6e04-4832-9d64-87278f12cbda"
+    },
+    {
+      "name": "Skullbriar, the Walking Grave",
+      "pool": "commander",
+      "cell": "C6",
+      "oracleId": "088ac883-6f44-4046-bf19-81c7fd952e55"
+    },
+    {
+      "name": "Jin Sakai, Ghost of Tsushima",
+      "pool": "commander",
+      "cell": "C7",
+      "oracleId": "76c43ac8-a878-4239-b0e3-f0254ef63e50"
+    },
+    {
+      "name": "Sidar Kondo of Jamuraa",
+      "pool": "commander",
+      "cell": "C8",
+      "oracleId": "331b6834-6bb4-40fa-b80b-22d67b34734f"
+    },
+    {
+      "name": "Zinnia, Valley's Voice",
+      "pool": "commander",
+      "cell": "C9",
+      "oracleId": "d8c16a3a-dd9d-410c-a5d5-06339a89970f"
+    },
+    {
+      "name": "The Wandering Rescuer",
+      "pool": "commander",
+      "cell": "C12",
+      "oracleId": "b8ef65df-f8e7-44e3-9864-9c127232a2b6"
+    },
+    {
+      "name": "Kitsa, Otterball Elite",
+      "pool": "commander",
+      "cell": "C13",
+      "oracleId": "16414460-11ce-481d-ab54-6f0e0ea7d83d"
+    },
+    {
+      "name": "Catti-brie of Mithral Hall",
+      "pool": "commander",
+      "cell": "C14",
+      "oracleId": "f44ffa35-bd88-4996-8b20-46329565df9b"
+    },
+    {
+      "name": "The Infamous Cruelclaw",
+      "pool": "commander",
+      "cell": "C15",
+      "oracleId": "e229d55c-9513-437d-bd67-015ac46aaa18"
+    },
+    {
+      "name": "Bria, Riptide Rogue",
+      "pool": "commander",
+      "cell": "C16",
+      "oracleId": "d627996b-cbcd-4162-bd13-9ab286de64d1"
+    },
+    {
+      "name": "Selvala, Eager Trailblazer",
+      "pool": "commander",
+      "cell": "C17",
+      "oracleId": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20"
+    },
+    {
+      "name": "Loot, the Pathfinder",
+      "pool": "commander",
+      "cell": "C18",
+      "oracleId": "68c7e459-0932-4644-a3c0-9a1eae1db7a3"
+    },
+    {
+      "name": "Rakdos, the Muscle",
+      "pool": "commander",
+      "cell": "C19",
+      "oracleId": "e2c141af-925e-42bd-8d83-e1a71f4c9794"
+    }
+  ]
+}

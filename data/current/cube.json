@@ -1,13 +1,12 @@
 {
   "release": {
-    "snapshotId": "80f61d39943cf24053716ba4e82f03eca84c190a8a0265a4a3dff85d3090e0b4",
-    "publishedAt": "2026-11-12T17:41:16.804Z",
-    "rulesRevision": "2",
-    "note": "November cube update"
+    "snapshotId": "85552e71f79eb94e2bcdf34f697e621598cc3fd198735c0a7047816f111b059b",
+    "publishedAt": "2026-11-14T10:15:13.017Z",
+    "rulesRevision": "2"
   },
   "snapshot": {
-    "id": "80f61d39943cf24053716ba4e82f03eca84c190a8a0265a4a3dff85d3090e0b4",
-    "createdAt": "2026-11-12T17:41:06.685Z",
+    "id": "85552e71f79eb94e2bcdf34f697e621598cc3fd198735c0a7047816f111b059b",
+    "createdAt": "2026-11-14T10:15:13.017Z",
     "rulesRevision": "2",
     "draftCards": [
       {
@@ -2297,8 +2296,8 @@
         }
       },
       {
-        "oracleId": "d3b2d8a2-d3bc-448c-9cf6-6bead6010c28",
-        "name": "Bristly Bill, Spine Sower",
+        "oracleId": "051ff7e0-dd00-4467-8796-a5d1c21934ed",
+        "name": "Bejeweled Warg",
         "colorIdentity": [
           "G"
         ],
@@ -4540,8 +4539,8 @@
         "isLand": false
       },
       {
-        "oracleId": "63e2cba7-ec1a-44bf-b915-d2ae75851430",
-        "name": "Hermes, Overseer of Elpis",
+        "oracleId": "6b071146-2f83-4fda-a55a-46fcb74e6f28",
+        "name": "Deekah, Fractal Theorist",
         "colorIdentity": [
           "U"
         ],
@@ -4604,16 +4603,16 @@
         "isLand": false
       },
       {
-        "oracleId": "46c3a69a-4984-40b0-905f-4b0762c7ad72",
-        "name": "Titania, Nature's Force",
+        "oracleId": "84d648c7-655e-4590-a3e0-366a8a4a4cb3",
+        "name": "Radagast of Rhosgobel",
         "colorIdentity": [
           "G"
         ],
         "isLand": false
       },
       {
-        "oracleId": "d0ade00d-a496-441d-9b7e-7dc033d3292c",
-        "name": "Titania, Protector of Argoth",
+        "oracleId": "d3b2d8a2-d3bc-448c-9cf6-6bead6010c28",
+        "name": "Bristly Bill, Spine Sower",
         "colorIdentity": [
           "G"
         ],
@@ -4701,8 +4700,8 @@
         "isLand": false
       },
       {
-        "oracleId": "c65ba242-3369-48a9-864f-1b1f85238f67",
-        "name": "Emmara, Soul of the Accord",
+        "oracleId": "69924636-138e-4baa-a378-0fd7df5b847d",
+        "name": "Finneas, Ace Archer",
         "colorIdentity": [
           "G",
           "W"
@@ -4728,8 +4727,8 @@
         "isLand": false
       },
       {
-        "oracleId": "b110b8e6-859b-4370-aceb-b21c6cf61532",
-        "name": "Ghyrson Starn, Kelermorph",
+        "oracleId": "d627996b-cbcd-4162-bd13-9ab286de64d1",
+        "name": "Bria, Riptide Rogue",
         "colorIdentity": [
           "R",
           "U"
@@ -4746,8 +4745,8 @@
         "isLand": false
       },
       {
-        "oracleId": "0310dfdb-0498-488d-9f1a-279f8239e024",
-        "name": "Meren of Clan Nel Toth",
+        "oracleId": "62511d43-8eaf-405a-9c81-7bd593d3a01e",
+        "name": "Ygra, Eater of All",
         "colorIdentity": [
           "B",
           "G"
@@ -4764,8 +4763,8 @@
         "isLand": false
       },
       {
-        "oracleId": "7c4bbb1b-29c4-4e06-aed0-b361293a585b",
-        "name": "Arabella, Abandoned Doll",
+        "oracleId": "82ea519f-0e14-43d3-bf46-a1c5352e9600",
+        "name": "The Jolly Balloon Man",
         "colorIdentity": [
           "R",
           "W"
@@ -4782,8 +4781,8 @@
         "isLand": false
       },
       {
-        "oracleId": "4563ae4b-6226-4cc9-abde-582d0ab83433",
-        "name": "Gandalf, Westward Voyager",
+        "oracleId": "6d42e81a-84d3-4c90-9c69-c0d562c66cac",
+        "name": "Kimahri, Valiant Guardian",
         "colorIdentity": [
           "G",
           "U"
@@ -4791,8 +4790,8 @@
         "isLand": false
       },
       {
-        "oracleId": "6511f317-bd38-46d0-b800-7125a3f420da",
-        "name": "Aesi, Tyrant of Gyre Strait",
+        "oracleId": "715f0832-696c-4111-b418-d9b6da403159",
+        "name": "Berta, Wise Extrapolator",
         "colorIdentity": [
           "G",
           "U"
@@ -4810,8 +4809,8 @@
         "isLand": false
       },
       {
-        "oracleId": "c983338d-ae6b-4a15-9931-daa20fca8269",
-        "name": "Queza, Augur of Agonies",
+        "oracleId": "936ae5dc-9838-47f3-ba1f-66523a7f5b76",
+        "name": "Alela, Artful Provocateur",
         "colorIdentity": [
           "B",
           "U",
@@ -4880,8 +4879,8 @@
         "isLand": false
       },
       {
-        "oracleId": "ebf7ce9b-9e5e-4557-9e28-76556997f0ee",
-        "name": "Chulane, Teller of Tales",
+        "oracleId": "25636214-c6ea-4655-a5e8-98e735da5b05",
+        "name": "Ms. Bumbleflower",
         "colorIdentity": [
           "G",
           "U",

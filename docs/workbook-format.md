@@ -6,7 +6,7 @@
 
 ## Included sheets
 
-`Cube` provides the draft and commander working pools. `Archive` provides historical draft and commander reference data. `Cut-Watch-Interest` stays local to the Excel workflow and is not extracted.
+`Cube` provides the draft and commander working pools. `Archive` provides historical draft and commander reference data. `Cut-Watch-Interest` provides the read-only Maybe list from `Interesting Main Cube` (column A) and `Interesting Commander` (column C). Watchlist and Cutlist columns remain outside the website.
 
 ## Draft convention
 
@@ -23,6 +23,12 @@ Workbook allocation is preserved downstream and is separate from Scryfall color 
 Commander headings are on row 78 and card lists begin on row 79. Each commander list ends at its first blank separator, allowing later notes or scratch blocks to remain outside the active commander pool. `-` is treated as an empty placeholder.
 
 The adapter verifies section labels before reading. A moved or renamed workbook section therefore fails loudly instead of silently extracting the wrong cells.
+
+## Maybe ideas
+
+The Maybe list reads nonblank entries below `A1 = Interesting Main Cube` and `C1 = Interesting Commander`. These entries are resolved through Scryfall for display metadata but never participate in cube validation, snapshot identity, or history. Source rows are preserved in generated data. Duplicate names within the same pool are shown once in the UI.
+
+Columns E (`Watchlist`) and G (`Cutlist`) are intentionally not published.
 
 ## Archive
 

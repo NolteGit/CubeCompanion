@@ -46,4 +46,24 @@ describe('CubeUebersicht workbook adapter', () => {
     expect(extracted.archive.every((entry) => entry.pool === 'draft' || entry.pool === 'commander')).toBe(true)
     expect(extracted.archive.length).toBeGreaterThan(0)
   })
+
+  it('extracts only the two inclusion-idea columns from Cut-Watch-Interest', async () => {
+    const extracted = await extractWorkbook(resolve(process.cwd(), WORKBOOK_PATH))
+    const cells = extracted.ideas.map((entry) => entry.cell)
+
+    expect(extracted.ideas.length).toBeGreaterThan(0)
+    expect(cells.every((cell) => cell.startsWith('A') || cell.startsWith('C'))).toBe(true)
+    expect(extracted.ideas).toContainEqual({
+      name: 'Secure the Wastes',
+      pool: 'draft',
+      cell: 'A3',
+    })
+    expect(extracted.ideas).toContainEqual({
+      name: 'Anim Pakal, Thousandth Moon',
+      pool: 'commander',
+      cell: 'C2',
+    })
+    expect(extracted.ideas.some((entry) => entry.name === 'Hopeful Initiate')).toBe(false)
+    expect(extracted.ideas.some((entry) => entry.name === 'Balance')).toBe(false)
+  })
 })

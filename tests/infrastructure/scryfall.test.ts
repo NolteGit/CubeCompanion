@@ -88,6 +88,7 @@ describe('Scryfall card resolution', () => {
       draftCards: [{ name: 'Known', pool: 'draft', section: 'white', cell: 'B4' }],
       commanders: [{ name: 'Missing', pool: 'commander', section: 'white', cell: 'B79' }],
       archive: [{ name: 'Missing', pool: 'draft', section: 'white', cell: 'A3' }],
+      ideas: [],
     }
     const directory = await mkdtemp(join(tmpdir(), 'cube-scryfall-'))
     const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(

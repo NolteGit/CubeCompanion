@@ -1,3 +1,4 @@
+import { mkdir, writeFile } from 'node:fs/promises'
 import { DEFAULT_CUBE_RULES } from '../../src/domain/index.ts'
 import {
   DEFAULT_ARCHIVE_PATH,
@@ -17,6 +18,17 @@ function optionValue(name: string): string | undefined {
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
+}
+
+const IDEAS_PATH = 'data/ideas/cards.json'
+
+async function publishIdeas(): Promise<void> {
+  await mkdir('data/ideas', { recursive: true })
+  await writeFile(
+    IDEAS_PATH,
+    `${JSON.stringify({ version: 1, cards: result.ideas }, null, 2)}\n`,
+    'utf8',
+  )
 }
 
 const note = optionValue('--note')
@@ -53,6 +65,12 @@ if (result.unresolved.length > 0) {
   console.log(`History:    ${publication.createdHistory ? 'created' : 'reused'} ${publication.historyPath}`)
   console.log('Current:    data/current/cube.json')
   console.log('Metadata:   data/metadata/cards.json')
+
+  await publishIdeas()
+  console.log(`Ideas:      ${result.ideas.length} source entries ${IDEAS_PATH}`)
+  if (result.unresolvedIdeas.length > 0) {
+    console.warn(`Ideas:      ${result.unresolvedIdeas.length} unresolved — ${result.unresolvedIdeas.join(', ')}`)
+  }
 
   try {
     const archive = await publishArchive(result.archive)

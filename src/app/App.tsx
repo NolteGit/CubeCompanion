@@ -2,7 +2,14 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { AnalysisDashboard } from '../features/analysis/AnalysisDashboard'
 import { ArchiveBrowser } from '../features/archive/ArchiveBrowser'
 import { CubeBrowser, type BrowserList } from '../features/browser/CubeBrowser'
-import { commanderCards, draftCards, releaseInfo } from '../features/browser/data'
+import {
+  commanderCards,
+  draftCards,
+  maybeCommanderCards,
+  maybeDraftCards,
+  releaseInfo,
+} from '../features/browser/data'
+import { MaybeList } from '../features/browser/MaybeList'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import { SandboxView } from '../features/sandbox/SandboxView'
@@ -25,6 +32,7 @@ import {
 type NavIcon =
   | 'cards'
   | 'commanders'
+  | 'maybe'
   | 'list'
   | 'analysis'
   | 'changes'
@@ -32,6 +40,8 @@ type NavIcon =
   | 'playtest'
   | 'history'
   | 'archive'
+
+type LibraryList = BrowserList | 'maybe'
 
 interface NavItem {
   page: AppPage
@@ -68,6 +78,14 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="m5 9 3 2 4-6 4 6 3-2-1.5 9h-11L5 9Z" />
         <path d="M7 15h10" />
+      </svg>
+    )
+  }
+  if (icon === 'maybe') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m12 3 1.6 4.2L18 9l-4.4 1.8L12 15l-1.6-4.2L6 9l4.4-1.8L12 3Z" />
+        <path d="m18.5 14.5.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z" />
       </svg>
     )
   }
@@ -297,7 +315,7 @@ function App() {
   const [preferences, setPreferences] = useState<WorkspacePreferences>(() =>
     loadWorkspacePreferences(window.localStorage),
   )
-  const [cardList, setCardList] = useState<BrowserList>(() => preferences.defaultPool)
+  const [cardList, setCardList] = useState<LibraryList>(() => preferences.defaultPool)
   const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
   const totalCards = draftCards.length + commanderCards.length
 
@@ -329,7 +347,7 @@ function App() {
     setPage(nextPage)
   }
 
-  function openCardList(nextList: BrowserList) {
+  function openCardList(nextList: LibraryList) {
     setCardList(nextList)
     if (page !== 'browse') {
       window.history.pushState(null, '', hashForPage('browse'))
@@ -339,6 +357,7 @@ function App() {
 
   function renderPage(): ReactNode {
     if (page === 'browse') {
+      if (cardList === 'maybe') return <MaybeList />
       return (
         <CubeBrowser
           list={cardList}
@@ -391,6 +410,13 @@ function App() {
                 count={commanderCards.length}
                 active={page === 'browse' && cardList === 'commanders'}
                 onClick={() => openCardList('commanders')}
+              />
+              <SidebarNavButton
+                label="Maybe"
+                icon="maybe"
+                count={maybeDraftCards.length + maybeCommanderCards.length}
+                active={page === 'browse' && cardList === 'maybe'}
+                onClick={() => openCardList('maybe')}
               />
               <SidebarNavButton
                 label="Changes list"

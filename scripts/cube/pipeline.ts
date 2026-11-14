@@ -10,10 +10,12 @@ import {
   extractWorkbook,
   WORKBOOK_PATH,
   type ExtractedArchiveEntry,
+  type ExtractedIdeaEntry,
   type ExtractedWorkbook,
 } from '../../src/infrastructure/excel/index.ts'
 import {
   cardLookupKey,
+  resolveCardNames,
   resolveExtractedWorkbook,
   suggestCardNames,
   type CardMetadata,
@@ -21,12 +23,18 @@ import {
   type UnresolvedCard,
 } from '../../src/infrastructure/scryfall/index.ts'
 
+export interface PreparedIdea extends ExtractedIdeaEntry {
+  oracleId?: string
+}
+
 export interface PreparedCubeSource {
   cube?: CubeDefinition
   validation?: ValidationResult
   unresolved: readonly UnresolvedCard[]
   metadata: readonly CardMetadata[]
   archive: readonly ExtractedArchiveEntry[]
+  ideas: readonly PreparedIdea[]
+  unresolvedIdeas: readonly string[]
   resolution: {
     fetchedCount: number
     cacheHitCount: number
@@ -39,7 +47,7 @@ export interface PrepareCubeSourceOptions extends ResolveWorkbookOptions {
 }
 
 function activeOnly(workbook: ExtractedWorkbook): ExtractedWorkbook {
-  return { ...workbook, archive: [] }
+  return { ...workbook, archive: [], ideas: [] }
 }
 
 function toCubeCard(
@@ -83,17 +91,33 @@ export async function prepareCubeSource(
     }))
   }
 
+  const ideaResolution = await resolveCardNames(
+    extractedWorkbook.ideas.map((entry) => entry.name),
+    resolutionOptions,
+  )
+  const ideas: PreparedIdea[] = extractedWorkbook.ideas.map((entry) => {
+    const card = ideaResolution.cards.get(cardLookupKey(entry.name))
+    return card ? { ...entry, oracleId: card.oracleId } : entry
+  })
   const metadata = uniqueMetadata([
     ...resolved.draftCards.map(({ card }) => card),
     ...resolved.commanders.map(({ card }) => card),
+    ...ideaResolution.cards.values(),
   ])
+  const combinedResolution = {
+    fetchedCount: resolved.stats.fetchedCount + ideaResolution.fetchedCount,
+    cacheHitCount: resolved.stats.cacheHitCount + ideaResolution.cacheHitCount,
+    resolvedUniqueCards: metadata.length,
+  }
 
   if (unresolved.length > 0) {
     return {
       unresolved,
       metadata,
       archive: extractedWorkbook.archive,
-      resolution: resolved.stats,
+      ideas,
+      unresolvedIdeas: ideaResolution.unresolvedNames,
+      resolution: combinedResolution,
     }
   }
 
@@ -110,6 +134,8 @@ export async function prepareCubeSource(
     unresolved,
     metadata,
     archive: extractedWorkbook.archive,
-    resolution: resolved.stats,
+    ideas,
+    unresolvedIdeas: ideaResolution.unresolvedNames,
+    resolution: combinedResolution,
   }
 }

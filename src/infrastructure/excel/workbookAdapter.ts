@@ -6,13 +6,17 @@ import {
   COMMANDER_SECTIONS,
   CUBE_SHEET,
   DRAFT_SECTIONS,
+  IDEA_SECTIONS,
+  IDEAS_SHEET,
   draftAllocationFor,
   type ActiveSectionLayout,
   type ArchiveSectionLayout,
+  type IdeaSectionLayout,
 } from './layout'
 import type {
   ExtractedArchiveEntry,
   ExtractedCard,
+  ExtractedIdeaEntry,
   ExtractedWorkbook,
   WorkbookPool,
 } from './types'
@@ -73,6 +77,24 @@ function readActiveSection(
   return cards
 }
 
+function readIdeaSection(
+  worksheet: ExcelJS.Worksheet,
+  layout: IdeaSectionLayout,
+): ExtractedIdeaEntry[] {
+  assertSectionLabel(worksheet, layout)
+  const entries: ExtractedIdeaEntry[] = []
+
+  for (let row = layout.startRow; row <= worksheet.rowCount; row += 1) {
+    const cell = `${layout.cardColumn}${row}`
+    const name = cellText(worksheet, cell)
+    if (!name || IGNORED_VALUES.has(name)) continue
+
+    entries.push({ name, pool: layout.pool, cell })
+  }
+
+  return entries
+}
+
 function readArchiveSection(
   worksheet: ExcelJS.Worksheet,
   layout: ArchiveSectionLayout,
@@ -98,6 +120,7 @@ export async function extractWorkbook(workbookPath: string): Promise<ExtractedWo
 
   const cubeSheet = requireSheet(workbook, CUBE_SHEET)
   const archiveSheet = requireSheet(workbook, ARCHIVE_SHEET)
+  const ideasSheet = requireSheet(workbook, IDEAS_SHEET)
 
   return {
     draftCards: DRAFT_SECTIONS.flatMap((section) =>
@@ -114,5 +137,6 @@ export async function extractWorkbook(workbookPath: string): Promise<ExtractedWo
         readArchiveSection(archiveSheet, section, 'commander'),
       ),
     ],
+    ideas: IDEA_SECTIONS.flatMap((section) => readIdeaSection(ideasSheet, section)),
   }
 }

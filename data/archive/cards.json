@@ -177,6 +177,11 @@
       "section": "dual"
     },
     {
+      "name": "Aesi, Tyrant of Gyre Strait",
+      "pool": "commander",
+      "section": "dual"
+    },
+    {
       "name": "Akiri, Line-Slinger",
       "pool": "commander",
       "section": "dual"
@@ -228,6 +233,11 @@
     },
     {
       "name": "Florian, Voldaren Scion",
+      "pool": "commander",
+      "section": "dual"
+    },
+    {
+      "name": "Gandalf, Westward Voyager",
       "pool": "commander",
       "section": "dual"
     },
@@ -532,7 +542,17 @@
       "section": "multicolor"
     },
     {
+      "name": "Arabella, Abandoned Doll",
+      "pool": "commander",
+      "section": "multicolor"
+    },
+    {
       "name": "Caesar, Legion's Emperor",
+      "pool": "commander",
+      "section": "multicolor"
+    },
+    {
+      "name": "Chulane, Teller of Tales",
       "pool": "commander",
       "section": "multicolor"
     },
@@ -552,6 +572,11 @@
       "section": "multicolor"
     },
     {
+      "name": "Emmara, Soul of the Accord",
+      "pool": "commander",
+      "section": "multicolor"
+    },
+    {
       "name": "Esika, God of the Tree",
       "pool": "commander",
       "section": "multicolor"
@@ -563,6 +588,11 @@
     },
     {
       "name": "Ghired, Conclave Exile",
+      "pool": "commander",
+      "section": "multicolor"
+    },
+    {
+      "name": "Ghyrson Starn, Kelermorph",
       "pool": "commander",
       "section": "multicolor"
     },
@@ -623,6 +653,11 @@
     },
     {
       "name": "Marchesa, the Black Rose",
+      "pool": "commander",
+      "section": "multicolor"
+    },
+    {
+      "name": "Meren of Clan Nel Toth",
       "pool": "commander",
       "section": "multicolor"
     },
