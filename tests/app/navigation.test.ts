@@ -10,20 +10,20 @@ describe('app navigation', () => {
     expect(pageFromHash('#cards')).toBe('browse')
     expect(pageFromHash('#analysis')).toBe('analysis')
     expect(pageFromHash('#changes')).toBe('sandbox')
-    expect(pageFromHash('#customize')).toBe('customize')
     expect(pageFromHash('#playtest')).toBe('playtest')
     expect(pageFromHash('#history')).toBe('history')
     expect(pageFromHash('#archive')).toBe('archive')
   })
 
-  it('falls back to Cards for empty or unknown hashes', () => {
+  it('falls back to Cards for empty, legacy, or unknown hashes', () => {
     expect(pageFromHash('')).toBe('browse')
+    expect(pageFromHash('#customize')).toBe('browse')
     expect(pageFromHash('#unknown')).toBe('browse')
   })
 
   it('provides stable hashes and page titles', () => {
     expect(hashForPage('browse')).toBe('#cards')
     expect(hashForPage('history')).toBe('#history')
-    expect(pageTitle('customize')).toBe('Customize · Cube Companion')
+    expect(pageTitle('browse')).toBe('Cards · Cube Companion')
   })
 })

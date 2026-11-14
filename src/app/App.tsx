@@ -22,12 +22,6 @@ import {
   pageTitle,
   type AppPage,
 } from './navigation'
-import {
-  applyWorkspacePreferences,
-  loadWorkspacePreferences,
-  saveWorkspacePreferences,
-  type WorkspacePreferences,
-} from './preferences'
 
 type NavIcon =
   | 'cards'
@@ -36,7 +30,6 @@ type NavIcon =
   | 'list'
   | 'analysis'
   | 'changes'
-  | 'customize'
   | 'playtest'
   | 'history'
   | 'archive'
@@ -52,7 +45,6 @@ interface NavItem {
 const WORKSPACE_NAV: readonly NavItem[] = [
   { page: 'analysis', label: 'Analysis', icon: 'analysis' },
   { page: 'sandbox', label: 'Changes', icon: 'changes' },
-  { page: 'customize', label: 'Customize', icon: 'customize' },
 ]
 
 function CubeMark() {
@@ -113,16 +105,6 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
       </svg>
     )
   }
-  if (icon === 'customize') {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 7h7M15 7h5M4 17h5M13 17h7M4 12h12M20 12h0" />
-        <circle cx="13" cy="7" r="2" />
-        <circle cx="11" cy="17" r="2" />
-        <circle cx="18" cy="12" r="2" />
-      </svg>
-    )
-  }
   if (icon === 'playtest') {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -177,146 +159,6 @@ function SidebarNavButton({
   )
 }
 
-function ChoiceGroup<T extends string>({
-  value,
-  options,
-  onChange,
-}: {
-  value: T
-  options: readonly { value: T; label: string }[]
-  onChange: (value: T) => void
-}) {
-  return (
-    <div className="preference-options" role="group">
-      {options.map((option) => (
-        <button
-          type="button"
-          className={value === option.value ? 'active' : ''}
-          key={option.value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function CustomizeView({
-  preferences,
-  onChange,
-}: {
-  preferences: WorkspacePreferences
-  onChange: (preferences: WorkspacePreferences) => void
-}) {
-  return (
-    <section className="customize-view" aria-label="Customize Cube Companion">
-      <header className="customize-heading">
-        <span>Preferences</span>
-        <h2>Customize</h2>
-        <p>Workspace preferences are stored locally in this browser.</p>
-      </header>
-
-      <div className="preferences-stack">
-        <section className="preferences-section">
-          <header>
-            <h3>Cards</h3>
-            <p>Choose how the card browser opens and how densely it is displayed.</p>
-          </header>
-
-          <div className="preferences-list">
-            <div className="preference-row">
-              <div>
-                <strong>Default pool</strong>
-                <span>Which library opens when you return to Cards.</span>
-              </div>
-              <ChoiceGroup
-                value={preferences.defaultPool}
-                options={[
-                  { value: 'draft', label: 'Cube' },
-                  { value: 'commanders', label: 'Commanders' },
-                ]}
-                onChange={(defaultPool) => onChange({ ...preferences, defaultPool })}
-              />
-            </div>
-
-            <div className="preference-row">
-              <div>
-                <strong>Default view</strong>
-                <span>Open Cards as dense columns or card images.</span>
-              </div>
-              <ChoiceGroup
-                value={preferences.defaultView}
-                options={[
-                  { value: 'list', label: 'Columns' },
-                  { value: 'images', label: 'Images' },
-                ]}
-                onChange={(defaultView) => onChange({ ...preferences, defaultView })}
-              />
-            </div>
-
-            <div className="preference-row">
-              <div>
-                <strong>Row density</strong>
-                <span>Choose between the dense cube overview and roomier card rows.</span>
-              </div>
-              <ChoiceGroup
-                value={preferences.cardDensity}
-                options={[
-                  { value: 'compact', label: 'Compact' },
-                  { value: 'comfortable', label: 'Comfortable' },
-                ]}
-                onChange={(cardDensity) => onChange({ ...preferences, cardDensity })}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="preferences-section">
-          <header>
-            <h3>Interaction</h3>
-            <p>Control card inspection behavior across the workspace.</p>
-          </header>
-
-          <div className="preferences-list">
-            <div className="preference-row">
-              <div>
-                <strong>Hover previews</strong>
-                <span>Show card artwork and metadata when hovering card rows.</span>
-              </div>
-              <ChoiceGroup
-                value={preferences.hoverPreviews ? 'on' : 'off'}
-                options={[
-                  { value: 'on', label: 'On' },
-                  { value: 'off', label: 'Off' },
-                ]}
-                onChange={(value) => onChange({ ...preferences, hoverPreviews: value === 'on' })}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="preferences-section">
-          <header>
-            <h3>Appearance</h3>
-            <p>Visual settings for the workspace.</p>
-          </header>
-
-          <div className="preferences-list">
-            <div className="preference-row">
-              <div>
-                <strong>Theme</strong>
-                <span>Cube Companion currently uses one purpose-built dark theme.</span>
-              </div>
-              <span className="preference-static-value">Dark workspace</span>
-            </div>
-          </div>
-        </section>
-      </div>
-    </section>
-  )
-}
-
 function initialPendingChangeCount(): number {
   const state = loadSandboxState(
     releaseInfo.snapshotId,
@@ -329,17 +171,9 @@ function initialPendingChangeCount(): number {
 
 function App() {
   const [page, setPage] = useState<AppPage>(() => pageFromHash(window.location.hash))
-  const [preferences, setPreferences] = useState<WorkspacePreferences>(() =>
-    loadWorkspacePreferences(window.localStorage),
-  )
-  const [cardList, setCardList] = useState<LibraryList>(() => preferences.defaultPool)
+  const [cardList, setCardList] = useState<LibraryList>('draft')
   const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
   const totalCards = draftCards.length + commanderCards.length
-
-  useEffect(() => {
-    saveWorkspacePreferences(preferences, window.localStorage)
-    applyWorkspacePreferences(preferences, document.documentElement)
-  }, [preferences])
 
   useEffect(() => {
     function syncPageFromUrl() {
@@ -378,7 +212,6 @@ function App() {
       return (
         <CubeBrowser
           list={cardList}
-          defaultView={preferences.defaultView}
           onOpenChanges={() => navigate('sandbox')}
         />
       )
@@ -386,9 +219,6 @@ function App() {
     if (page === 'analysis') return <AnalysisDashboard />
     if (page === 'sandbox') {
       return <SandboxView onChangeCount={setPendingChangeCount} />
-    }
-    if (page === 'customize') {
-      return <CustomizeView preferences={preferences} onChange={setPreferences} />
     }
     if (page === 'playtest') return <PlaytestTable />
     if (page === 'history') return <HistoryBrowser />
