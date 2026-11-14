@@ -43,6 +43,8 @@ interface ArchiveCommanderGroup {
   items: ArchiveItem[]
 }
 
+type ArchiveSort = 'name' | 'active'
+
 const ARCHIVE_COLOR_COLUMNS: readonly { key: ArchiveColorKey; label: string }[] = [
   { key: 'white', label: 'White' },
   { key: 'blue', label: 'Blue' },
@@ -132,13 +134,27 @@ function ArchiveCardRow({ item }: { item: ArchiveItem }) {
   )
 }
 
-function archiveColumns(items: readonly ArchiveItem[]): ArchiveColorColumn[] {
+function compareArchiveItems(
+  left: ArchiveItem,
+  right: ArchiveItem,
+  sort: ArchiveSort,
+): number {
+  if (sort === 'active' && left.record.active !== right.record.active) {
+    return Number(right.record.active) - Number(left.record.active)
+  }
+  return left.record.name.localeCompare(right.record.name)
+}
+
+function archiveColumns(
+  items: readonly ArchiveItem[],
+  sort: ArchiveSort,
+): ArchiveColorColumn[] {
   return ARCHIVE_COLOR_COLUMNS.map(({ key, label }) => ({
     key,
     label,
     items: items
       .filter((item) => archiveColorKey(item) === key)
-      .sort((left, right) => left.record.name.localeCompare(right.record.name)),
+      .sort((left, right) => compareArchiveItems(left, right, sort)),
   }))
 }
 
@@ -185,9 +201,15 @@ function CubeColumnSections({
   )
 }
 
-function ArchiveCubeBoard({ items }: { items: readonly ArchiveItem[] }) {
+function ArchiveCubeBoard({
+  items,
+  sort,
+}: {
+  items: readonly ArchiveItem[]
+  sort: ArchiveSort
+}) {
   if (items.length === 0) return null
-  const columns = archiveColumns(items)
+  const columns = archiveColumns(items, sort)
 
   return (
     <section className="archive-pool-board">
@@ -244,7 +266,10 @@ function legacyCommanderGroup(record: ArchiveRecord): { key: string; label: stri
   }
 }
 
-function commanderGroups(items: readonly ArchiveItem[]): ArchiveCommanderGroup[] {
+function commanderGroups(
+  items: readonly ArchiveItem[],
+  sort: ArchiveSort,
+): ArchiveCommanderGroup[] {
   const groups = new Map<string, ArchiveCommanderGroup>()
 
   for (const item of items) {
@@ -264,7 +289,7 @@ function commanderGroups(items: readonly ArchiveItem[]): ArchiveCommanderGroup[]
     .map((group) => ({
       ...group,
       items: [...group.items].sort((left, right) =>
-        left.record.name.localeCompare(right.record.name),
+        compareArchiveItems(left, right, sort),
       ),
     }))
     .sort((left, right) => {
@@ -274,9 +299,15 @@ function commanderGroups(items: readonly ArchiveItem[]): ArchiveCommanderGroup[]
     })
 }
 
-function ArchiveCommanderBoard({ items }: { items: readonly ArchiveItem[] }) {
+function ArchiveCommanderBoard({
+  items,
+  sort,
+}: {
+  items: readonly ArchiveItem[]
+  sort: ArchiveSort
+}) {
   if (items.length === 0) return null
-  const groups = commanderGroups(items)
+  const groups = commanderGroups(items, sort)
 
   return (
     <section className="archive-pool-board">
@@ -312,6 +343,7 @@ export function ArchiveBrowser() {
   const [query, setQuery] = useState('')
   const [pool, setPool] = useState<ArchivePoolFilter>('all')
   const [source, setSource] = useState<ArchiveSourceFilter>('all')
+  const [sort, setSort] = useState<ArchiveSort>('name')
   const records = useMemo(
     () => buildArchiveRecords(
       workbookArchiveEntries,
@@ -335,7 +367,7 @@ export function ArchiveBrowser() {
   const workbookCount = records.filter((record) => record.sources.includes('workbook')).length
   const historyCount = records.filter((record) => record.sources.includes('history')).length
   const activeCount = records.filter((record) => record.active).length
-  const hasFilters = Boolean(query || pool !== 'all' || source !== 'all')
+  const hasFilters = Boolean(query || pool !== 'all' || source !== 'all' || sort !== 'name')
   const visibleDraft = visibleItems.filter((item) => item.record.pool === 'draft')
   const visibleCommanders = visibleItems.filter((item) => item.record.pool === 'commander')
 
@@ -343,6 +375,7 @@ export function ArchiveBrowser() {
     setQuery('')
     setPool('all')
     setSource('all')
+    setSort('name')
   }
 
   return (
@@ -365,22 +398,22 @@ export function ArchiveBrowser() {
         <p>Workbook names and historical sections are preserved as recorded.</p>
       </div>
 
-      <div className={`archive-filter-dock${hasFilters ? ' active' : ''}`}>
-        <label className="archive-search">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="6.5" />
-            <path d="m16 16 4 4" />
-          </svg>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search card or historical section…"
-            aria-label="Search archive"
-          />
-        </label>
+      <label className="archive-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m16 16 4 4" />
+        </svg>
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search card or historical section…"
+          aria-label="Search archive"
+        />
+      </label>
 
-        <div className="archive-filter-group">
-          <span>Pool</span>
+      <div className={`archive-filter-dock${hasFilters ? ' active' : ''}`}>
+        <div className="archive-filter-row">
+          <span className="archive-filter-row-label">Pool</span>
           <div className="archive-filter-chips" role="group" aria-label="Archive pool">
             {POOL_OPTIONS.map((option) => (
               <button
@@ -393,10 +426,19 @@ export function ArchiveBrowser() {
               </button>
             ))}
           </div>
+
+          <div className="archive-filter-status">
+            <span className="archive-active-legend">
+              <span className="archive-active-dot" aria-hidden="true" />
+              Active in current cube
+            </span>
+            <span><strong>{visible.length}</strong> of {records.length}</span>
+            {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
+          </div>
         </div>
 
-        <div className="archive-filter-group">
-          <span>Source</span>
+        <div className="archive-filter-row archive-filter-row-secondary">
+          <span className="archive-filter-row-label">Source</span>
           <div className="archive-filter-chips" role="group" aria-label="Archive source">
             {SOURCE_OPTIONS.map((option) => (
               <button
@@ -409,18 +451,31 @@ export function ArchiveBrowser() {
               </button>
             ))}
           </div>
-        </div>
 
-        <div className="archive-filter-status">
-          <span><strong>{visible.length}</strong> of {records.length}</span>
-          {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
+          <div className="archive-sort-control" role="group" aria-label="Sort archive cards">
+            <span>Sort</span>
+            <button
+              type="button"
+              className={sort === 'name' ? 'active' : ''}
+              onClick={() => setSort('name')}
+            >
+              Name
+            </button>
+            <button
+              type="button"
+              className={sort === 'active' ? 'active' : ''}
+              onClick={() => setSort('active')}
+            >
+              Active
+            </button>
+          </div>
         </div>
       </div>
 
       {visible.length > 0 ? (
         <div className="archive-pools">
-          <ArchiveCubeBoard items={visibleDraft} />
-          <ArchiveCommanderBoard items={visibleCommanders} />
+          <ArchiveCubeBoard items={visibleDraft} sort={sort} />
+          <ArchiveCommanderBoard items={visibleCommanders} sort={sort} />
         </div>
       ) : (
         <div className="archive-empty">
