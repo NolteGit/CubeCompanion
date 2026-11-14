@@ -124,7 +124,6 @@ function CardActionButton({
       className={`card-row-action card-row-action--${action.tone}${active ? ' active' : ''}`}
       aria-label={action.title(card, active)}
       title={action.title(card, active)}
-      disabled={active}
       onClick={(event) => {
         event.preventDefault()
         event.stopPropagation()
@@ -230,6 +229,7 @@ export function CardCollection({
                 <span className="card-row-name">{card.name}</span>
               )}
               {workingAdded && <span className="card-row-working-status">IN</span>}
+              {active && <span className="card-row-removal-status">OUT</span>}
               <CardActionButton card={card} action={rowAction} />
             </div>
           )

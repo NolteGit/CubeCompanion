@@ -67,6 +67,13 @@ function primaryType(card: BrowserCard): string {
   return order.find((type) => card.typeLine.includes(type)) ?? 'Other'
 }
 
+function compareWorkingCards(left: BrowserCard, right: BrowserCard): number {
+  const leftCreature = left.typeLine.includes('Creature')
+  const rightCreature = right.typeLine.includes('Creature')
+  if (leftCreature !== rightCreature) return leftCreature ? -1 : 1
+  return left.manaValue - right.manaValue || left.name.localeCompare(right.name)
+}
+
 function filteredSubgroups(
   cards: readonly BrowserCard[],
   activeType: CardTypeFilter,
@@ -300,7 +307,13 @@ function CubeBrowserContent({
     }),
     [sandboxState],
   )
-  const sourceCards = pool === 'draft' ? sandboxState.draftCards : sandboxState.commanders
+  const workingPoolCards = pool === 'draft' ? sandboxState.draftCards : sandboxState.commanders
+  const officialPoolCards = pool === 'draft' ? draftCards : commanderCards
+  const addedPoolCards = pool === 'draft' ? pendingDiff.addedDraft : pendingDiff.addedCommanders
+  const sourceCards = useMemo(
+    () => [...officialPoolCards, ...addedPoolCards],
+    [addedPoolCards, officialPoolCards],
+  )
   const poolAddedCount = pool === 'draft'
     ? pendingDiff.addedDraft.length
     : pendingDiff.addedCommanders.length
@@ -320,7 +333,10 @@ function CubeBrowserContent({
     [pool, query, section, sort, sourceCards, type],
   )
   const groups = useMemo(
-    () => groupCards(visibleCards, pool),
+    () => groupCards(visibleCards, pool).map((group) => ({
+      ...group,
+      cards: [...group.cards].sort(compareWorkingCards),
+    })),
     [pool, visibleCards],
   )
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all' || sort !== 'cube')
@@ -335,26 +351,31 @@ function CubeBrowserContent({
   }
 
   function queueRemoval(card: BrowserCard) {
-    if (!onRemoveToChanges || queuedRemovalIds.has(card.oracleId)) return
+    if (!onRemoveToChanges) return
     onRemoveToChanges(card, pool === 'draft' ? 'draft' : 'commander')
-    setQueuedRemovalIds((current) => new Set(current).add(card.oracleId))
-    setSandboxState(loadSandboxState(
+    const nextState = loadSandboxState(
       releaseInfo.snapshotId,
       draftCards,
       commanderCards,
       window.sessionStorage,
-    ))
+    )
+    const nextDiff = sandboxDiff(nextState, draftCards, commanderCards)
+    const removedCards = pool === 'draft'
+      ? nextDiff.removedDraft
+      : nextDiff.removedCommanders
+    setSandboxState(nextState)
+    setQueuedRemovalIds(new Set(removedCards.map((entry) => entry.oracleId)))
   }
 
   const removeAction = onRemoveToChanges
     ? {
         symbol: '−',
-        activeSymbol: '✓',
+        activeSymbol: '×',
         tone: 'remove' as const,
         isActive: (card: BrowserCard) => queuedRemovalIds.has(card.oracleId),
         title: (card: BrowserCard, active: boolean) =>
           active
-            ? `${card.name} is queued for removal`
+            ? `Cancel removal of ${card.name}`
             : `Queue ${card.name} for removal`,
         onClick: queueRemoval,
       }
@@ -485,7 +506,9 @@ function CubeBrowserContent({
           </div>
 
           <div className="filter-status">
-            <span><strong>{visibleCards.length}</strong> of {sourceCards.length} working cards</span>
+            <span>
+              <strong>{visibleCards.length}</strong> shown · {workingPoolCards.length} working
+            </span>
             {(poolAddedCount > 0 || poolRemovedCount > 0) && (
               <span className="working-preview-status">
                 Working <b>+{poolAddedCount}</b> <b>−{poolRemovedCount}</b>

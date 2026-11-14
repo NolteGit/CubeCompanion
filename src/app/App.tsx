@@ -237,9 +237,10 @@ function App() {
       window.sessionStorage,
     )
     const poolCards = pool === 'draft' ? current.draftCards : current.commanders
-    if (!poolCards.some((entry) => entry.oracleId === card.oracleId)) return
-
-    const next = removeSandboxCard(current, pool, card.oracleId)
+    const isPresent = poolCards.some((entry) => entry.oracleId === card.oracleId)
+    const next = isPresent
+      ? removeSandboxCard(current, pool, card.oracleId)
+      : applySandboxCard(current, card, pool)
     saveSandboxState(next, window.sessionStorage)
     setPendingChangeCount(
       sandboxChangeCount(sandboxDiff(next, draftCards, commanderCards)),

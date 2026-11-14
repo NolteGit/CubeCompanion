@@ -1,8 +1,15 @@
 import { useMemo, useState } from 'react'
-import { maybeCommanderCards, maybeDraftCards } from './data'
+import {
+  commanderCards,
+  draftCards,
+  maybeCommanderCards,
+  maybeDraftCards,
+  releaseInfo,
+} from './data'
 import { HoverCard } from './HoverCard'
 import { groupCards } from './selectors'
 import type { BrowserCard, CardGroup } from './types'
+import { loadSandboxState } from '../sandbox/storage'
 import type { SandboxPool } from '../sandbox/types'
 import './maybe.css'
 
@@ -100,6 +107,38 @@ function commanderGroups(cards: readonly BrowserCard[]): CardGroup[] {
       const rightIndex = COMMANDER_GROUP_INDEX.get(right.key) ?? Number.MAX_SAFE_INTEGER
       return leftIndex - rightIndex || left.label.localeCompare(right.label)
     })
+}
+
+function workingMaybeStatuses(): ReadonlyMap<string, MaybeAddResult> {
+  const state = loadSandboxState(
+    releaseInfo.snapshotId,
+    draftCards,
+    commanderCards,
+    window.sessionStorage,
+  )
+  const statuses = new Map<string, MaybeAddResult>()
+  const officialDraftIds = new Set(draftCards.map((card) => card.oracleId))
+  const officialCommanderIds = new Set(commanderCards.map((card) => card.oracleId))
+  const workingDraftIds = new Set(state.draftCards.map((card) => card.oracleId))
+  const workingCommanderIds = new Set(state.commanders.map((card) => card.oracleId))
+
+  for (const card of maybeDraftCards) {
+    if (!workingDraftIds.has(card.oracleId)) continue
+    statuses.set(
+      `draft:${card.oracleId}`,
+      officialDraftIds.has(card.oracleId) ? 'unchanged' : 'added',
+    )
+  }
+
+  for (const card of maybeCommanderCards) {
+    if (!workingCommanderIds.has(card.oracleId)) continue
+    statuses.set(
+      `commander:${card.oracleId}`,
+      officialCommanderIds.has(card.oracleId) ? 'unchanged' : 'added',
+    )
+  }
+
+  return statuses
 }
 
 function MaybeCardRows({
@@ -280,7 +319,7 @@ function MaybeCommanderPool({
 export function MaybeList({ onAddToChanges }: MaybeListProps) {
   const [query, setQuery] = useState('')
   const [statuses, setStatuses] = useState<ReadonlyMap<string, MaybeAddResult>>(
-    () => new Map(),
+    workingMaybeStatuses,
   )
   const draftIdeas = useMemo(() => filterIdeas(maybeDraftCards, query), [query])
   const commanderIdeas = useMemo(() => filterIdeas(maybeCommanderCards, query), [query])
