@@ -1,0 +1,209 @@
+.archive-pools {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+
+.archive-pool-board {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.archive-pool-board + .archive-pool-board {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.archive-pool-heading {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px;
+}
+
+.archive-pool-heading strong {
+  font-size: 0.72rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.archive-pool-heading > span {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-color-columns,
+.archive-commander-groups {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(152px, 1fr));
+  align-items: start;
+  gap: 5px;
+  min-width: 1180px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.archive-commander-groups {
+  gap: 10px 5px;
+}
+
+.archive-color-column,
+.archive-commander-group {
+  --column-rgb: 153 164 174;
+  min-width: 0;
+}
+
+.archive-color-column--white { --column-rgb: 211 205 173; }
+.archive-color-column--blue { --column-rgb: 83 158 205; }
+.archive-color-column--black { --column-rgb: 123 105 137; }
+.archive-color-column--red { --column-rgb: 202 86 88; }
+.archive-color-column--green { --column-rgb: 68 161 105; }
+.archive-color-column--multicolor { --column-rgb: 212 174 67; }
+.archive-color-column--colorless { --column-rgb: 153 164 174; }
+.archive-color-column--land { --column-rgb: 155 104 74; }
+
+.archive-color-column > header,
+.archive-commander-group > header {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  min-height: 29px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px;
+  color: var(--text);
+}
+
+.archive-color-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--column-rgb));
+  box-shadow: 0 0 0 2px rgb(var(--column-rgb) / 12%);
+}
+
+.archive-color-column > header strong,
+.archive-commander-group > header strong {
+  overflow: hidden;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-color-column > header > span:last-child,
+.archive-commander-group > header > span:last-child {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-column-sections {
+  display: grid;
+  gap: 5px;
+}
+
+.archive-column-section {
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgb(var(--column-rgb) / 3%);
+  box-shadow: inset 0 0 0 1px rgb(var(--column-rgb) / 10%);
+}
+
+.archive-column-section > header {
+  display: flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 0 7px;
+  border-bottom: 1px solid rgb(var(--column-rgb) / 12%);
+  background: rgb(var(--column-rgb) / 6%);
+}
+
+.archive-column-section > header strong {
+  font-size: 0.62rem;
+  font-weight: 750;
+}
+
+.archive-column-section > header span {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-column-cards {
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgb(var(--column-rgb) / 3%);
+  box-shadow: inset 0 0 0 1px rgb(var(--column-rgb) / 10%);
+}
+
+.archive-column-section .archive-column-cards {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.archive-column-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10px;
+  min-height: 27px;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px 3px 7px;
+  border-bottom: 1px solid rgb(255 255 255 / 5%);
+  background: rgb(var(--column-rgb) / 4%);
+}
+
+.archive-column-card:last-child {
+  border-bottom: 0;
+}
+
+.archive-column-card:hover {
+  background: rgb(var(--column-rgb) / 14%);
+  box-shadow: inset 2px 0 rgb(var(--column-rgb) / 55%);
+}
+
+.archive-column-card > strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.69rem;
+  font-weight: 650;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.archive-active-dot {
+  width: 6px;
+  height: 6px;
+  justify-self: center;
+  border-radius: 50%;
+  background: #78d89d;
+  box-shadow: 0 0 0 2px rgb(68 161 105 / 10%);
+}
+
+.archive-column-empty {
+  display: grid;
+  min-height: 34px;
+  place-items: center;
+  border: 1px dashed rgb(var(--column-rgb) / 14%);
+  border-radius: 6px;
+  color: var(--text-faint);
+  background: rgb(var(--column-rgb) / 2%);
+  font-size: 0.62rem;
+}
+
+@media (max-width: 760px) {
+  .archive-pools {
+    gap: 18px;
+  }
+
+  .archive-color-columns,
+  .archive-commander-groups {
+    min-width: 1120px;
+  }
+}

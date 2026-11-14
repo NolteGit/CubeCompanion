@@ -35,6 +35,7 @@ export interface PreparedCubeSource {
   archive: readonly ExtractedArchiveEntry[]
   ideas: readonly PreparedIdea[]
   unresolvedIdeas: readonly string[]
+  unresolvedArchive: readonly string[]
   resolution: {
     fetchedCount: number
     cacheHitCount: number
@@ -99,14 +100,27 @@ export async function prepareCubeSource(
     const card = ideaResolution.cards.get(cardLookupKey(entry.name))
     return card ? { ...entry, oracleId: card.oracleId } : entry
   })
+
+  const archiveResolution = await resolveCardNames(
+    extractedWorkbook.archive.map((entry) => entry.name),
+    resolutionOptions,
+  )
+
   const metadata = uniqueMetadata([
     ...resolved.draftCards.map(({ card }) => card),
     ...resolved.commanders.map(({ card }) => card),
     ...ideaResolution.cards.values(),
+    ...archiveResolution.cards.values(),
   ])
   const combinedResolution = {
-    fetchedCount: resolved.stats.fetchedCount + ideaResolution.fetchedCount,
-    cacheHitCount: resolved.stats.cacheHitCount + ideaResolution.cacheHitCount,
+    fetchedCount:
+      resolved.stats.fetchedCount +
+      ideaResolution.fetchedCount +
+      archiveResolution.fetchedCount,
+    cacheHitCount:
+      resolved.stats.cacheHitCount +
+      ideaResolution.cacheHitCount +
+      archiveResolution.cacheHitCount,
     resolvedUniqueCards: metadata.length,
   }
 
@@ -117,6 +131,7 @@ export async function prepareCubeSource(
       archive: extractedWorkbook.archive,
       ideas,
       unresolvedIdeas: ideaResolution.unresolvedNames,
+      unresolvedArchive: archiveResolution.unresolvedNames,
       resolution: combinedResolution,
     }
   }
@@ -136,6 +151,7 @@ export async function prepareCubeSource(
     archive: extractedWorkbook.archive,
     ideas,
     unresolvedIdeas: ideaResolution.unresolvedNames,
+    unresolvedArchive: archiveResolution.unresolvedNames,
     resolution: combinedResolution,
   }
 }

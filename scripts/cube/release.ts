@@ -71,6 +71,11 @@ if (result.unresolved.length > 0) {
   if (result.unresolvedIdeas.length > 0) {
     console.warn(`Ideas:      ${result.unresolvedIdeas.length} unresolved — ${result.unresolvedIdeas.join(', ')}`)
   }
+  if (result.unresolvedArchive.length > 0) {
+    console.warn(
+      `Archive metadata: ${result.unresolvedArchive.length} unresolved — ${result.unresolvedArchive.join(', ')}`,
+    )
+  }
 
   try {
     const archive = await publishArchive(result.archive)

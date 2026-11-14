@@ -41,6 +41,15 @@ export function browserCardFromCubeCard(
   return joinCard(card, sourceIndex)
 }
 
+export function browserCardFromName(
+  name: string,
+  sourceIndex = 0,
+): BrowserCard | undefined {
+  const metadata = metadataByName.get(name.trim().toLocaleLowerCase('en-US'))
+  if (!metadata) return undefined
+  return { ...metadata, sourceIndex }
+}
+
 function joinIdea(entry: IdeaSourceEntry, sourceIndex: number): BrowserCard {
   const metadata = entry.oracleId
     ? metadataByOracleId.get(entry.oracleId)

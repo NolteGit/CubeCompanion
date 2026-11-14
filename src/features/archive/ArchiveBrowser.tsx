@@ -1,8 +1,9 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { cardTint } from '../browser/cardTint'
-import { commanderCards, draftCards } from '../browser/data'
+import { browserCardFromName, commanderCards, draftCards } from '../browser/data'
 import { HoverCard } from '../browser/HoverCard'
-import type { BrowserCard } from '../browser/types'
+import { groupCards } from '../browser/selectors'
+import type { BrowserCard, CardGroup } from '../browser/types'
 import { historySnapshots } from '../history/data'
 import {
   buildArchiveRecords,
@@ -13,6 +14,59 @@ import {
 } from './archive'
 import { workbookArchiveEntries } from './data'
 import './archive.css'
+import './archiveColumns.css'
+
+type ArchiveColorKey =
+  | 'white'
+  | 'blue'
+  | 'black'
+  | 'red'
+  | 'green'
+  | 'multicolor'
+  | 'colorless'
+  | 'land'
+
+interface ArchiveItem {
+  record: ArchiveRecord
+  card?: BrowserCard
+}
+
+interface ArchiveColorColumn {
+  key: ArchiveColorKey
+  label: string
+  items: ArchiveItem[]
+}
+
+interface ArchiveCommanderGroup {
+  key: string
+  label: string
+  items: ArchiveItem[]
+}
+
+const ARCHIVE_COLOR_COLUMNS: readonly { key: ArchiveColorKey; label: string }[] = [
+  { key: 'white', label: 'White' },
+  { key: 'blue', label: 'Blue' },
+  { key: 'black', label: 'Black' },
+  { key: 'red', label: 'Red' },
+  { key: 'green', label: 'Green' },
+  { key: 'multicolor', label: 'Multicolor' },
+  { key: 'colorless', label: 'Colorless' },
+  { key: 'land', label: 'Lands' },
+]
+
+const COMMANDER_GROUP_ORDER = [
+  '1-W', '1-U', '1-B', '1-R', '1-G',
+  '2-WU', '2-UB', '2-BR', '2-RG', '2-WG',
+  '2-WB', '2-UR', '2-BG', '2-WR', '2-UG',
+  '3-WUB', '3-UBR', '3-BRG', '3-WRG', '3-WUG',
+  '3-WUR', '3-WBR', '3-WBG', '3-UBG', '3-URG',
+  '4-WUBR', '4-WUBG', '4-WURG', '4-WBRG', '4-UBRG',
+  '5-WUBRG', '0-color',
+] as const
+
+const COMMANDER_GROUP_INDEX = new Map<string, number>(
+  COMMANDER_GROUP_ORDER.map((key, index) => [key, index]),
+)
 
 const POOL_OPTIONS: readonly { value: ArchivePoolFilter; label: string }[] = [
   { value: 'all', label: 'All pools' },
@@ -30,48 +84,227 @@ function normalizedName(value: string): string {
   return value.trim().toLocaleLowerCase('en-US')
 }
 
-function currentCardKey(pool: 'draft' | 'commander', name: string): string {
-  return `${pool}:${normalizedName(name)}`
+function archiveColorKey(item: ArchiveItem): ArchiveColorKey {
+  if (item.card) return cardTint(item.card)
+
+  const sections = item.record.sections.map(normalizedName)
+  if (sections.includes('land')) return 'land'
+  if (sections.includes('white')) return 'white'
+  if (sections.includes('blue')) return 'blue'
+  if (sections.includes('black')) return 'black'
+  if (sections.includes('red')) return 'red'
+  if (sections.includes('green')) return 'green'
+  if (sections.includes('colorless')) return 'colorless'
+  return 'multicolor'
 }
 
-function ArchiveRow({
-  record,
-  card,
-}: {
-  record: ArchiveRecord
-  card?: BrowserCard
-}) {
-  const className = `archive-row${card ? ` archive-row--${cardTint(card)}` : ''}`
+function archiveMeta(record: ArchiveRecord): string {
+  const sources = record.sources.map((entrySource) =>
+    entrySource === 'workbook' ? 'Workbook' : 'History',
+  )
+  return [...record.sections, ...(record.active ? ['Active'] : []), ...sources].join(' · ')
+}
+
+function ArchiveCardRow({ item }: { item: ArchiveItem }) {
+  const { record, card } = item
+  const meta = archiveMeta(record)
   const content: ReactNode = (
     <>
-      <div className="archive-card">
-        <strong>{record.name}</strong>
-        <small>{record.pool === 'draft' ? 'Cube' : 'Commander'}</small>
-      </div>
-
-      <div className="archive-sections">
-        {record.sections.map((section) => <span key={section}>{section}</span>)}
-      </div>
-
-      <div className="archive-sources">
-        {record.active && <span className="active-card">Active</span>}
-        {record.sources.map((entrySource) => (
-          <span key={entrySource}>
-            {entrySource === 'workbook' ? 'Workbook' : 'History'}
-          </span>
-        ))}
-      </div>
+      <strong title={`${record.name} — ${meta}`}>{record.name}</strong>
+      {record.active && (
+        <span
+          className="archive-active-dot"
+          title="Active in the current cube"
+          aria-label="Active in the current cube"
+        />
+      )}
     </>
   )
 
   if (!card) {
-    return <article className={className}>{content}</article>
+    return <div className="archive-column-card">{content}</div>
   }
 
   return (
-    <HoverCard card={card} className={className}>
+    <HoverCard card={card} className="archive-column-card">
       {content}
     </HoverCard>
+  )
+}
+
+function archiveColumns(items: readonly ArchiveItem[]): ArchiveColorColumn[] {
+  return ARCHIVE_COLOR_COLUMNS.map(({ key, label }) => ({
+    key,
+    label,
+    items: items
+      .filter((item) => archiveColorKey(item) === key)
+      .sort((left, right) => left.record.name.localeCompare(right.record.name)),
+  }))
+}
+
+function CubeColumnSections({
+  column,
+}: {
+  column: ArchiveColorColumn
+}) {
+  const groups = column.key === 'land'
+    ? [{ label: 'Land', items: column.items }]
+    : [
+        {
+          label: 'Creature',
+          items: column.items.filter((item) => item.card?.typeLine.includes('Creature')),
+        },
+        {
+          label: 'Noncreature',
+          items: column.items.filter(
+            (item) => item.card && !item.card.typeLine.includes('Creature'),
+          ),
+        },
+        {
+          label: 'Other',
+          items: column.items.filter((item) => !item.card),
+        },
+      ]
+
+  return (
+    <div className="archive-column-sections">
+      {groups.filter((group) => group.items.length > 0).map((group) => (
+        <section className="archive-column-section" key={group.label}>
+          <header>
+            <strong>{group.label}</strong>
+            <span>{group.items.length}</span>
+          </header>
+          <div className="archive-column-cards">
+            {group.items.map((item) => (
+              <ArchiveCardRow item={item} key={item.record.key} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+function ArchiveCubeBoard({ items }: { items: readonly ArchiveItem[] }) {
+  if (items.length === 0) return null
+  const columns = archiveColumns(items)
+
+  return (
+    <section className="archive-pool-board">
+      <header className="archive-pool-heading">
+        <strong>Cube archive</strong>
+        <span>{items.length}</span>
+      </header>
+
+      <div className="archive-color-columns">
+        {columns.map((column) => (
+          <section
+            className={`archive-color-column archive-color-column--${column.key}`}
+            key={column.key}
+          >
+            <header>
+              <span className="archive-color-dot" aria-hidden="true" />
+              <strong>{column.label}</strong>
+              <span>{column.items.length}</span>
+            </header>
+
+            {column.items.length > 0 ? (
+              <CubeColumnSections column={column} />
+            ) : (
+              <div className="archive-column-empty">—</div>
+            )}
+          </section>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function resolvedCommanderGroup(card: BrowserCard): CardGroup {
+  return groupCards([card], 'commanders')[0]
+}
+
+function legacyCommanderGroup(record: ArchiveRecord): { key: string; label: string } {
+  const section = record.sections[0] ?? 'Other'
+  const normalized = normalizedName(section)
+
+  const mono: Readonly<Record<string, { key: string; label: string }>> = {
+    white: { key: '1-W', label: 'White' },
+    blue: { key: '1-U', label: 'Blue' },
+    black: { key: '1-B', label: 'Black' },
+    red: { key: '1-R', label: 'Red' },
+    green: { key: '1-G', label: 'Green' },
+    colorless: { key: '0-color', label: 'Colorless' },
+  }
+  return mono[normalized] ?? {
+    key: `legacy-${normalized}`,
+    label: normalized === 'dual' || normalized === 'multicolor'
+      ? 'Legacy multicolor'
+      : section,
+  }
+}
+
+function commanderGroups(items: readonly ArchiveItem[]): ArchiveCommanderGroup[] {
+  const groups = new Map<string, ArchiveCommanderGroup>()
+
+  for (const item of items) {
+    const group = item.card
+      ? resolvedCommanderGroup(item.card)
+      : legacyCommanderGroup(item.record)
+    const current = groups.get(group.key) ?? {
+      key: group.key,
+      label: group.label,
+      items: [],
+    }
+    current.items.push(item)
+    groups.set(group.key, current)
+  }
+
+  return [...groups.values()]
+    .map((group) => ({
+      ...group,
+      items: [...group.items].sort((left, right) =>
+        left.record.name.localeCompare(right.record.name),
+      ),
+    }))
+    .sort((left, right) => {
+      const leftIndex = COMMANDER_GROUP_INDEX.get(left.key) ?? Number.MAX_SAFE_INTEGER
+      const rightIndex = COMMANDER_GROUP_INDEX.get(right.key) ?? Number.MAX_SAFE_INTEGER
+      return leftIndex - rightIndex || left.label.localeCompare(right.label)
+    })
+}
+
+function ArchiveCommanderBoard({ items }: { items: readonly ArchiveItem[] }) {
+  if (items.length === 0) return null
+  const groups = commanderGroups(items)
+
+  return (
+    <section className="archive-pool-board">
+      <header className="archive-pool-heading">
+        <strong>Commander archive</strong>
+        <span>{items.length}</span>
+      </header>
+
+      <div className="archive-commander-groups">
+        {groups.map((group) => (
+          <section
+            className={`archive-commander-group cube-theme cube-theme--${group.key}`}
+            key={group.key}
+          >
+            <header>
+              <span className="archive-color-dot" aria-hidden="true" />
+              <strong>{group.label}</strong>
+              <span>{group.items.length}</span>
+            </header>
+            <div className="archive-column-cards">
+              {group.items.map((item) => (
+                <ArchiveCardRow item={item} key={item.record.key} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -88,24 +321,23 @@ export function ArchiveBrowser() {
     ),
     [],
   )
-  const currentCards = useMemo(() => {
-    const cards = new Map<string, BrowserCard>()
-    for (const card of draftCards) {
-      cards.set(currentCardKey('draft', card.name), card)
-    }
-    for (const card of commanderCards) {
-      cards.set(currentCardKey('commander', card.name), card)
-    }
-    return cards
-  }, [])
   const visible = useMemo(
     () => filterArchiveRecords(records, { query, pool, source }),
     [pool, query, records, source],
+  )
+  const visibleItems = useMemo(
+    () => visible.map((record, index) => ({
+      record,
+      card: browserCardFromName(record.name, index),
+    })),
+    [visible],
   )
   const workbookCount = records.filter((record) => record.sources.includes('workbook')).length
   const historyCount = records.filter((record) => record.sources.includes('history')).length
   const activeCount = records.filter((record) => record.active).length
   const hasFilters = Boolean(query || pool !== 'all' || source !== 'all')
+  const visibleDraft = visibleItems.filter((item) => item.record.pool === 'draft')
+  const visibleCommanders = visibleItems.filter((item) => item.record.pool === 'commander')
 
   function clearFilters() {
     setQuery('')
@@ -186,20 +418,9 @@ export function ArchiveBrowser() {
       </div>
 
       {visible.length > 0 ? (
-        <div className="archive-results">
-          <header className="archive-results-header" aria-hidden="true">
-            <span>Card</span>
-            <span>Historical section</span>
-            <span>Status / source</span>
-          </header>
-
-          {visible.map((record) => (
-            <ArchiveRow
-              record={record}
-              card={currentCards.get(currentCardKey(record.pool, record.name))}
-              key={record.key}
-            />
-          ))}
+        <div className="archive-pools">
+          <ArchiveCubeBoard items={visibleDraft} />
+          <ArchiveCommanderBoard items={visibleCommanders} />
         </div>
       ) : (
         <div className="archive-empty">
