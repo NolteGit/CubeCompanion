@@ -25,10 +25,13 @@ import './browser.css'
 
 export type BrowserList = BrowserPool | 'changes'
 
+type RemoveToChanges = (card: BrowserCard, pool: 'draft' | 'commander') => void
+
 interface CubeBrowserProps {
   list: BrowserList
   defaultView?: BrowserView
   onOpenChanges?: () => void
+  onRemoveToChanges?: RemoveToChanges
 }
 
 interface CubeBrowserContentProps {
@@ -36,6 +39,7 @@ interface CubeBrowserContentProps {
   view: BrowserView
   onViewChange: (view: BrowserView) => void
   onOpenChanges?: () => void
+  onRemoveToChanges?: RemoveToChanges
 }
 
 interface ColumnSection {
@@ -238,6 +242,7 @@ export function CubeBrowser({
   list,
   defaultView = 'list',
   onOpenChanges,
+  onRemoveToChanges,
 }: CubeBrowserProps) {
   const [view, setView] = useState<BrowserView>(defaultView)
 
@@ -248,6 +253,7 @@ export function CubeBrowser({
       view={view}
       onViewChange={setView}
       onOpenChanges={onOpenChanges}
+      onRemoveToChanges={onRemoveToChanges}
     />
   )
 }
@@ -257,6 +263,7 @@ function CubeBrowserContent({
   view,
   onViewChange,
   onOpenChanges,
+  onRemoveToChanges,
 }: CubeBrowserContentProps) {
   const pool: BrowserPool = list === 'commanders' ? 'commanders' : 'draft'
   const [sandboxState] = useState(() =>
@@ -271,6 +278,13 @@ function CubeBrowserContent({
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
   const [sort, setSort] = useState<BrowserSort>('cube')
+  const [queuedRemovalIds, setQueuedRemovalIds] = useState<ReadonlySet<string>>(() => {
+    const initialDiff = sandboxDiff(sandboxState, draftCards, commanderCards)
+    const removedCards = pool === 'draft'
+      ? initialDiff.removedDraft
+      : initialDiff.removedCommanders
+    return new Set(removedCards.map((card) => card.oracleId))
+  })
 
   const pendingDiff = useMemo(
     () => sandboxDiff(sandboxState, draftCards, commanderCards),
@@ -306,6 +320,26 @@ function CubeBrowserContent({
     setType('all')
     setSort('cube')
   }
+
+  function queueRemoval(card: BrowserCard) {
+    if (!onRemoveToChanges || queuedRemovalIds.has(card.oracleId)) return
+    onRemoveToChanges(card, pool === 'draft' ? 'draft' : 'commander')
+    setQueuedRemovalIds((current) => new Set(current).add(card.oracleId))
+  }
+
+  const removeAction = onRemoveToChanges
+    ? {
+        symbol: '−',
+        activeSymbol: '✓',
+        tone: 'remove' as const,
+        isActive: (card: BrowserCard) => queuedRemovalIds.has(card.oracleId),
+        title: (card: BrowserCard, active: boolean) =>
+          active
+            ? `${card.name} is queued for removal`
+            : `Queue ${card.name} for removal`,
+        onClick: queueRemoval,
+      }
+    : undefined
 
   return (
     <section className="cube-browser" aria-label="Cards">
@@ -497,7 +531,11 @@ function CubeBrowserContent({
                       <strong>{columnSection.label}</strong>
                       <span>{columnSection.cards.length}</span>
                     </header>
-                    <CardCollection cards={columnSection.cards} view="list" />
+                    <CardCollection
+                      cards={columnSection.cards}
+                      view="list"
+                      rowAction={removeAction}
+                    />
                   </section>
                 ))}
               </div>
@@ -534,7 +572,11 @@ function CubeBrowserContent({
                         <strong>{subgroup.label}</strong>
                         <span>{subgroup.cards.length}</span>
                       </header>
-                      <CardCollection cards={subgroup.cards} view="list" />
+                      <CardCollection
+                        cards={subgroup.cards}
+                        view="list"
+                        rowAction={removeAction}
+                      />
                     </section>
                   ))}
                 </div>
@@ -551,7 +593,7 @@ function CubeBrowserContent({
             </div>
             <span>{sort === 'name' ? 'Sorted by name' : sort === 'mana' ? 'Sorted by mana value' : 'Image view'}</span>
           </div>
-          <CardCollection cards={visibleCards} view={view} />
+          <CardCollection cards={visibleCards} view={view} rowAction={removeAction} />
         </div>
       )}
         </>

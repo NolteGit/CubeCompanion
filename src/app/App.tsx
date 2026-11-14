@@ -14,7 +14,12 @@ import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import { SandboxView } from '../features/sandbox/SandboxView'
 import { loadSandboxState, saveSandboxState } from '../features/sandbox/storage'
-import { applySandboxCard, sandboxChangeCount, sandboxDiff } from '../features/sandbox/state'
+import {
+  applySandboxCard,
+  removeSandboxCard,
+  sandboxChangeCount,
+  sandboxDiff,
+} from '../features/sandbox/state'
 import type { SandboxPool } from '../features/sandbox/types'
 import type { BrowserCard } from '../features/browser/types'
 import './app.css'
@@ -225,6 +230,23 @@ function App() {
     return 'added'
   }
 
+  function removeCardToChanges(card: BrowserCard, pool: SandboxPool) {
+    const current = loadSandboxState(
+      releaseInfo.snapshotId,
+      draftCards,
+      commanderCards,
+      window.sessionStorage,
+    )
+    const poolCards = pool === 'draft' ? current.draftCards : current.commanders
+    if (!poolCards.some((entry) => entry.oracleId === card.oracleId)) return
+
+    const next = removeSandboxCard(current, pool, card.oracleId)
+    saveSandboxState(next, window.sessionStorage)
+    setPendingChangeCount(
+      sandboxChangeCount(sandboxDiff(next, draftCards, commanderCards)),
+    )
+  }
+
   function renderPage(): ReactNode {
     if (page === 'browse') {
       if (cardList === 'maybe') {
@@ -234,6 +256,7 @@ function App() {
         <CubeBrowser
           list={cardList}
           onOpenChanges={() => navigate('sandbox')}
+          onRemoveToChanges={removeCardToChanges}
         />
       )
     }

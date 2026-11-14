@@ -1,10 +1,20 @@
 import { useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
 import type { BrowserCard, BrowserView } from './types'
 
+interface CardRowAction {
+  symbol: string
+  activeSymbol: string
+  tone: 'remove'
+  isActive: (card: BrowserCard) => boolean
+  title: (card: BrowserCard, active: boolean) => string
+  onClick: (card: BrowserCard) => void
+}
+
 interface CardCollectionProps {
   cards: readonly BrowserCard[]
   view: BrowserView
   linkCards?: boolean
+  rowAction?: CardRowAction
 }
 
 interface PreviewState {
@@ -98,27 +108,73 @@ function CardPreview({ preview }: { preview: PreviewState }) {
   )
 }
 
-export function CardCollection({ cards, view, linkCards = true }: CardCollectionProps) {
+function CardActionButton({
+  card,
+  action,
+}: {
+  card: BrowserCard
+  action: CardRowAction
+}) {
+  const active = action.isActive(card)
+
+  return (
+    <button
+      type="button"
+      className={`card-row-action card-row-action--${action.tone}${active ? ' active' : ''}`}
+      aria-label={action.title(card, active)}
+      title={action.title(card, active)}
+      disabled={active}
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        action.onClick(card)
+      }}
+    >
+      {active ? action.activeSymbol : action.symbol}
+    </button>
+  )
+}
+
+export function CardCollection({
+  cards,
+  view,
+  linkCards = true,
+  rowAction,
+}: CardCollectionProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
 
   if (view === 'images') {
     return (
       <div className="card-grid">
-        {cards.map((card) => (
-          <CardLink
-            card={card}
-            className="image-card"
-            key={card.oracleId}
-            linked={linkCards}
-          >
-            {card.imageUri ? (
-              <img src={card.imageUri} alt={card.name} loading="lazy" />
-            ) : (
-              <div className="image-placeholder">No image</div>
-            )}
-            <span className="image-card-name">{card.name}</span>
-          </CardLink>
-        ))}
+        {cards.map((card) => {
+          const active = rowAction?.isActive(card) ?? false
+          const image = (
+            <CardLink
+              card={card}
+              className="image-card"
+              linked={linkCards}
+            >
+              {card.imageUri ? (
+                <img src={card.imageUri} alt={card.name} loading="lazy" />
+              ) : (
+                <div className="image-placeholder">No image</div>
+              )}
+              <span className="image-card-name">{card.name}</span>
+            </CardLink>
+          )
+
+          if (!rowAction) return <div key={card.oracleId}>{image}</div>
+
+          return (
+            <div
+              className={`image-card-shell${active ? ' image-card-shell--queued' : ''}`}
+              key={card.oracleId}
+            >
+              {image}
+              <CardActionButton card={card} action={rowAction} />
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -126,21 +182,52 @@ export function CardCollection({ cards, view, linkCards = true }: CardCollection
   return (
     <>
       <div className="card-list" role="list">
-        {cards.map((card) => (
-          <CardLink
-            card={card}
-            className="card-list-row"
-            key={card.oracleId}
-            linked={linkCards}
-            onMouseEnter={(event) => {
-              const position = previewPosition(event)
-              setPreview({ card, ...position })
-            }}
-            onMouseLeave={() => setPreview(null)}
-          >
-            <span>{card.name}</span>
-          </CardLink>
-        ))}
+        {cards.map((card) => {
+          const showPreview = (event: MouseEvent<HTMLElement>) => {
+            const position = previewPosition(event)
+            setPreview({ card, ...position })
+          }
+
+          if (!rowAction) {
+            return (
+              <CardLink
+                card={card}
+                className="card-list-row"
+                key={card.oracleId}
+                linked={linkCards}
+                onMouseEnter={showPreview}
+                onMouseLeave={() => setPreview(null)}
+              >
+                <span>{card.name}</span>
+              </CardLink>
+            )
+          }
+
+          const active = rowAction.isActive(card)
+          return (
+            <div
+              className={`card-list-row card-list-row--actionable${active ? ' card-list-row--queued-removal' : ''}`}
+              key={card.oracleId}
+              role="listitem"
+              onMouseEnter={showPreview}
+              onMouseLeave={() => setPreview(null)}
+            >
+              {linkCards && card.scryfallUri ? (
+                <a
+                  className="card-row-name"
+                  href={card.scryfallUri}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {card.name}
+                </a>
+              ) : (
+                <span className="card-row-name">{card.name}</span>
+              )}
+              <CardActionButton card={card} action={rowAction} />
+            </div>
+          )
+        })}
       </div>
       {preview && <CardPreview preview={preview} />}
     </>
