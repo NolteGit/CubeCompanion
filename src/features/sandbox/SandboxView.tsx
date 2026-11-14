@@ -17,6 +17,7 @@ import {
 import { loadSandboxState, saveSandboxState } from './storage'
 import type { SandboxPool, SandboxState } from './types'
 import './sandbox.css'
+import './unifiedChanges.css'
 
 type EditorNoticeTone = 'success' | 'warning' | 'error' | 'info'
 
@@ -73,7 +74,10 @@ function DiffSection({
   tone: 'added' | 'removed'
   onRevert: (entry: DiffEntry, tone: 'added' | 'removed') => void
 }) {
-  if (entries.length === 0) return null
+  const groups = [
+    { label: 'Cube', entries: entries.filter((entry) => entry.pool === 'draft') },
+    { label: 'Commanders', entries: entries.filter((entry) => entry.pool === 'commander') },
+  ].filter((group) => group.entries.length > 0)
 
   return (
     <section className={`diff-section diff-section--${tone}`}>
@@ -81,33 +85,50 @@ function DiffSection({
         <span>{title}</span>
         <strong>{entries.length}</strong>
       </header>
-      <div className="change-card-list">
-        {entries.map((entry) => (
-          <HoverCard
-            card={entry.card}
-            className={`change-card change-card--${cardTint(entry.card)}`}
-            key={`${entry.pool}-${entry.card.oracleId}`}
-          >
-            <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
-            <div className="change-card-copy">
-              <strong>{entry.card.name}</strong>
-              <small>
-                {entry.pool === 'draft'
-                  ? `Cube · ${allocationLabel(entry.card.draftAllocation)}`
-                  : 'Commanders'}
-              </small>
-            </div>
-            <button
-              type="button"
-              className="change-revert"
-              onClick={() => onRevert(entry, tone)}
-              title={`Revert ${entry.card.name}`}
-            >
-              Revert
-            </button>
-          </HoverCard>
-        ))}
-      </div>
+
+      {entries.length === 0 ? (
+        <p className="diff-section-empty">
+          {tone === 'added' ? 'No cards coming in.' : 'No cards going out.'}
+        </p>
+      ) : (
+        <div className="diff-pool-groups">
+          {groups.map((group) => (
+            <section className="diff-pool-group" key={group.label}>
+              <header>
+                <span>{group.label}</span>
+                <strong>{group.entries.length}</strong>
+              </header>
+              <div className="change-card-list">
+                {group.entries.map((entry) => (
+                  <HoverCard
+                    card={entry.card}
+                    className={`change-card change-card--${cardTint(entry.card)}`}
+                    key={`${entry.pool}-${entry.card.oracleId}`}
+                  >
+                    <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
+                    <div className="change-card-copy">
+                      <strong>{entry.card.name}</strong>
+                      <small>
+                        {entry.pool === 'draft'
+                          ? `Cube · ${allocationLabel(entry.card.draftAllocation)}`
+                          : 'Commanders'}
+                      </small>
+                    </div>
+                    <button
+                      type="button"
+                      className="change-revert"
+                      onClick={() => onRevert(entry, tone)}
+                      title={`Revert ${entry.card.name}`}
+                    >
+                      Revert
+                    </button>
+                  </HoverCard>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </section>
   )
 }
@@ -258,9 +279,9 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
     <section className="sandbox-view" aria-label="Cube changes">
       <header className="changes-heading">
         <div>
-          <span className="changes-eyebrow">Workspace</span>
+          <span className="changes-eyebrow">Working list</span>
           <h2>Changes</h2>
-          <p>Build and validate a working diff against the current cube.</p>
+          <p>Add, remove, review and validate the current session diff.</p>
         </div>
 
         <div className="changes-header-actions">
@@ -295,8 +316,8 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
         <span className="meta-pill strong">
           <b>{changeCount}</b> pending
         </span>
-        <span className="meta-pill added">+{addedCount} added</span>
-        <span className="meta-pill removed">−{removedCount} removed</span>
+        <span className="meta-pill added"><b>IN</b> {addedCount}</span>
+        <span className="meta-pill removed"><b>OUT</b> {removedCount}</span>
         <span className="meta-divider" aria-hidden="true" />
         <span className="meta-text">Cube {state.draftCards.length}</span>
         <span className="meta-text">Commanders {state.commanders.length}</span>
@@ -333,12 +354,12 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
             <div className="diff-empty">
               <span>±</span>
               <strong>No pending changes</strong>
-              <p>Add or remove cards with Quick edit. Changes appear here immediately.</p>
+              <p>Add a card or search the current cube to queue a removal.</p>
             </div>
           ) : (
             <div className="diff-board">
               <DiffSection
-                title="Added"
+                title="IN"
                 entries={[
                   ...diff.addedDraft.map((card) => ({ card, pool: 'draft' as const })),
                   ...diff.addedCommanders.map((card) => ({ card, pool: 'commander' as const })),
@@ -347,7 +368,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
                 onRevert={revertChange}
               />
               <DiffSection
-                title="Removed"
+                title="OUT"
                 entries={[
                   ...diff.removedDraft.map((card) => ({ card, pool: 'draft' as const })),
                   ...diff.removedCommanders.map((card) => ({ card, pool: 'commander' as const })),

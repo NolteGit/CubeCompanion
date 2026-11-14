@@ -51,7 +51,6 @@ interface NavItem {
 
 const WORKSPACE_NAV: readonly NavItem[] = [
   { page: 'analysis', label: 'Analysis', icon: 'analysis' },
-  { page: 'sandbox', label: 'Changes', icon: 'changes' },
 ]
 
 function CubeMark() {
@@ -160,7 +159,7 @@ function SidebarNavButton({
       <NavGlyph icon={icon} />
       <span>{label}</span>
       {count !== undefined && (
-        <small className={label === 'Changes list' && count > 0 ? 'pending' : ''}>{count}</small>
+        <small className={label === 'Changes' && count > 0 ? 'pending' : ''}>{count}</small>
       )}
     </button>
   )
@@ -310,11 +309,11 @@ function App() {
                 onClick={() => openCardList('maybe')}
               />
               <SidebarNavButton
-                label="Changes list"
-                icon="list"
+                label="Changes"
+                icon="changes"
                 count={pendingChangeCount}
-                active={page === 'browse' && cardList === 'changes'}
-                onClick={() => openCardList('changes')}
+                active={page === 'sandbox'}
+                onClick={() => navigate('sandbox')}
               />
             </nav>
 
