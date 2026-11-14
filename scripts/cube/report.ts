@@ -20,6 +20,13 @@ export function printUnresolved(entries: readonly UnresolvedCard[]): void {
   }
 }
 
+export function printIdeaValidationIssues(entries: readonly string[]): void {
+  console.error(`Maybe source validation failed: ${entries.length} issue(s)`)
+  for (const issue of entries) {
+    console.error(`- ${issue}`)
+  }
+}
+
 export function printValidationIssues(validation: ValidationResult): void {
   console.error(`Cube validation failed: ${validation.issues.length} issue(s)`)
   for (const issue of validation.issues) {

@@ -2683,20 +2683,6 @@
       "scryfallUri": "https://scryfall.com/card/msc/168/vandalblast?utm_source=api"
     },
     {
-      "oracleId": "3577c47e-76d3-4659-b922-31c4b74be3a0",
-      "name": "Enduring Vitality",
-      "colorIdentity": [
-        "G"
-      ],
-      "manaValue": 3,
-      "manaCost": "{1}{G}{G}",
-      "typeLine": "Enchantment Creature — Elk Glimmer",
-      "oracleText": "Vigilance\nCreatures you control have \"{T}: Add one mana of any color.\"\nWhen Enduring Vitality dies, if it was a creature, return it to the battlefield under its owner's control. It's an enchantment. (It's not a creature.)",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/9/d/9d76a30c-0431-4334-892a-9822dda9671a.jpg?1783909457",
-      "scryfallUri": "https://scryfall.com/card/dsk/176/enduring-vitality?utm_source=api"
-    },
-    {
       "oracleId": "358789f9-7d87-411d-919e-d597da665cbd",
       "name": "Stoneforge Mystic",
       "colorIdentity": [

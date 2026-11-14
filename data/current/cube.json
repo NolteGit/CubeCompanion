@@ -1,8 +1,9 @@
 {
   "release": {
     "snapshotId": "85552e71f79eb94e2bcdf34f697e621598cc3fd198735c0a7047816f111b059b",
-    "publishedAt": "2026-11-14T14:10:31.779Z",
-    "rulesRevision": "2"
+    "publishedAt": "2026-11-14T16:39:29.690Z",
+    "rulesRevision": "2",
+    "note": "Final cube companion update"
   },
   "snapshot": {
     "id": "85552e71f79eb94e2bcdf34f697e621598cc3fd198735c0a7047816f111b059b",

@@ -6,7 +6,12 @@ import {
 } from '../../src/infrastructure/archive/index.ts'
 import { publishCube } from '../../src/infrastructure/snapshots/index.ts'
 import { prepareCubeSource } from './pipeline.ts'
-import { printPreparedCube, printUnresolved, printValidationIssues } from './report.ts'
+import {
+  printIdeaValidationIssues,
+  printPreparedCube,
+  printUnresolved,
+  printValidationIssues,
+} from './report.ts'
 
 function optionValue(name: string): string | undefined {
   const index = process.argv.indexOf(name)
@@ -42,6 +47,9 @@ printPreparedCube(result)
 
 if (result.unresolved.length > 0) {
   printUnresolved(result.unresolved)
+  process.exitCode = 1
+} else if (result.ideaIssues.length > 0) {
+  printIdeaValidationIssues(result.ideaIssues)
   process.exitCode = 1
 } else if (!result.validation) {
   throw new Error('Cube release did not produce a validation result')

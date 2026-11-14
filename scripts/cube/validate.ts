@@ -1,5 +1,10 @@
 import { prepareCubeSource } from './pipeline.ts'
-import { printPreparedCube, printUnresolved, printValidationIssues } from './report.ts'
+import {
+  printIdeaValidationIssues,
+  printPreparedCube,
+  printUnresolved,
+  printValidationIssues,
+} from './report.ts'
 
 const result = await prepareCubeSource({
   refresh: process.argv.includes('--refresh'),
@@ -11,6 +16,9 @@ printPreparedCube(result)
 
 if (result.unresolved.length > 0) {
   printUnresolved(result.unresolved)
+  process.exitCode = 1
+} else if (result.ideaIssues.length > 0) {
+  printIdeaValidationIssues(result.ideaIssues)
   process.exitCode = 1
 } else if (!result.validation) {
   throw new Error('Cube validation did not produce a result')

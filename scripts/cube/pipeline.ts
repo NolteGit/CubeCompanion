@@ -34,6 +34,7 @@ export interface PreparedCubeSource {
   metadata: readonly CardMetadata[]
   archive: readonly ExtractedArchiveEntry[]
   ideas: readonly PreparedIdea[]
+  ideaIssues: readonly string[]
   unresolvedIdeas: readonly string[]
   unresolvedArchive: readonly string[]
   resolution: {
@@ -68,6 +69,44 @@ function uniqueMetadata(cards: readonly CardMetadata[]): CardMetadata[] {
   return [...new Map(cards.map((card) => [card.oracleId, card])).values()]
 }
 
+function ideaPoolLabel(pool: PreparedIdea['pool']): string {
+  return pool === 'draft' ? 'Cube Maybe' : 'Commander Maybe'
+}
+
+export function validateIdeasAgainstActiveCube(
+  ideas: readonly PreparedIdea[],
+  activeCards: readonly CubeCard[],
+): string[] {
+  const issues: string[] = []
+  const activeIds = new Set(activeCards.map((card) => card.oracleId))
+  const groups = new Map<string, PreparedIdea[]>()
+
+  for (const idea of ideas) {
+    const logicalKey = idea.oracleId ?? cardLookupKey(idea.name)
+    const groupKey = `${idea.pool}:${logicalKey}`
+    const group = groups.get(groupKey) ?? []
+    group.push(idea)
+    groups.set(groupKey, group)
+
+    if (idea.oracleId && activeIds.has(idea.oracleId)) {
+      issues.push(
+        `${ideaPoolLabel(idea.pool)} card "${idea.name}" at Cube!${idea.cell} is already active in the current cube.`,
+      )
+    }
+  }
+
+  for (const group of groups.values()) {
+    if (group.length < 2) continue
+    issues.push(
+      `${ideaPoolLabel(group[0].pool)} contains duplicate idea "${group[0].name}" at ${group
+        .map((idea) => `Cube!${idea.cell}`)
+        .join(', ')}.`,
+    )
+  }
+
+  return issues
+}
+
 export async function prepareCubeSource(
   options: PrepareCubeSourceOptions = {},
 ): Promise<PreparedCubeSource> {
@@ -100,6 +139,13 @@ export async function prepareCubeSource(
     const card = ideaResolution.cards.get(cardLookupKey(entry.name))
     return card ? { ...entry, oracleId: card.oracleId } : entry
   })
+  const activeCards = [
+    ...resolved.draftCards.map(({ card, source }) =>
+      toCubeCard(card, source.draftAllocation),
+    ),
+    ...resolved.commanders.map(({ card }) => toCubeCard(card)),
+  ]
+  const ideaIssues = validateIdeasAgainstActiveCube(ideas, activeCards)
 
   const archiveResolution = await resolveCardNames(
     extractedWorkbook.archive.map((entry) => entry.name),
@@ -130,6 +176,7 @@ export async function prepareCubeSource(
       metadata,
       archive: extractedWorkbook.archive,
       ideas,
+      ideaIssues,
       unresolvedIdeas: ideaResolution.unresolvedNames,
       unresolvedArchive: archiveResolution.unresolvedNames,
       resolution: combinedResolution,
@@ -150,6 +197,7 @@ export async function prepareCubeSource(
     metadata,
     archive: extractedWorkbook.archive,
     ideas,
+    ideaIssues,
     unresolvedIdeas: ideaResolution.unresolvedNames,
     unresolvedArchive: archiveResolution.unresolvedNames,
     resolution: combinedResolution,
