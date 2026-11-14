@@ -9,6 +9,9 @@ npm install
 npm run dev
 npm run verify
 npm run cube:release
+npm run deploy:cloudflare
 ```
 
-Architecture, release workflow, and Cloudflare deployment settings live in [`docs/`](docs/architecture.md).
+Production is a Cloudflare Worker serving the Vite build from `dist/`. The Worker configuration is committed in [`wrangler.jsonc`](wrangler.jsonc). Git-connected production builds use `main`, `npm run build`, and `npm run deploy:cloudflare`.
+
+Architecture and release/deployment details live in [`docs/architecture.md`](docs/architecture.md).
