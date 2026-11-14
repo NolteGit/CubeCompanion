@@ -1,5 +1,8 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
-import { releaseInfo } from '../browser/data'
+import type { CubeCard } from '../../domain'
+import { browserCardFromCubeCard, releaseInfo } from '../browser/data'
+import { cardTint } from '../browser/cardTint'
+import { HoverCard } from '../browser/HoverCard'
 import { historySnapshots } from './data'
 import { diffSnapshots, totalChanges, type SnapshotDiff } from './diff'
 import './history.css'
@@ -11,56 +14,74 @@ function formatDate(value: string): string {
   }).format(new Date(value))
 }
 
-function ChangeColumn({
+function HistoryChangeSide({
+  title,
+  tone,
+  cards,
+}: {
+  title: 'IN' | 'OUT'
+  tone: 'added' | 'removed'
+  cards: readonly CubeCard[]
+}) {
+  return (
+    <section className={`history-change-side history-change-side--${tone}`}>
+      <header>
+        <div>
+          <strong>{title}</strong>
+          <span>{tone === 'added' ? 'Coming in' : 'Going out'}</span>
+        </div>
+        <b>{cards.length}</b>
+      </header>
+
+      {cards.length === 0 ? (
+        <p className="history-change-empty">
+          {tone === 'added' ? 'No cards coming in.' : 'No cards going out.'}
+        </p>
+      ) : (
+        <div className="history-change-rows">
+          {cards.map((item, index) => {
+            const card = browserCardFromCubeCard(item, index)
+            return (
+              <HoverCard
+                card={card}
+                className={`history-change-row history-change-row--${tone} history-change-row--${cardTint(card)}`}
+                key={item.oracleId}
+              >
+                <span className="history-change-sign">{tone === 'added' ? '+' : '−'}</span>
+                <div>
+                  <strong>{item.name}</strong>
+                  <small>{card.typeLine || 'Card'}</small>
+                </div>
+              </HoverCard>
+            )
+          })}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function HistoryPoolChanges({
   title,
   added,
   removed,
 }: {
   title: string
-  added: readonly { name: string }[]
-  removed: readonly { name: string }[]
+  added: readonly CubeCard[]
+  removed: readonly CubeCard[]
 }) {
   return (
-    <section className="history-change-column">
-      <header>
+    <section className="history-pool">
+      <header className="history-pool-heading">
         <div>
           <h3>{title}</h3>
           <p>{added.length + removed.length} changes</p>
         </div>
       </header>
 
-      <div className="history-change-block history-change-block--added">
-        <div className="history-change-label">
-          <span>Added</span>
-          <strong>{added.length}</strong>
-        </div>
-        {added.length > 0 ? (
-          added.map((item) => (
-            <div className="history-change-row" key={item.name}>
-              <span>+</span>
-              <strong>{item.name}</strong>
-            </div>
-          ))
-        ) : (
-          <p className="history-change-empty">No additions</p>
-        )}
-      </div>
-
-      <div className="history-change-block history-change-block--removed">
-        <div className="history-change-label">
-          <span>Removed</span>
-          <strong>{removed.length}</strong>
-        </div>
-        {removed.length > 0 ? (
-          removed.map((item) => (
-            <div className="history-change-row" key={item.name}>
-              <span>−</span>
-              <strong>{item.name}</strong>
-            </div>
-          ))
-        ) : (
-          <p className="history-change-empty">No removals</p>
-        )}
+      <div className="history-pool-board">
+        <HistoryChangeSide title="IN" tone="added" cards={added} />
+        <HistoryChangeSide title="OUT" tone="removed" cards={removed} />
       </div>
     </section>
   )
@@ -77,15 +98,16 @@ function DiffView({ diff }: { diff: SnapshotDiff }) {
           <h3>Changes from previous snapshot</h3>
           <p>Only card additions and removals are tracked.</p>
         </div>
-        <div className="history-diff-pills">
-          <span className="added">+{added} added</span>
-          <span className="removed">−{removed} removed</span>
+        <div className="history-diff-summary">
+          <span className="added"><strong>IN</strong> {added}</span>
+          <span className="removed"><strong>OUT</strong> {removed}</span>
+          <span>Net {added - removed >= 0 ? '+' : ''}{added - removed}</span>
         </div>
       </header>
 
-      <div className="history-diff-grid">
-        <ChangeColumn title="Draft" added={diff.addedDraft} removed={diff.removedDraft} />
-        <ChangeColumn
+      <div className="history-pools">
+        <HistoryPoolChanges title="Cube" added={diff.addedDraft} removed={diff.removedDraft} />
+        <HistoryPoolChanges
           title="Commanders"
           added={diff.addedCommanders}
           removed={diff.removedCommanders}
@@ -144,7 +166,7 @@ export function HistoryBrowser() {
         </div>
 
         <div className="snapshot-stat">
-          <span>Draft</span>
+          <span>Cube</span>
           <strong>{selected.draftCards.length}</strong>
         </div>
         <div className="snapshot-stat">

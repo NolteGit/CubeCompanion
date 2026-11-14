@@ -127,6 +127,79 @@
   font-size: 0.64rem;
 }
 
+.maybe-card-list {
+  display: grid;
+}
+
+.maybe-card-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  min-height: 27px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px 0 8px;
+  border-bottom: 1px solid rgb(255 255 255 / 5%);
+  color: #edf2f4;
+  background: rgb(var(--column-rgb) / 7%);
+}
+
+.maybe-card-row:last-child {
+  border-bottom: 0;
+}
+
+.maybe-card-row:hover {
+  background: rgb(var(--column-rgb) / 18%);
+  box-shadow: inset 2px 0 rgb(var(--column-rgb) / 70%);
+}
+
+.maybe-card-row > a,
+.maybe-card-row > span {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 0.73rem;
+  line-height: 1.2;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.maybe-card-row > a:hover {
+  color: #fff;
+}
+
+.maybe-card-row button {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  color: var(--text-faint);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.maybe-card-row button:hover:not(:disabled) {
+  color: #9af0b8;
+  background: rgb(74 222 128 / 10%);
+}
+
+.maybe-card-row button.status-added {
+  color: #8adeaa;
+}
+
+.maybe-card-row button.status-unchanged {
+  color: var(--text-faint);
+}
+
+.maybe-card-row button:disabled {
+  cursor: default;
+}
+
 @media (max-width: 600px) {
   .maybe-heading {
     align-items: flex-start;

@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
-import { CardCollection } from './CardCollection'
 import { maybeCommanderCards, maybeDraftCards } from './data'
+import { HoverCard } from './HoverCard'
 import { groupCards } from './selectors'
 import type { BrowserCard, CardGroup } from './types'
+import type { SandboxPool } from '../sandbox/types'
 import './maybe.css'
 
 type MaybeColumnKey =
@@ -15,10 +16,16 @@ type MaybeColumnKey =
   | 'colorless'
   | 'land'
 
+type MaybeAddResult = 'added' | 'unchanged'
+
 interface MaybeColumn {
   key: MaybeColumnKey
   label: string
   cards: BrowserCard[]
+}
+
+interface MaybeListProps {
+  onAddToChanges: (card: BrowserCard, pool: SandboxPool) => MaybeAddResult
 }
 
 const MAYBE_COLUMNS: readonly { key: MaybeColumnKey; label: string }[] = [
@@ -95,7 +102,61 @@ function commanderGroups(cards: readonly BrowserCard[]): CardGroup[] {
     })
 }
 
-function MaybeColumnSections({ cards }: { cards: readonly BrowserCard[] }) {
+function MaybeCardRows({
+  cards,
+  pool,
+  statuses,
+  onAdd,
+}: {
+  cards: readonly BrowserCard[]
+  pool: SandboxPool
+  statuses: ReadonlyMap<string, MaybeAddResult>
+  onAdd: (card: BrowserCard, pool: SandboxPool) => void
+}) {
+  return (
+    <div className="maybe-card-list">
+      {cards.map((card) => {
+        const key = `${pool}:${card.oracleId}`
+        const status = statuses.get(key)
+        return (
+          <HoverCard card={card} className="maybe-card-row" key={card.oracleId}>
+            {card.scryfallUri ? (
+              <a href={card.scryfallUri} target="_blank" rel="noreferrer">{card.name}</a>
+            ) : (
+              <span>{card.name}</span>
+            )}
+            <button
+              type="button"
+              className={status ? `status-${status}` : ''}
+              aria-label={`Add ${card.name} to Changes`}
+              title={
+                status === 'added'
+                  ? 'Added to Changes'
+                  : status === 'unchanged'
+                    ? 'Already present in this pool'
+                    : 'Add to Changes'
+              }
+              disabled={Boolean(status)}
+              onClick={() => onAdd(card, pool)}
+            >
+              {status === 'added' ? '✓' : status === 'unchanged' ? '•' : '+'}
+            </button>
+          </HoverCard>
+        )
+      })}
+    </div>
+  )
+}
+
+function MaybeColumnSections({
+  cards,
+  statuses,
+  onAdd,
+}: {
+  cards: readonly BrowserCard[]
+  statuses: ReadonlyMap<string, MaybeAddResult>
+  onAdd: (card: BrowserCard, pool: SandboxPool) => void
+}) {
   const creatures = cards.filter((card) => card.typeLine.includes('Creature'))
   const noncreatures = cards.filter((card) => !card.typeLine.includes('Creature'))
 
@@ -107,7 +168,7 @@ function MaybeColumnSections({ cards }: { cards: readonly BrowserCard[] }) {
             <strong>Creature</strong>
             <span>{creatures.length}</span>
           </header>
-          <CardCollection cards={creatures} view="list" />
+          <MaybeCardRows cards={creatures} pool="draft" statuses={statuses} onAdd={onAdd} />
         </section>
       )}
       {noncreatures.length > 0 && (
@@ -116,14 +177,22 @@ function MaybeColumnSections({ cards }: { cards: readonly BrowserCard[] }) {
             <strong>Noncreature</strong>
             <span>{noncreatures.length}</span>
           </header>
-          <CardCollection cards={noncreatures} view="list" />
+          <MaybeCardRows cards={noncreatures} pool="draft" statuses={statuses} onAdd={onAdd} />
         </section>
       )}
     </div>
   )
 }
 
-function MaybeDraftPool({ cards }: { cards: readonly BrowserCard[] }) {
+function MaybeDraftPool({
+  cards,
+  statuses,
+  onAdd,
+}: {
+  cards: readonly BrowserCard[]
+  statuses: ReadonlyMap<string, MaybeAddResult>
+  onAdd: (card: BrowserCard, pool: SandboxPool) => void
+}) {
   if (cards.length === 0) return null
   const columns = groupIdeas(cards)
 
@@ -147,7 +216,7 @@ function MaybeDraftPool({ cards }: { cards: readonly BrowserCard[] }) {
             </header>
 
             {column.cards.length > 0 ? (
-              <MaybeColumnSections cards={column.cards} />
+              <MaybeColumnSections cards={column.cards} statuses={statuses} onAdd={onAdd} />
             ) : (
               <div className="maybe-column-empty">—</div>
             )}
@@ -158,7 +227,15 @@ function MaybeDraftPool({ cards }: { cards: readonly BrowserCard[] }) {
   )
 }
 
-function MaybeCommanderPool({ cards }: { cards: readonly BrowserCard[] }) {
+function MaybeCommanderPool({
+  cards,
+  statuses,
+  onAdd,
+}: {
+  cards: readonly BrowserCard[]
+  statuses: ReadonlyMap<string, MaybeAddResult>
+  onAdd: (card: BrowserCard, pool: SandboxPool) => void
+}) {
   if (cards.length === 0) return null
   const groups = commanderGroups(cards)
 
@@ -186,7 +263,12 @@ function MaybeCommanderPool({ cards }: { cards: readonly BrowserCard[] }) {
                 <strong>Commanders</strong>
                 <span>{group.cards.length}</span>
               </header>
-              <CardCollection cards={group.cards} view="list" />
+              <MaybeCardRows
+                cards={group.cards}
+                pool="commander"
+                statuses={statuses}
+                onAdd={onAdd}
+              />
             </section>
           </section>
         ))}
@@ -195,12 +277,25 @@ function MaybeCommanderPool({ cards }: { cards: readonly BrowserCard[] }) {
   )
 }
 
-export function MaybeList() {
+export function MaybeList({ onAddToChanges }: MaybeListProps) {
   const [query, setQuery] = useState('')
+  const [statuses, setStatuses] = useState<ReadonlyMap<string, MaybeAddResult>>(
+    () => new Map(),
+  )
   const draftIdeas = useMemo(() => filterIdeas(maybeDraftCards, query), [query])
   const commanderIdeas = useMemo(() => filterIdeas(maybeCommanderCards, query), [query])
   const visibleCount = draftIdeas.length + commanderIdeas.length
   const totalCount = maybeDraftCards.length + maybeCommanderCards.length
+
+  function addIdea(card: BrowserCard, pool: SandboxPool) {
+    const result = onAddToChanges(card, pool)
+    const key = `${pool}:${card.oracleId}`
+    setStatuses((current) => {
+      const next = new Map(current)
+      next.set(key, result)
+      return next
+    })
+  }
 
   return (
     <section className="maybe-view" aria-label="Maybe list">
@@ -208,7 +303,7 @@ export function MaybeList() {
         <div>
           <span>Source ideas</span>
           <h2>Maybe</h2>
-          <p>Read-only inclusion ideas from the source workbook.</p>
+          <p>Source inclusion ideas. Use + to queue a card in the current Changes session.</p>
         </div>
         <strong>{totalCount} ideas</strong>
       </header>
@@ -237,8 +332,8 @@ export function MaybeList() {
         </div>
       ) : (
         <div className="maybe-groups">
-          <MaybeDraftPool cards={draftIdeas} />
-          <MaybeCommanderPool cards={commanderIdeas} />
+          <MaybeDraftPool cards={draftIdeas} statuses={statuses} onAdd={addIdea} />
+          <MaybeCommanderPool cards={commanderIdeas} statuses={statuses} onAdd={addIdea} />
         </div>
       )}
     </section>

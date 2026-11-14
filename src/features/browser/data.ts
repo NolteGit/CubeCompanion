@@ -34,6 +34,13 @@ function joinCard(card: CurrentCubeData['snapshot']['draftCards'][number], sourc
   }
 }
 
+export function browserCardFromCubeCard(
+  card: CurrentCubeData['snapshot']['draftCards'][number],
+  sourceIndex = 0,
+): BrowserCard {
+  return joinCard(card, sourceIndex)
+}
+
 function joinIdea(entry: IdeaSourceEntry, sourceIndex: number): BrowserCard {
   const metadata = entry.oracleId
     ? metadataByOracleId.get(entry.oracleId)

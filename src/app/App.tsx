@@ -13,8 +13,10 @@ import { MaybeList } from '../features/browser/MaybeList'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import { SandboxView } from '../features/sandbox/SandboxView'
-import { loadSandboxState } from '../features/sandbox/storage'
-import { sandboxChangeCount, sandboxDiff } from '../features/sandbox/state'
+import { loadSandboxState, saveSandboxState } from '../features/sandbox/storage'
+import { applySandboxCard, sandboxChangeCount, sandboxDiff } from '../features/sandbox/state'
+import type { SandboxPool } from '../features/sandbox/types'
+import type { BrowserCard } from '../features/browser/types'
 import './app.css'
 import {
   hashForPage,
@@ -206,9 +208,28 @@ function App() {
     }
   }
 
+  function addMaybeToChanges(card: BrowserCard, pool: SandboxPool): 'added' | 'unchanged' {
+    const current = loadSandboxState(
+      releaseInfo.snapshotId,
+      draftCards,
+      commanderCards,
+      window.sessionStorage,
+    )
+    const next = applySandboxCard(current, card, pool)
+    if (next === current) return 'unchanged'
+
+    saveSandboxState(next, window.sessionStorage)
+    setPendingChangeCount(
+      sandboxChangeCount(sandboxDiff(next, draftCards, commanderCards)),
+    )
+    return 'added'
+  }
+
   function renderPage(): ReactNode {
     if (page === 'browse') {
-      if (cardList === 'maybe') return <MaybeList />
+      if (cardList === 'maybe') {
+        return <MaybeList onAddToChanges={addMaybeToChanges} />
+      }
       return (
         <CubeBrowser
           list={cardList}

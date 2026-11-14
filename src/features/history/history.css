@@ -1,6 +1,6 @@
 .history-view {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -28,7 +28,7 @@
 
 .history-heading p,
 .history-comparison-heading p,
-.history-change-column header p,
+.history-pool-heading p,
 .history-first-state p {
   margin: 3px 0 0;
   color: var(--text-muted);
@@ -109,136 +109,206 @@
 }
 
 .history-comparison {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: rgb(18 25 31 / 82%);
+  display: grid;
+  gap: 0;
 }
 
 .history-comparison-heading {
   display: flex;
-  min-height: 58px;
+  min-height: 62px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 13px;
+  padding: 0 2px 12px;
   border-bottom: 1px solid var(--border);
 }
 
 .history-comparison-heading h3,
-.history-change-column h3 {
+.history-pool-heading h3 {
   margin: 0;
-  font-size: 0.86rem;
+  font-size: 0.92rem;
 }
 
-.history-diff-pills {
+.history-diff-summary {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 14px;
+  color: var(--text-faint);
+  font-size: 0.72rem;
 }
 
-.history-diff-pills span {
-  padding: 4px 7px;
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 700;
+.history-diff-summary strong {
+  margin-right: 3px;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
 }
 
-.history-diff-pills .added {
-  color: #8adeaa;
-  background: rgb(68 161 105 / 10%);
+.history-diff-summary .added {
+  color: #91ddb0;
 }
 
-.history-diff-pills .removed {
-  color: #df918c;
-  background: rgb(202 86 88 / 9%);
+.history-diff-summary .removed {
+  color: #e39b96;
 }
 
-.history-diff-grid {
+.history-pools {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.history-change-column + .history-change-column {
-  border-left: 1px solid var(--border);
+.history-pool {
+  display: grid;
+  gap: 8px;
+  padding: 18px 0 22px;
 }
 
-.history-change-column > header {
-  min-height: 50px;
-  padding: 10px 13px 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.history-change-block {
-  padding-bottom: 5px;
-}
-
-.history-change-block + .history-change-block {
+.history-pool + .history-pool {
   border-top: 1px solid var(--border);
 }
 
-.history-change-label {
+.history-pool-heading {
+  padding: 0 2px;
+}
+
+.history-pool-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.history-change-side {
+  min-width: 0;
+  padding-right: 24px;
+}
+
+.history-change-side + .history-change-side {
+  padding-right: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--border);
+}
+
+.history-change-side > header {
   display: flex;
-  min-height: 30px;
+  min-height: 46px;
   align-items: center;
   justify-content: space-between;
-  padding: 0 13px;
+  gap: 12px;
+  padding: 0 2px 8px;
+  border-bottom: 1px solid rgb(255 255 255 / 7%);
 }
 
-.history-change-label span {
+.history-change-side > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.history-change-side > header strong {
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.history-change-side > header span {
   color: var(--text-faint);
-  font-size: 0.61rem;
-  font-weight: 750;
-  letter-spacing: 0.045em;
-  text-transform: uppercase;
+  font-size: 0.66rem;
 }
 
-.history-change-label strong {
-  font-size: 0.62rem;
+.history-change-side > header b {
+  font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
 }
 
-.history-change-block--added .history-change-label strong,
-.history-change-block--added .history-change-row > span {
-  color: #78d89d;
+.history-change-side--added > header strong,
+.history-change-side--added > header b {
+  color: #91ddb0;
 }
 
-.history-change-block--removed .history-change-label strong,
-.history-change-block--removed .history-change-row > span {
-  color: #db8883;
+.history-change-side--removed > header strong,
+.history-change-side--removed > header b {
+  color: #e39b96;
+}
+
+.history-change-rows {
+  display: grid;
 }
 
 .history-change-row {
+  --card-tint-rgb: 124 132 139;
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr);
-  min-height: 31px;
+  grid-template-columns: 22px minmax(0, 1fr);
+  min-height: 54px;
   align-items: center;
-  gap: 4px;
-  padding: 0 13px;
-  border-top: 1px solid rgb(255 255 255 / 4%);
+  gap: 8px;
+  padding: 7px 9px;
+  border-top: 1px solid rgb(255 255 255 / 5%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--card-tint-rgb) / 8%),
+    rgb(var(--card-tint-rgb) / 3%) 60%,
+    transparent 100%
+  );
+  box-shadow: inset 2px 0 rgb(var(--card-tint-rgb) / 28%);
+  cursor: default;
 }
 
 .history-change-row:hover {
-  background: rgb(255 255 255 / 2.5%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--card-tint-rgb) / 13%),
+    rgb(var(--card-tint-rgb) / 5%) 60%,
+    transparent 100%
+  );
 }
 
-.history-change-row > span {
-  font-size: 0.72rem;
+.history-change-sign {
+  font-size: 0.82rem;
   font-weight: 800;
+  text-align: center;
+}
+
+.history-change-row--added .history-change-sign {
+  color: #8adeaa;
+}
+
+.history-change-row--removed .history-change-sign {
+  color: #df918c;
+}
+
+.history-change-row > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
 }
 
 .history-change-row strong {
   overflow: hidden;
-  font-size: 0.69rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.history-change-row small {
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: 0.65rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-change-row--white { --card-tint-rgb: 211 205 173; }
+.history-change-row--blue { --card-tint-rgb: 83 158 205; }
+.history-change-row--black { --card-tint-rgb: 123 105 137; }
+.history-change-row--red { --card-tint-rgb: 202 86 88; }
+.history-change-row--green { --card-tint-rgb: 68 161 105; }
+.history-change-row--multicolor { --card-tint-rgb: 212 174 67; }
+.history-change-row--colorless { --card-tint-rgb: 153 164 174; }
+.history-change-row--land { --card-tint-rgb: 155 104 74; }
+
 .history-change-empty {
   margin: 0;
-  padding: 6px 13px 9px;
+  padding: 14px 2px;
   color: var(--text-faint);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
 }
 
 .history-first-state {
@@ -309,11 +379,18 @@
     padding-block: 10px;
   }
 
-  .history-diff-grid {
+  .history-pool-board {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 
-  .history-change-column + .history-change-column {
+  .history-change-side {
+    padding-right: 0;
+  }
+
+  .history-change-side + .history-change-side {
+    padding-top: 16px;
+    padding-left: 0;
     border-top: 1px solid var(--border);
     border-left: 0;
   }
