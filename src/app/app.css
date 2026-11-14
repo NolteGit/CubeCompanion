@@ -12,10 +12,11 @@
   z-index: 30;
   top: 0;
   display: grid;
-  grid-template-columns: 172px minmax(0, 1fr);
-  min-height: 58px;
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: 64px;
   border-bottom: 1px solid var(--border);
-  background: rgb(12 17 22 / 94%);
+  background: rgb(10 15 20 / 95%);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 2%);
   backdrop-filter: blur(18px);
 }
 
@@ -26,14 +27,14 @@
 }
 
 .brand {
-  gap: 9px;
+  gap: 10px;
   padding: 0 18px;
   border-right: 1px solid var(--border);
 }
 
 .brand strong {
   overflow: hidden;
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   letter-spacing: -0.015em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,8 +42,8 @@
 
 .brand-mark {
   display: grid;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   flex: 0 0 auto;
   place-items: center;
   color: var(--accent);
@@ -60,49 +61,50 @@
 .cube-title {
   min-width: 0;
   gap: 12px;
-  padding: 0 18px;
+  padding: 0 22px;
 }
 
 .cube-title strong {
   overflow: hidden;
-  font-size: 0.93rem;
+  font-size: 1rem;
+  letter-spacing: -0.012em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .cube-title > span:not(.current-chip) {
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
 }
 
 .current-chip {
-  padding: 4px 8px;
-  border: 1px solid rgb(74 222 128 / 20%);
+  padding: 5px 9px;
+  border: 1px solid rgb(74 222 128 / 22%);
   border-radius: 999px;
-  color: #86efac;
-  background: rgb(22 101 52 / 35%);
+  color: #9af0b8;
+  background: rgb(22 101 52 / 34%);
   font-size: 0.72rem;
   font-weight: 750;
 }
 
 .app-body {
   display: grid;
-  grid-template-columns: 172px minmax(0, 1fr);
-  min-height: calc(100vh - 58px);
-  min-height: calc(100dvh - 58px);
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: calc(100vh - 64px);
+  min-height: calc(100dvh - 64px);
 }
 
 .app-sidebar {
   position: sticky;
-  top: 58px;
+  top: 64px;
   display: flex;
-  height: calc(100vh - 58px);
-  height: calc(100dvh - 58px);
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px 9px 14px;
+  padding: 14px 11px 16px;
   border-right: 1px solid var(--border);
-  background: rgb(14 20 25 / 76%);
+  background: rgb(13 20 25 / 82%);
   backdrop-filter: blur(14px);
 }
 
@@ -199,7 +201,7 @@
 
 .app-main {
   min-width: 0;
-  padding: 12px 14px 38px;
+  padding: 18px 22px 46px;
   overflow: hidden;
 }
 
@@ -333,6 +335,106 @@
   font-size: 0.72rem;
 }
 
+
+/* Shared visual-system pass */
+:is(
+  .analysis-heading,
+  .changes-heading,
+  .customize-heading,
+  .playtest-heading,
+  .history-heading,
+  .archive-heading,
+  .maybe-heading,
+  .browser-changes-heading
+) {
+  min-height: 72px;
+}
+
+:is(
+  .analysis-heading,
+  .changes-heading,
+  .customize-heading,
+  .playtest-heading,
+  .history-heading,
+  .archive-heading,
+  .maybe-heading,
+  .browser-changes-heading
+) h2 {
+  font-size: 1.55rem;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+:is(
+  .analysis-eyebrow,
+  .changes-eyebrow,
+  .customize-heading > span,
+  .playtest-eyebrow,
+  .history-eyebrow,
+  .archive-eyebrow,
+  .maybe-heading > div > span,
+  .browser-changes-heading > div > span
+) {
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+}
+
+:is(
+  .analysis-heading,
+  .changes-heading,
+  .customize-heading,
+  .playtest-heading,
+  .history-heading,
+  .archive-heading,
+  .maybe-heading,
+  .browser-changes-heading
+) p {
+  max-width: 72ch;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+:is(
+  .analysis-panel,
+  .analysis-metric,
+  .working-diff,
+  .edit-cube,
+  .preferences-panel,
+  .customize-note,
+  .playtest-panel,
+  .snapshot-summary,
+  .history-comparison,
+  .history-first-state,
+  .archive-summary-strip,
+  .archive-filter-dock,
+  .archive-results,
+  .maybe-search-row
+) {
+  border-color: var(--border);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 2%) inset,
+    0 8px 24px rgb(0 0 0 / 5%);
+}
+
+:is(
+  .changes-header-actions button,
+  .browser-changes-actions button,
+  .new-deal-button,
+  .playtest-panel-heading button,
+  .preference-options button,
+  .archive-filter-status button
+) {
+  min-height: 34px;
+  font-size: 0.72rem;
+}
+
+.snapshot-picker select {
+  min-height: 38px;
+  font-size: 0.76rem;
+}
+
 .app-error {
   width: min(680px, calc(100% - 32px));
   margin: 12vh auto 0;
@@ -368,7 +470,7 @@
 @media (max-width: 900px) {
   .app-header,
   .app-body {
-    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-columns: 64px minmax(0, 1fr);
   }
 
   .brand {
@@ -405,7 +507,7 @@
   }
 
   .app-main {
-    padding-inline: 10px;
+    padding: 14px 12px 36px;
   }
 
   .preference-row {
