@@ -217,84 +217,101 @@ function CustomizeView({
         <p>Workspace preferences are stored locally in this browser.</p>
       </header>
 
-      <div className="preferences-panel">
-        <header>
-          <h3>Cards</h3>
-          <p>Choose how the card browser opens and how densely it is displayed.</p>
-        </header>
+      <div className="preferences-stack">
+        <section className="preferences-section">
+          <header>
+            <h3>Cards</h3>
+            <p>Choose how the card browser opens and how densely it is displayed.</p>
+          </header>
 
-        <div className="preference-row">
-          <div>
-            <strong>Default pool</strong>
-            <span>Which pool opens when you return to Cards.</span>
+          <div className="preferences-list">
+            <div className="preference-row">
+              <div>
+                <strong>Default pool</strong>
+                <span>Which library opens when you return to Cards.</span>
+              </div>
+              <ChoiceGroup
+                value={preferences.defaultPool}
+                options={[
+                  { value: 'draft', label: 'Cube' },
+                  { value: 'commanders', label: 'Commanders' },
+                ]}
+                onChange={(defaultPool) => onChange({ ...preferences, defaultPool })}
+              />
+            </div>
+
+            <div className="preference-row">
+              <div>
+                <strong>Default view</strong>
+                <span>Open Cards as dense columns or card images.</span>
+              </div>
+              <ChoiceGroup
+                value={preferences.defaultView}
+                options={[
+                  { value: 'list', label: 'Columns' },
+                  { value: 'images', label: 'Images' },
+                ]}
+                onChange={(defaultView) => onChange({ ...preferences, defaultView })}
+              />
+            </div>
+
+            <div className="preference-row">
+              <div>
+                <strong>Row density</strong>
+                <span>Choose between the dense cube overview and roomier card rows.</span>
+              </div>
+              <ChoiceGroup
+                value={preferences.cardDensity}
+                options={[
+                  { value: 'compact', label: 'Compact' },
+                  { value: 'comfortable', label: 'Comfortable' },
+                ]}
+                onChange={(cardDensity) => onChange({ ...preferences, cardDensity })}
+              />
+            </div>
           </div>
-          <ChoiceGroup
-            value={preferences.defaultPool}
-            options={[
-              { value: 'draft', label: 'Draft' },
-              { value: 'commanders', label: 'Commanders' },
-            ]}
-            onChange={(defaultPool) => onChange({ ...preferences, defaultPool })}
-          />
-        </div>
+        </section>
 
-        <div className="preference-row">
-          <div>
-            <strong>Default view</strong>
-            <span>Open Cards as dense columns or card images.</span>
+        <section className="preferences-section">
+          <header>
+            <h3>Interaction</h3>
+            <p>Control card inspection behavior across the workspace.</p>
+          </header>
+
+          <div className="preferences-list">
+            <div className="preference-row">
+              <div>
+                <strong>Hover previews</strong>
+                <span>Show card artwork and metadata when hovering card rows.</span>
+              </div>
+              <ChoiceGroup
+                value={preferences.hoverPreviews ? 'on' : 'off'}
+                options={[
+                  { value: 'on', label: 'On' },
+                  { value: 'off', label: 'Off' },
+                ]}
+                onChange={(value) => onChange({ ...preferences, hoverPreviews: value === 'on' })}
+              />
+            </div>
           </div>
-          <ChoiceGroup
-            value={preferences.defaultView}
-            options={[
-              { value: 'list', label: 'Columns' },
-              { value: 'images', label: 'Images' },
-            ]}
-            onChange={(defaultView) => onChange({ ...preferences, defaultView })}
-          />
-        </div>
+        </section>
 
-        <div className="preference-row">
-          <div>
-            <strong>Row density</strong>
-            <span>Compact matches the current CubeCobra-style overview.</span>
+        <section className="preferences-section">
+          <header>
+            <h3>Appearance</h3>
+            <p>Visual settings for the workspace.</p>
+          </header>
+
+          <div className="preferences-list">
+            <div className="preference-row">
+              <div>
+                <strong>Theme</strong>
+                <span>Cube Companion currently uses one purpose-built dark theme.</span>
+              </div>
+              <span className="preference-static-value">Dark workspace</span>
+            </div>
           </div>
-          <ChoiceGroup
-            value={preferences.cardDensity}
-            options={[
-              { value: 'compact', label: 'Compact' },
-              { value: 'comfortable', label: 'Comfortable' },
-            ]}
-            onChange={(cardDensity) => onChange({ ...preferences, cardDensity })}
-          />
-        </div>
-      </div>
-
-      <div className="preferences-panel">
-        <header>
-          <h3>Interaction</h3>
-          <p>Control card inspection behavior across the workspace.</p>
-        </header>
-
-        <div className="preference-row">
-          <div>
-            <strong>Hover previews</strong>
-            <span>Show card artwork and metadata when hovering card rows.</span>
-          </div>
-          <ChoiceGroup
-            value={preferences.hoverPreviews ? 'on' : 'off'}
-            options={[
-              { value: 'on', label: 'On' },
-              { value: 'off', label: 'Off' },
-            ]}
-            onChange={(value) => onChange({ ...preferences, hoverPreviews: value === 'on' })}
-          />
-        </div>
-      </div>
-
-      <div className="customize-note">
-        <span>Theme</span>
-        <strong>Dark workspace</strong>
-        <p>Cube Companion currently uses one purpose-built dark theme.</p>
+        </section>
       </div>
     </section>
   )
