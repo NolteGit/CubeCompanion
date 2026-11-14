@@ -15,6 +15,7 @@ interface CardCollectionProps {
   view: BrowserView
   linkCards?: boolean
   rowAction?: CardRowAction
+  workingAddedIds?: ReadonlySet<string>
 }
 
 interface PreviewState {
@@ -140,6 +141,7 @@ export function CardCollection({
   view,
   linkCards = true,
   rowAction,
+  workingAddedIds,
 }: CardCollectionProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
 
@@ -148,6 +150,7 @@ export function CardCollection({
       <div className="card-grid">
         {cards.map((card) => {
           const active = rowAction?.isActive(card) ?? false
+          const workingAdded = workingAddedIds?.has(card.oracleId) ?? false
           const image = (
             <CardLink
               card={card}
@@ -167,10 +170,11 @@ export function CardCollection({
 
           return (
             <div
-              className={`image-card-shell${active ? ' image-card-shell--queued' : ''}`}
+              className={`image-card-shell${active ? ' image-card-shell--queued' : ''}${workingAdded ? ' image-card-shell--working-added' : ''}`}
               key={card.oracleId}
             >
               {image}
+              {workingAdded && <span className="image-card-working-status">IN</span>}
               <CardActionButton card={card} action={rowAction} />
             </div>
           )
@@ -187,6 +191,7 @@ export function CardCollection({
             const position = previewPosition(event)
             setPreview({ card, ...position })
           }
+          const workingAdded = workingAddedIds?.has(card.oracleId) ?? false
 
           if (!rowAction) {
             return (
@@ -206,7 +211,7 @@ export function CardCollection({
           const active = rowAction.isActive(card)
           return (
             <div
-              className={`card-list-row card-list-row--actionable${active ? ' card-list-row--queued-removal' : ''}`}
+              className={`card-list-row card-list-row--actionable${workingAdded ? ' card-list-row--working-added' : ''}${active ? ' card-list-row--queued-removal' : ''}`}
               key={card.oracleId}
               role="listitem"
               onMouseEnter={showPreview}
@@ -224,6 +229,7 @@ export function CardCollection({
               ) : (
                 <span className="card-row-name">{card.name}</span>
               )}
+              {workingAdded && <span className="card-row-working-status">IN</span>}
               <CardActionButton card={card} action={rowAction} />
             </div>
           )

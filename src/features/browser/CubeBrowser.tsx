@@ -266,7 +266,7 @@ function CubeBrowserContent({
   onRemoveToChanges,
 }: CubeBrowserContentProps) {
   const pool: BrowserPool = list === 'commanders' ? 'commanders' : 'draft'
-  const [sandboxState] = useState(() =>
+  const [sandboxState, setSandboxState] = useState(() =>
     loadSandboxState(
       releaseInfo.snapshotId,
       draftCards,
@@ -300,7 +300,20 @@ function CubeBrowserContent({
     }),
     [sandboxState],
   )
-  const sourceCards = pool === 'draft' ? draftCards : commanderCards
+  const sourceCards = pool === 'draft' ? sandboxState.draftCards : sandboxState.commanders
+  const poolAddedCount = pool === 'draft'
+    ? pendingDiff.addedDraft.length
+    : pendingDiff.addedCommanders.length
+  const poolRemovedCount = pool === 'draft'
+    ? pendingDiff.removedDraft.length
+    : pendingDiff.removedCommanders.length
+  const workingAddedIds = useMemo(
+    () => new Set(
+      (pool === 'draft' ? pendingDiff.addedDraft : pendingDiff.addedCommanders)
+        .map((card) => card.oracleId),
+    ),
+    [pendingDiff, pool],
+  )
   const sectionOptions = pool === 'draft' ? DRAFT_SECTION_OPTIONS : COMMANDER_SECTION_OPTIONS
   const visibleCards = useMemo(
     () => filterAndSortCards(sourceCards, pool, { query, section, type, sort }),
@@ -325,6 +338,12 @@ function CubeBrowserContent({
     if (!onRemoveToChanges || queuedRemovalIds.has(card.oracleId)) return
     onRemoveToChanges(card, pool === 'draft' ? 'draft' : 'commander')
     setQueuedRemovalIds((current) => new Set(current).add(card.oracleId))
+    setSandboxState(loadSandboxState(
+      releaseInfo.snapshotId,
+      draftCards,
+      commanderCards,
+      window.sessionStorage,
+    ))
   }
 
   const removeAction = onRemoveToChanges
@@ -466,7 +485,12 @@ function CubeBrowserContent({
           </div>
 
           <div className="filter-status">
-            <span><strong>{visibleCards.length}</strong> of {sourceCards.length} cards</span>
+            <span><strong>{visibleCards.length}</strong> of {sourceCards.length} working cards</span>
+            {(poolAddedCount > 0 || poolRemovedCount > 0) && (
+              <span className="working-preview-status">
+                Working <b>+{poolAddedCount}</b> <b>−{poolRemovedCount}</b>
+              </span>
+            )}
             {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
           </div>
         </div>
@@ -535,6 +559,7 @@ function CubeBrowserContent({
                       cards={columnSection.cards}
                       view="list"
                       rowAction={removeAction}
+                      workingAddedIds={workingAddedIds}
                     />
                   </section>
                 ))}
@@ -576,6 +601,7 @@ function CubeBrowserContent({
                         cards={subgroup.cards}
                         view="list"
                         rowAction={removeAction}
+                        workingAddedIds={workingAddedIds}
                       />
                     </section>
                   ))}
@@ -593,7 +619,12 @@ function CubeBrowserContent({
             </div>
             <span>{sort === 'name' ? 'Sorted by name' : sort === 'mana' ? 'Sorted by mana value' : 'Image view'}</span>
           </div>
-          <CardCollection cards={visibleCards} view={view} rowAction={removeAction} />
+          <CardCollection
+            cards={visibleCards}
+            view={view}
+            rowAction={removeAction}
+            workingAddedIds={workingAddedIds}
+          />
         </div>
       )}
         </>
