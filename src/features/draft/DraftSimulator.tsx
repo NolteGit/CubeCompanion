@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { commanderCards, draftCards, releaseInfo } from '../browser/data'
 import type { BrowserCard } from '../browser/types'
 import { dealCommanderPack } from '../playtest/deal'
+import { DeckOverview } from './DeckOverview'
 import {
   draftDirection,
   pickDraftCard,
@@ -19,6 +20,7 @@ import {
 import './draft.css'
 
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
+type PoolFilter = 'all' | 'available' | 'included'
 
 const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v1'
 
@@ -104,6 +106,8 @@ export function DraftSimulator() {
   const [selected, setSelected] = useState<Set<string>>(() => new Set(savedDraft?.selectedIds ?? []))
   const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
   const [message, setMessage] = useState('')
+  const [poolQuery, setPoolQuery] = useState('')
+  const [poolFilter, setPoolFilter] = useState<PoolFilter>('all')
 
   useEffect(() => {
     const saved: SavedDraft = {
@@ -121,6 +125,12 @@ export function DraftSimulator() {
   const totalNeeded = players * packsPerPlayer * cardsPerPack
   const draftPool = session?.selections[0] ?? []
   const deck = checkDraftDeck(commander, draftPool, selected, basics)
+  const selectedCards = draftPool.filter((card) => selected.has(card.oracleId))
+  const visiblePool = draftPool
+    .filter((card) => card.name.toLocaleLowerCase('en-US').includes(poolQuery.trim().toLocaleLowerCase('en-US')))
+    .filter((card) => poolFilter === 'all' || (selected.has(card.oracleId) === (poolFilter === 'included')))
+    .slice()
+    .sort((left, right) => left.manaValue - right.manaValue || left.name.localeCompare(right.name))
 
   function reset() {
     setPhase('setup')
@@ -130,6 +140,8 @@ export function DraftSimulator() {
     setSelected(new Set())
     setBasics(emptyBasicLands())
     setMessage('')
+    setPoolQuery('')
+    setPoolFilter('all')
   }
 
   function begin() {
@@ -259,54 +271,73 @@ export function DraftSimulator() {
       )}
 
       {phase === 'build' && session && commander && (
-        <div className="draft-layout">
-          <div className="draft-panel">
-            <div className="draft-stage-header">
-              <div>
-                <h3>Drafted pool</h3>
-                <p>Choose which drafted cards to include. Cards outside your commander's colors are flagged.</p>
+        <div className="draft-build-view">
+          <header className="draft-build-heading">
+            <div>
+              <h3>Build your deck</h3>
+              <p>Pick cards from your drafted pool. They appear immediately in the deck overview, and you can remove them directly from the board.</p>
+            </div>
+            <div className="draft-build-actions">
+              <span className={`draft-build-count${deck.valid ? ' draft-build-count--valid' : ''}`}>{deck.total} / 60 cards</span>
+              <button type="button" className="draft-primary" onClick={() => void copyDecklist()}>Copy decklist</button>
+            </div>
+          </header>
+          <div className="draft-build-layout">
+            <div className="draft-build-board">
+              <DeckOverview
+                commander={commander}
+                selectedCards={selectedCards}
+                basics={basics}
+                onRemoveCard={toggleDeck}
+                onAdjustBasic={adjustBasic}
+              />
+              <div className={`draft-validation${deck.valid ? ' draft-validation--valid' : ''}`} aria-live="polite">
+                {deck.valid ? <strong>60-card deck valid</strong> : deck.issues.map((issue) => <p key={issue}>{issue}</p>)}
               </div>
-              <span className="draft-progress">{selected.size} selected</span>
             </div>
-            <div className="draft-card-grid">
-              {draftPool.map((card) => (
-                <div key={card.oracleId} className={!isCommanderLegal(card, commander) ? 'draft-offcolor' : undefined}>
-                  <DraftCardButton card={card} action="Add or remove from deck" selected={selected.has(card.oracleId)} onClick={() => toggleDeck(card)} />
-                  {!isCommanderLegal(card, commander) && <small className="draft-color-warning">Off-color</small>}
-                </div>
-              ))}
-            </div>
+            <aside className="draft-panel draft-pool-panel" aria-label="Drafted card pool">
+              <div className="draft-pool-header">
+                <h3>Drafted pool <span>{selected.size} / {draftPool.length} included</span></h3>
+                <p>Click a card to add it to the visual deck, or click again to remove it.</p>
+              </div>
+              <label className="draft-pool-search">
+                <span>Find a card</span>
+                <input type="search" value={poolQuery} onChange={(event) => setPoolQuery(event.target.value)} placeholder="Search drafted cards…" />
+              </label>
+              <div className="draft-pool-filters" role="group" aria-label="Filter drafted cards">
+                {(['all', 'available', 'included'] as const).map((filter) => (
+                  <button key={filter} type="button" aria-pressed={poolFilter === filter} className={poolFilter === filter ? 'active' : ''} onClick={() => setPoolFilter(filter)}>
+                    {filter === 'all' ? 'All' : filter === 'available' ? 'Available' : 'In deck'}
+                  </button>
+                ))}
+              </div>
+              <div className="draft-pool-items">
+                {visiblePool.map((card) => {
+                  const included = selected.has(card.oracleId)
+                  const offColor = !isCommanderLegal(card, commander)
+                  return (
+                    <button
+                      key={card.oracleId}
+                      type="button"
+                      className={`draft-pool-card${included ? ' draft-pool-card--included' : ''}${offColor ? ' draft-pool-card--offcolor' : ''}`}
+                      aria-pressed={included}
+                      title={`${included ? 'Remove' : 'Add'} ${card.name}${offColor ? ' (outside commander colors)' : ''}`}
+                      onClick={() => toggleDeck(card)}
+                    >
+                      {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-pool-placeholder" />}
+                      <span className="draft-pool-card-content">
+                        <strong>{card.name}</strong>
+                        <small>{card.manaCost || card.typeLine}</small>
+                        {offColor && <em>Off-color</em>}
+                      </span>
+                      <span className="draft-pool-card-action" aria-hidden="true">{included ? '✓' : '+'}</span>
+                    </button>
+                  )
+                })}
+                {visiblePool.length === 0 && <p className="draft-pool-empty">No cards match this filter.</p>}
+              </div>
+            </aside>
           </div>
-          <aside className="draft-panel draft-side draft-deckbuilder">
-            <h3>My deck <span>{deck.total} / 60</span></h3>
-            <p><strong>Commander:</strong> {commander.name}</p>
-            <div className="draft-basic-list">
-              <h4>Basic lands · unlimited external supply</h4>
-              {BASIC_LANDS.map((land) => (
-                <div key={land} className="draft-basic-row">
-                  <span>{land}</span>
-                  <div>
-                    <button type="button" aria-label={`Remove ${land}`} disabled={basics[land] === 0} onClick={() => adjustBasic(land, -1)}>−</button>
-                    <output>{basics[land]}</output>
-                    <button type="button" aria-label={`Add ${land}`} onClick={() => adjustBasic(land, 1)}>+</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <h4>Included drafted cards ({selected.size})</h4>
-            <ul className="draft-deck-cards">
-              {draftPool.filter((card) => selected.has(card.oracleId)).map((card) => (
-                <li key={card.oracleId}>
-                  <span>{card.name}</span>
-                  <button type="button" aria-label={`Remove ${card.name}`} onClick={() => toggleDeck(card)}>×</button>
-                </li>
-              ))}
-            </ul>
-            <div className={`draft-validation${deck.valid ? ' draft-validation--valid' : ''}`} aria-live="polite">
-              {deck.valid ? <strong>60-card deck valid</strong> : deck.issues.map((issue) => <p key={issue}>{issue}</p>)}
-            </div>
-            <button type="button" className="draft-primary" onClick={() => void copyDecklist()}>Copy decklist</button>
-          </aside>
         </div>
       )}
       {message && <p className="draft-message" role="status">{message}</p>}
