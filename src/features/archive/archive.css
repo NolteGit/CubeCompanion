@@ -208,7 +208,10 @@
 }
 
 .archive-results {
-  overflow: hidden;
+  max-height: calc(100dvh - 255px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   border: 1px solid var(--border);
   border-radius: 9px;
   background: rgb(18 25 31 / 82%);
@@ -224,10 +227,15 @@
 }
 
 .archive-results-header {
+  position: sticky;
+  z-index: 3;
+  top: 0;
   min-height: 30px;
   border-bottom: 1px solid var(--border);
   color: var(--text-faint);
-  background: rgb(8 13 17 / 24%);
+  background: rgb(13 19 24 / 97%);
+  box-shadow: 0 5px 12px rgb(0 0 0 / 12%);
+  backdrop-filter: blur(10px);
   font-size: 0.59rem;
   font-weight: 750;
   letter-spacing: 0.055em;
@@ -377,6 +385,12 @@
 
   .archive-filter-chips {
     flex-wrap: wrap;
+  }
+
+  .archive-results {
+    max-height: none;
+    overflow: visible;
+    scrollbar-gutter: auto;
   }
 
   .archive-results-header {
