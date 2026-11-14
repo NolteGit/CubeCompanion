@@ -3,7 +3,7 @@ import { MANA_VALUE_BUCKETS, groupDraftDeck } from '../../domain/draft/overview'
 import { BASIC_LANDS, type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
 
 interface DeckOverviewProps {
-  commander: BrowserCard
+  commanders: readonly BrowserCard[]
   selectedCards: readonly BrowserCard[]
   basics: BasicLandCounts
   onRemoveCard: (card: BrowserCard) => void
@@ -62,7 +62,7 @@ function CreatureOrSpellRow({
 }
 
 export function DeckOverview({
-  commander,
+  commanders,
   selectedCards,
   basics,
   onRemoveCard,
@@ -81,13 +81,18 @@ export function DeckOverview({
         </div>
       </header>
 
-      <div className="draft-board-commander">
-        {commander.imageUri ? <img src={commander.imageUri} alt="" /> : <div className="draft-board-commander-placeholder" />}
-        <div>
-          <span>Commander · 1 card</span>
-          <strong>{commander.name}</strong>
-          <small>{commander.manaCost || commander.typeLine}</small>
-        </div>
+      <div className="draft-board-commanders" aria-label="Active commanders">
+        {commanders.length === 0 && <p className="draft-board-no-commander">Choose your commander(s) above to start building.</p>}
+        {commanders.map((commander) => (
+          <div className="draft-board-commander" key={commander.oracleId}>
+            {commander.imageUri ? <img src={commander.imageUri} alt="" /> : <div className="draft-board-commander-placeholder" />}
+            <div>
+              <span>Commander · 1 card</span>
+              <strong>{commander.name}</strong>
+              <small>{commander.manaCost || commander.typeLine}</small>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="draft-board-curve-scroll" role="region" aria-label="Mana curve by type" tabIndex={0}>

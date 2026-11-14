@@ -8,8 +8,15 @@ export function emptyBasicLands(): BasicLandCounts {
   return { Plains: 0, Island: 0, Swamp: 0, Mountain: 0, Forest: 0, Wastes: 0 }
 }
 
-export function isCommanderLegal(card: Pick<CubeCard, 'colorIdentity'>, commander: Pick<CubeCard, 'colorIdentity'>): boolean {
-  const identity = new Set<ColorIdentity[number]>(commander.colorIdentity)
+type CommanderIdentity = Pick<CubeCard, 'colorIdentity'>
+
+/** The cube allows either one commander or a pair with a combined color identity. */
+export function isCommanderLegal(
+  card: CommanderIdentity,
+  commanders: CommanderIdentity | readonly CommanderIdentity[],
+): boolean {
+  const chosen = 'colorIdentity' in commanders ? [commanders] : commanders
+  const identity = new Set<ColorIdentity[number]>(chosen.flatMap((entry) => entry.colorIdentity))
   return card.colorIdentity.every((color) => identity.has(color))
 }
 
@@ -19,37 +26,43 @@ export interface DeckCheck {
   issues: string[]
 }
 
-/** 60 cards including exactly one commander and any number of external basics. */
+/** 60 cards including one or two commanders and any number of external basics. */
 export function checkDraftDeck(
-  commander: CubeCard | null,
+  commanders: CubeCard | readonly CubeCard[] | null,
   draftPool: readonly CubeCard[],
   selectedIds: ReadonlySet<string>,
   basics: BasicLandCounts,
 ): DeckCheck {
+  const chosen = commanders === null ? [] : 'oracleId' in commanders ? [commanders] : commanders
   const selected = draftPool.filter((card) => selectedIds.has(card.oracleId))
-  const unknown = [...selectedIds].filter((id) => !draftPool.some((card) => card.oracleId === id))
+  const available = new Set(draftPool.map((card) => card.oracleId))
+  const unknown = [...selectedIds].filter((id) => !available.has(id))
   const issues: string[] = []
-  if (!commander) issues.push('Choose a commander.')
+  if (chosen.length === 0) issues.push('Choose at least one commander for your deck.')
+  if (chosen.length > 2) issues.push('A deck can have at most two commanders.')
+  const commanderIds = new Set(chosen.map((card) => card.oracleId))
+  if (commanderIds.size !== chosen.length) issues.push('The same commander cannot be selected twice.')
   if (unknown.length > 0) issues.push('The deck contains cards outside your drafted pool.')
   for (const [land, count] of Object.entries(basics)) {
     if (!Number.isInteger(count) || count < 0) issues.push(`Invalid ${land} count.`)
   }
   const landCount = Object.values(basics).reduce((sum, count) => sum + (Number.isInteger(count) && count > 0 ? count : 0), 0)
-  const total = (commander ? 1 : 0) + selected.length + landCount
+  const total = chosen.length + selected.length + landCount
   if (total !== 60) issues.push(`The deck needs exactly 60 cards (currently ${total}).`)
-  if (commander) {
-    if (selected.some((card) => card.oracleId === commander.oracleId)) {
-      issues.push('The commander cannot also occupy a slot in the main deck.')
+  if (chosen.length > 0) {
+    if (selected.some((card) => commanderIds.has(card.oracleId))) {
+      issues.push('A commander cannot also occupy a slot in the main deck.')
     }
-    const offColor = selected.filter((card) => !isCommanderLegal(card, commander))
-    if (offColor.length > 0) issues.push(`Outside commander's color identity: ${offColor.map((card) => card.name).join(', ')}.`)
+    const offColor = selected.filter((card) => !isCommanderLegal(card, chosen))
+    if (offColor.length > 0) issues.push(`Outside commanders' color identity: ${offColor.map((card) => card.name).join(', ')}.`)
     const landSymbols: Record<BasicLand, ColorIdentity[number] | null> = {
       Plains: 'W', Island: 'U', Swamp: 'B', Mountain: 'R', Forest: 'G', Wastes: null,
     }
+    const permitted = new Set(chosen.flatMap((card) => card.colorIdentity))
     for (const land of BASIC_LANDS) {
       const symbol = landSymbols[land]
-      if (symbol && basics[land] > 0 && !commander.colorIdentity.includes(symbol)) {
-        issues.push(`${land} is outside your commander's color identity.`)
+      if (symbol && basics[land] > 0 && !permitted.has(symbol)) {
+        issues.push(`${land} is outside your commanders' color identity.`)
       }
     }
   }

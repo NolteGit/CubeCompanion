@@ -22,10 +22,11 @@ import './draft.css'
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
 type PoolFilter = 'all' | 'available' | 'included'
 
-const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v1'
+const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v2'
+const LEGACY_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v1'
 
 interface SavedDraft {
-  version: 1
+  version: 2
   snapshotId: string
   phase: Phase
   players: number
@@ -33,22 +34,36 @@ interface SavedDraft {
   cardsPerPack: number
   session: DraftSession<BrowserCard> | null
   commanderOffer: BrowserCard[]
-  commander: BrowserCard | null
+  commanderCandidates: BrowserCard[]
+  activeCommanderIds: string[]
   selectedIds: string[]
   basics: BasicLandCounts
 }
 
 function readSavedDraft(): SavedDraft | null {
   try {
+    // Upgrade prior sessions without losing their drafted cards or deck choices.
     const raw = window.sessionStorage.getItem(DRAFT_STORAGE_KEY)
-    if (!raw) return null
-    const saved = JSON.parse(raw) as SavedDraft
-    if (saved.version !== 1 || saved.snapshotId !== releaseInfo.snapshotId) return null
-    if (!['setup', 'commander', 'draft', 'build'].includes(saved.phase)) return null
-    if (!Array.isArray(saved.selectedIds) || !saved.basics || !Array.isArray(saved.commanderOffer)) return null
-    if (saved.phase !== 'setup' && !saved.session) return null
-    if ((saved.phase === 'draft' || saved.phase === 'build') && !saved.commander) return null
-    return saved
+    const legacyRaw = raw ? null : window.sessionStorage.getItem(LEGACY_DRAFT_STORAGE_KEY)
+    if (!raw && !legacyRaw) return null
+    const parsed = JSON.parse(raw ?? legacyRaw!) as SavedDraft & { commander?: BrowserCard | null }
+    if (parsed.snapshotId !== releaseInfo.snapshotId) return null
+    if (!['setup', 'commander', 'draft', 'build'].includes(parsed.phase)) return null
+    if (!Array.isArray(parsed.selectedIds) || !parsed.basics || !Array.isArray(parsed.commanderOffer)) return null
+    if (parsed.phase !== 'setup' && !parsed.session) return null
+    if (raw) {
+      if (parsed.version !== 2 || !Array.isArray(parsed.commanderCandidates) || !Array.isArray(parsed.activeCommanderIds)) return null
+      if ((parsed.phase === 'draft' || parsed.phase === 'build') && parsed.commanderCandidates.length === 0) return null
+      return parsed
+    }
+    const oldCommander = parsed.commander
+    if ((parsed.phase === 'draft' || parsed.phase === 'build') && !oldCommander) return null
+    return {
+      ...parsed,
+      version: 2,
+      commanderCandidates: oldCommander ? [oldCommander] : [],
+      activeCommanderIds: oldCommander ? [oldCommander.oracleId] : [],
+    }
   } catch {
     return null
   }
@@ -83,8 +98,8 @@ function DraftCardButton({
   )
 }
 
-function createDecklist(commander: BrowserCard, pool: readonly BrowserCard[], selected: ReadonlySet<string>, basics: BasicLandCounts): string {
-  const lines = [`1 ${commander.name}`, '']
+function createDecklist(commanders: readonly BrowserCard[], pool: readonly BrowserCard[], selected: ReadonlySet<string>, basics: BasicLandCounts): string {
+  const lines = [...commanders.map((commander) => `1 ${commander.name}`), '']
   for (const card of pool.filter((entry) => selected.has(entry.oracleId)).sort((a, b) => a.manaValue - b.manaValue || a.name.localeCompare(b.name))) {
     lines.push(`1 ${card.name}`)
   }
@@ -102,7 +117,8 @@ export function DraftSimulator() {
   const [cardsPerPack, setCardsPerPack] = useState(savedDraft?.cardsPerPack ?? 15)
   const [session, setSession] = useState<DraftSession<BrowserCard> | null>(savedDraft?.session ?? null)
   const [commanderOffer, setCommanderOffer] = useState<BrowserCard[]>(savedDraft?.commanderOffer ?? [])
-  const [commander, setCommander] = useState<BrowserCard | null>(savedDraft?.commander ?? null)
+  const [commanderCandidates, setCommanderCandidates] = useState<BrowserCard[]>(savedDraft?.commanderCandidates ?? [])
+  const [activeCommanderIds, setActiveCommanderIds] = useState<string[]>(savedDraft?.activeCommanderIds ?? [])
   const [selected, setSelected] = useState<Set<string>>(() => new Set(savedDraft?.selectedIds ?? []))
   const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
   const [message, setMessage] = useState('')
@@ -111,20 +127,21 @@ export function DraftSimulator() {
 
   useEffect(() => {
     const saved: SavedDraft = {
-      version: 1,
+      version: 2,
       snapshotId: releaseInfo.snapshotId,
       phase, players, packsPerPlayer, cardsPerPack, session,
-      commanderOffer, commander, selectedIds: [...selected], basics,
+      commanderOffer, commanderCandidates, activeCommanderIds, selectedIds: [...selected], basics,
     }
     try {
       window.sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(saved))
     } catch {
       // The draft still works if private browsing disables storage.
     }
-  }, [phase, players, packsPerPlayer, cardsPerPack, session, commanderOffer, commander, selected, basics])
+  }, [phase, players, packsPerPlayer, cardsPerPack, session, commanderOffer, commanderCandidates, activeCommanderIds, selected, basics])
   const totalNeeded = players * packsPerPlayer * cardsPerPack
   const draftPool = session?.selections[0] ?? []
-  const deck = checkDraftDeck(commander, draftPool, selected, basics)
+  const activeCommanders = commanderCandidates.filter((card) => activeCommanderIds.includes(card.oracleId))
+  const deck = checkDraftDeck(activeCommanders, draftPool, selected, basics)
   const selectedCards = draftPool.filter((card) => selected.has(card.oracleId))
   const visiblePool = draftPool
     .filter((card) => card.name.toLocaleLowerCase('en-US').includes(poolQuery.trim().toLocaleLowerCase('en-US')))
@@ -136,7 +153,8 @@ export function DraftSimulator() {
     setPhase('setup')
     setSession(null)
     setCommanderOffer([])
-    setCommander(null)
+    setCommanderCandidates([])
+    setActiveCommanderIds([])
     setSelected(new Set())
     setBasics(emptyBasicLands())
     setMessage('')
@@ -150,6 +168,8 @@ export function DraftSimulator() {
       const next = startDraft(draftCards, { players, packsPerPlayer, cardsPerPack, seed: Date.now() })
       setSession(next)
       setCommanderOffer(dealCommanderPack(commanderCards))
+      setCommanderCandidates([])
+      setActiveCommanderIds([])
       setPhase('commander')
       setMessage('')
     } catch (error) {
@@ -168,6 +188,18 @@ export function DraftSimulator() {
     }
   }
 
+  function toggleCommanderCandidate(card: BrowserCard) {
+    setCommanderCandidates((old) => old.some((entry) => entry.oracleId === card.oracleId)
+      ? old.filter((entry) => entry.oracleId !== card.oracleId)
+      : old.length < 2 ? [...old, card] : old)
+  }
+
+  function toggleActiveCommander(oracleId: string) {
+    setActiveCommanderIds((old) => old.includes(oracleId)
+      ? old.filter((id) => id !== oracleId)
+      : old.length < 2 ? [...old, oracleId] : old)
+  }
+
   function toggleDeck(card: BrowserCard) {
     setSelected((old) => {
       const next = new Set(old)
@@ -182,9 +214,12 @@ export function DraftSimulator() {
   }
 
   async function copyDecklist() {
-    if (!commander) return
+    if (activeCommanders.length === 0) {
+      setMessage('Choose at least one commander before copying your decklist.')
+      return
+    }
     try {
-      await navigator.clipboard.writeText(createDecklist(commander, draftPool, selected, basics))
+      await navigator.clipboard.writeText(createDecklist(activeCommanders, draftPool, selected, basics))
       setMessage('Decklist copied to clipboard.')
     } catch {
       setMessage('Clipboard access was blocked. Try copying from a secure browser context.')
@@ -236,12 +271,25 @@ export function DraftSimulator() {
 
       {phase === 'commander' && (
         <div className="draft-panel">
-          <h3>Choose your commander</h3>
-          <p>Select one of the five random commander options. Your commander is separate from the draft packs and counts toward your 60-card deck.</p>
+          <h3>Choose two commander possibilities</h3>
+          <p>Pick exactly two of your five options. You can decide whether to play one or both after the draft.</p>
           <div className="draft-card-grid">
             {commanderOffer.map((card) => (
-              <DraftCardButton key={card.oracleId} card={card} action="Select commander" onClick={() => { setCommander(card); setPhase('draft') }} />
+              <DraftCardButton
+                key={card.oracleId}
+                card={card}
+                action="Choose commander possibility"
+                selected={commanderCandidates.some((chosen) => chosen.oracleId === card.oracleId)}
+                disabled={commanderCandidates.length === 2 && !commanderCandidates.some((chosen) => chosen.oracleId === card.oracleId)}
+                onClick={() => toggleCommanderCandidate(card)}
+              />
             ))}
+          </div>
+          <div className="draft-commander-confirm">
+            <span>{commanderCandidates.length} / 2 commander possibilities selected</span>
+            <button type="button" className="draft-primary" disabled={commanderCandidates.length !== 2} onClick={() => setPhase('draft')}>
+              Start drafting
+            </button>
           </div>
         </div>
       )}
@@ -262,7 +310,7 @@ export function DraftSimulator() {
           </div>
           <aside className="draft-panel draft-side">
             <h3>My picks</h3>
-            <p>{commander?.name} · {session.selections[0].length} cards</p>
+            <p>Commander options: {commanderCandidates.map((card) => card.name).join(' / ')} · {session.selections[0].length} cards</p>
             <ol className="draft-pick-list">
               {session.selections[0].map((card) => <li key={card.oracleId}>{card.name}</li>)}
             </ol>
@@ -270,8 +318,39 @@ export function DraftSimulator() {
         </div>
       )}
 
-      {phase === 'build' && session && commander && (
+      {phase === 'build' && session && (
         <div className="draft-build-view">
+          <section className="draft-panel draft-final-commanders" aria-label="Choose final commanders">
+            <div className="draft-final-commander-heading">
+              <div>
+                <h3>Choose your final commander(s)</h3>
+                <p>Play either option alone or both together. You can change your choice while building.</p>
+              </div>
+              <span className="draft-progress">{activeCommanders.length} / 2 active</span>
+            </div>
+            <div className="draft-final-commander-options">
+              {commanderCandidates.map((card) => {
+                const active = activeCommanderIds.includes(card.oracleId)
+                return (
+                  <button
+                    type="button"
+                    key={card.oracleId}
+                    className={`draft-final-commander-option${active ? ' active' : ''}`}
+                    aria-pressed={active}
+                    onClick={() => toggleActiveCommander(card.oracleId)}
+                  >
+                    {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-final-commander-image-placeholder" />}
+                    <span>
+                      <strong>{card.name}</strong>
+                      <small>{active ? 'In command zone' : 'Available option'}</small>
+                    </span>
+                    <span className="draft-final-commander-toggle" aria-hidden="true">{active ? '✓' : '+'}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <p className="draft-final-commander-note">Cube house rule: two commanders share their combined color identity and both count toward 60 cards. Official Partner restrictions are not checked.</p>
+          </section>
           <header className="draft-build-heading">
             <div>
               <h3>Build your deck</h3>
@@ -285,7 +364,7 @@ export function DraftSimulator() {
           <div className="draft-build-layout">
             <div className="draft-build-board">
               <DeckOverview
-                commander={commander}
+                commanders={activeCommanders}
                 selectedCards={selectedCards}
                 basics={basics}
                 onRemoveCard={toggleDeck}
@@ -314,7 +393,7 @@ export function DraftSimulator() {
               <div className="draft-pool-items">
                 {visiblePool.map((card) => {
                   const included = selected.has(card.oracleId)
-                  const offColor = !isCommanderLegal(card, commander)
+                  const offColor = activeCommanders.length > 0 && !isCommanderLegal(card, activeCommanders)
                   return (
                     <button
                       key={card.oracleId}
