@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { validateCube } from '../../domain'
 import { commanderCards, draftCards, releaseInfo } from '../browser/data'
+import { cardTint } from '../browser/cardTint'
 import { HoverCard } from '../browser/HoverCard'
 import type { BrowserCard } from '../browser/types'
 import { sandboxDiffText, sandboxFullListText } from './export'
@@ -84,7 +85,7 @@ function DiffSection({
         {entries.map((entry) => (
           <HoverCard
             card={entry.card}
-            className="change-card"
+            className={`change-card change-card--${cardTint(entry.card)}`}
             key={`${entry.pool}-${entry.card.oracleId}`}
           >
             <span className="diff-sign" aria-hidden="true">{tone === 'added' ? '+' : '−'}</span>
@@ -454,7 +455,7 @@ export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
                 {searchResults.map(({ card, pool }) => (
                   <HoverCard
                     card={card}
-                    className="sandbox-card-row"
+                    className={`sandbox-card-row sandbox-card-row--${cardTint(card)}`}
                     key={`${pool}-${card.oracleId}`}
                   >
                     <div>

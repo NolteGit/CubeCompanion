@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
+import { validateCube } from '../../domain'
 import { loadSandboxState } from '../sandbox/storage'
-import { sandboxChangeCount, sandboxDiff } from '../sandbox/state'
+import { allocationLabel, sandboxChangeCount, sandboxDiff } from '../sandbox/state'
 import { commanderCards, draftCards, releaseInfo } from './data'
+import { cardTint } from './cardTint'
 import { CardCollection } from './CardCollection'
+import { HoverCard } from './HoverCard'
 import {
   CARD_TYPE_OPTIONS,
   COMMANDER_SECTION_OPTIONS,
@@ -155,24 +158,78 @@ function ToolGlyph({ name }: { name: 'list' | 'images' }) {
 }
 
 
-function ChangeListSection({
+function ChangeListColumn({
   title,
-  cards,
   tone,
+  cubeCards,
+  commanderCards: changedCommanders,
 }: {
-  title: string
-  cards: readonly BrowserCard[]
+  title: 'IN' | 'OUT'
   tone: 'added' | 'removed'
+  cubeCards: readonly BrowserCard[]
+  commanderCards: readonly BrowserCard[]
 }) {
-  if (cards.length === 0) return null
+  const count = cubeCards.length + changedCommanders.length
+
+  function cardRow(card: BrowserCard, pool: 'draft' | 'commanders') {
+    return (
+      <HoverCard
+        card={card}
+        className={`browser-change-card browser-change-card--${tone} browser-change-card--${cardTint(card)}`}
+        key={`${pool}-${card.oracleId}`}
+      >
+        <span className="browser-change-sign" aria-hidden="true">
+          {tone === 'added' ? '+' : '−'}
+        </span>
+        <div>
+          <strong>{card.name}</strong>
+          <small>
+            {pool === 'draft'
+              ? `Cube · ${allocationLabel(card.draftAllocation)}`
+              : 'Commanders'}
+          </small>
+        </div>
+      </HoverCard>
+    )
+  }
 
   return (
-    <section className={`browser-change-section browser-change-section--${tone}`}>
-      <header>
-        <span>{title}</span>
-        <strong>{cards.length}</strong>
+    <section className={`browser-change-column browser-change-column--${tone}`}>
+      <header className="browser-change-column-heading">
+        <div>
+          <span>{title}</span>
+          <small>{tone === 'added' ? 'Coming into the cube' : 'Leaving the cube'}</small>
+        </div>
+        <strong>{count}</strong>
       </header>
-      <CardCollection cards={cards} view="list" />
+
+      {count === 0 ? (
+        <p className="browser-change-column-empty">
+          {tone === 'added' ? 'No cards coming in.' : 'No cards going out.'}
+        </p>
+      ) : (
+        <div className="browser-change-column-groups">
+          {cubeCards.length > 0 && (
+            <section className="browser-change-pool">
+              <header>
+                <span>Cube</span>
+                <strong>{cubeCards.length}</strong>
+              </header>
+              <div>{cubeCards.map((card) => cardRow(card, 'draft'))}</div>
+            </section>
+          )}
+
+          {changedCommanders.length > 0 && (
+            <section className="browser-change-pool">
+              <header>
+                <span>Commanders</span>
+                <strong>{changedCommanders.length}</strong>
+              </header>
+              <div>{changedCommanders.map((card) => cardRow(card, 'commanders'))}</div>
+            </section>
+          )}
+        </div>
+      )}
     </section>
   )
 }
@@ -220,6 +277,15 @@ function CubeBrowserContent({
     [sandboxState],
   )
   const pendingChangeCount = sandboxChangeCount(pendingDiff)
+  const pendingAddedCount = pendingDiff.addedDraft.length + pendingDiff.addedCommanders.length
+  const pendingRemovedCount = pendingDiff.removedDraft.length + pendingDiff.removedCommanders.length
+  const pendingValidation = useMemo(
+    () => validateCube({
+      draftCards: sandboxState.draftCards,
+      commanders: sandboxState.commanders,
+    }),
+    [sandboxState],
+  )
   const sourceCards = pool === 'draft' ? draftCards : commanderCards
   const sectionOptions = pool === 'draft' ? DRAFT_SECTION_OPTIONS : COMMANDER_SECTION_OPTIONS
   const visibleCards = useMemo(
@@ -261,6 +327,32 @@ function CubeBrowserContent({
               </div>
             </header>
 
+            <div className="browser-change-summary" aria-label="Change summary">
+              <span className="browser-change-summary-in">
+                <strong>IN</strong> {pendingAddedCount}
+              </span>
+              <span className="browser-change-summary-out">
+                <strong>OUT</strong> {pendingRemovedCount}
+              </span>
+              <span>
+                Net {pendingAddedCount - pendingRemovedCount >= 0 ? '+' : ''}
+                {pendingAddedCount - pendingRemovedCount}
+              </span>
+              <span className={pendingValidation.valid ? 'valid' : 'invalid'}>
+                {pendingValidation.valid
+                  ? '✓ Valid'
+                  : `! ${pendingValidation.issues.length} issue${pendingValidation.issues.length === 1 ? '' : 's'}`}
+              </span>
+            </div>
+
+            {!pendingValidation.valid && (
+              <div className="browser-change-validation">
+                {pendingValidation.issues.map((issue, index) => (
+                  <p key={`${issue.code}-${index}`}>{issue.message}</p>
+                ))}
+              </div>
+            )}
+
             {pendingChangeCount === 0 ? (
               <div className="browser-changes-empty">
                 <span>±</span>
@@ -268,11 +360,19 @@ function CubeBrowserContent({
                 <p>Add or remove cards in the Changes workspace and they will appear here.</p>
               </div>
             ) : (
-              <div className="browser-change-groups">
-                <ChangeListSection title="Cube · Added" cards={pendingDiff.addedDraft} tone="added" />
-                <ChangeListSection title="Cube · Removed" cards={pendingDiff.removedDraft} tone="removed" />
-                <ChangeListSection title="Commanders · Added" cards={pendingDiff.addedCommanders} tone="added" />
-                <ChangeListSection title="Commanders · Removed" cards={pendingDiff.removedCommanders} tone="removed" />
+              <div className="browser-change-board">
+                <ChangeListColumn
+                  title="IN"
+                  tone="added"
+                  cubeCards={pendingDiff.addedDraft}
+                  commanderCards={pendingDiff.addedCommanders}
+                />
+                <ChangeListColumn
+                  title="OUT"
+                  tone="removed"
+                  cubeCards={pendingDiff.removedDraft}
+                  commanderCards={pendingDiff.removedCommanders}
+                />
               </div>
             )}
           </section>
