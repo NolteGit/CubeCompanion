@@ -8,29 +8,47 @@ Personal web companion for the MTG Commander Cube stored in `source/CubeUebersic
 npm install
 npm run dev
 npm run verify
-npm run cube:release
-npm run deploy:cloudflare
 ```
+
+## Update, validate, and release the cube
+
+Run these commands from the repository root. **`source/CubeUebersicht.xlsx` is the source of truth.**
+
+**1. Update Excel** using one of these methods:
+
+- **Manually:** edit and save `source/CubeUebersicht.xlsx`.
+- **From Cube Companion:** export **Changes** as a text file, close Excel, preview the import, then apply it:
+
+```powershell
+npm run cube:apply-diff -- --file "$HOME\Downloads\cube-sandbox-diff.txt"
+npm run cube:apply-diff -- --file "$HOME\Downloads\cube-sandbox-diff.txt" --apply
+```
+
+The preview is read-only. `--apply` validates a temporary workbook, updates the sorted card lists within their fixed sections, removes newly activated cards from Maybe, and creates a backup in `.cache/cube-backups/`. It leaves the Archive sheet untouched.
+
+**2. Validate → release → verify**, in this order:
+
+```powershell
+npm run cube:validate
+npm run cube:release -- --note "Describe cube changes"
+npm run verify
+```
+
+`cube:validate` checks the Excel source and cube rules without publishing a new snapshot. `cube:release` checks again and writes `data/current/`, `data/history/`, card metadata, ideas, and archive publication files. `verify` runs tests, build, and lint against the updated source.
+
+**3. Review → commit → push** only if everything above passed:
+
+```powershell
+git status
+git diff --stat
+git add source/CubeUebersicht.xlsx data
+git diff --cached --stat
+git commit -m "chore: update cube"
+git push
+```
+
+Check the workbook visually as needed. Review staged changes before committing. The local release command never commits or pushes automatically, and publishing the website is driven by a successful push to `main` when the Cloudflare Git connection is enabled.
 
 Production is a Cloudflare Worker serving the Vite build from `dist/`. The Worker configuration is committed in [`wrangler.jsonc`](wrangler.jsonc). Git-connected production builds use `main`, `npm run build`, and `npm run deploy:cloudflare`.
 
-## Apply a Cube Companion Changes export to Excel
-
-Close the workbook in Excel and export the **Changes** text file from Cube Companion. From the project root, first preview the modifications (the default never writes the workbook):
-
-```bash
-npm run cube:apply-diff -- --file "path/to/cube-sandbox-diff.txt"
-```
-
-If the preview matches your intent, apply it:
-
-```bash
-npm run cube:apply-diff -- --file "path/to/cube-sandbox-diff.txt" --apply
-npm run cube:extract
-npm run verify
-npm run cube:release -- --note "Update cube from Changes export"
-```
-
-The importer checks all additions/removals, sorts creatures before noncreatures by ascending mana value (then name) inside each draft section, preserves existing land ordering and fixed guild blocks, and groups commanders by their existing color identities, and clears newly activated cards from the Maybe sheet. It validates a temporary copy against the existing cube rules **before** replacing the source workbook. Backups are written to `.cache/cube-backups/` and are not tracked by Git. The workbook's Archive sheet is left untouched. Review the workbook and Git changes before committing/pushing. If the rules fail, the original workbook is not replaced.
-
-Architecture and release/deployment details live in [`docs/architecture.md`](docs/architecture.md).
+Architecture and deployment details live in [`docs/architecture.md`](docs/architecture.md).
