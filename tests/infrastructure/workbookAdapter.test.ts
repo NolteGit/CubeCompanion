@@ -49,21 +49,17 @@ describe('CubeUebersicht workbook adapter', () => {
 
   it('extracts only the two inclusion-idea columns from Cut-Watch-Interest', async () => {
     const extracted = await extractWorkbook(resolve(process.cwd(), WORKBOOK_PATH))
-    const cells = extracted.ideas.map((entry) => entry.cell)
+    const draftIdeas = extracted.ideas.filter((entry) => entry.pool === 'draft')
+    const commanderIdeas = extracted.ideas.filter((entry) => entry.pool === 'commander')
+    const activeNames = new Set(
+      [...extracted.draftCards, ...extracted.commanders]
+        .map((card) => card.name.trim().toLocaleLowerCase('en-US')),
+    )
 
-    expect(extracted.ideas.length).toBeGreaterThan(0)
-    expect(cells.every((cell) => cell.startsWith('A') || cell.startsWith('C'))).toBe(true)
-    expect(extracted.ideas).toContainEqual({
-      name: 'Secure the Wastes',
-      pool: 'draft',
-      cell: 'A3',
-    })
-    expect(extracted.ideas).toContainEqual({
-      name: 'Anim Pakal, Thousandth Moon',
-      pool: 'commander',
-      cell: 'C2',
-    })
-    expect(extracted.ideas.some((entry) => entry.name === 'Hopeful Initiate')).toBe(false)
-    expect(extracted.ideas.some((entry) => entry.name === 'Balance')).toBe(false)
+    expect(draftIdeas.length).toBeGreaterThan(0)
+    expect(commanderIdeas.length).toBeGreaterThan(0)
+    expect(draftIdeas.every((entry) => entry.cell.startsWith('A') && rowNumber(entry.cell) >= 2)).toBe(true)
+    expect(commanderIdeas.every((entry) => entry.cell.startsWith('C') && rowNumber(entry.cell) >= 2)).toBe(true)
+    expect(extracted.ideas.every((entry) => !activeNames.has(entry.name.trim().toLocaleLowerCase('en-US')))).toBe(true)
   })
 })

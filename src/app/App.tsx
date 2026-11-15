@@ -12,6 +12,7 @@ import {
 import { MaybeList } from '../features/browser/MaybeList'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { PlaytestTable } from '../features/playtest/PlaytestTable'
+import { DraftSimulator } from '../features/draft/DraftSimulator'
 import { SandboxView } from '../features/sandbox/SandboxView'
 import { loadSandboxState, saveSandboxState } from '../features/sandbox/storage'
 import {
@@ -38,6 +39,7 @@ type NavIcon =
   | 'analysis'
   | 'changes'
   | 'playtest'
+  | 'draft'
   | 'history'
   | 'archive'
 
@@ -116,6 +118,13 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="m9 7 8 5-8 5V7Z" />
         <rect x="4" y="4" width="16" height="16" rx="2.5" />
+      </svg>
+    )
+  }
+  if (icon === 'draft') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 4h11v15H4zM9 9h11v11H9zM6.5 7.5h6M12 13h5" />
       </svg>
     )
   }
@@ -265,6 +274,7 @@ function App() {
       return <SandboxView onChangeCount={setPendingChangeCount} />
     }
     if (page === 'playtest') return <PlaytestTable />
+    if (page === 'draft') return <DraftSimulator />
     if (page === 'history') return <HistoryBrowser />
     return <ArchiveBrowser />
   }
@@ -334,6 +344,12 @@ function App() {
 
           <nav className="sidebar-nav-section sidebar-tools" aria-label="Tools">
             <span className="sidebar-section-label">Tools</span>
+            <SidebarNavButton
+              label="Draft"
+              icon="draft"
+              active={page === 'draft'}
+              onClick={() => navigate('draft')}
+            />
             <SidebarNavButton
               label="Playtest"
               icon="playtest"

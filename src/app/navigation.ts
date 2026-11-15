@@ -3,6 +3,7 @@ export type AppPage =
   | 'analysis'
   | 'sandbox'
   | 'playtest'
+  | 'draft'
   | 'history'
   | 'archive'
 
@@ -11,6 +12,7 @@ const HASH_BY_PAGE: Readonly<Record<AppPage, string>> = {
   analysis: '#analysis',
   sandbox: '#changes',
   playtest: '#playtest',
+  draft: '#draft',
   history: '#history',
   archive: '#archive',
 }
@@ -24,6 +26,7 @@ const TITLE_BY_PAGE: Readonly<Record<AppPage, string>> = {
   analysis: 'Analysis · Cube Companion',
   sandbox: 'Changes · Cube Companion',
   playtest: 'Playtest · Cube Companion',
+  draft: 'Draft · Cube Companion',
   history: 'History · Cube Companion',
   archive: 'Archive · Cube Companion',
 }

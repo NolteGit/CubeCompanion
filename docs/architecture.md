@@ -54,6 +54,23 @@ Domain code must not depend on React, Excel, Scryfall, or browser storage. Infra
 - Vitest
 - Scryfall for card identity and metadata
 - ExcelJS for the local source adapter
-- static Cloudflare Pages deployment from GitHub
+- Cloudflare Workers static-assets deployment from GitHub
 
 No backend, database, authentication, Docker, or cross-device sandbox persistence is required for v1.
+
+## Deployment
+
+The production site is the `cubecompanion` Cloudflare Worker. Vite writes the production bundle to `dist/`, and `wrangler.jsonc` publishes that directory as Worker static assets.
+
+Cloudflare Workers Builds should be connected to `NolteGit/CubeCompanion` with:
+
+```text
+Production branch: main
+Build command:     npm run build
+Deploy command:    npm run deploy:cloudflare
+Root directory:    /
+```
+
+A push to `main` triggers a production build only while the Cloudflare Git account connection is authorized. If the dashboard reports that the project is disconnected from the Git account, reconnect the Git integration before expecting pushes to trigger deployments.
+
+The checked-in `public/_headers` file is copied into `dist/` by Vite and is applied by Cloudflare to static-asset responses.
