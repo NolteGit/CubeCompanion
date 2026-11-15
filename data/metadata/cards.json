@@ -1147,20 +1147,6 @@
       "scryfallUri": "https://scryfall.com/card/otc/83/mirror-entity?utm_source=api"
     },
     {
-      "oracleId": "17fa98cd-ed8f-483f-9525-7e989a82ebb2",
-      "name": "Balance",
-      "colorIdentity": [
-        "W"
-      ],
-      "manaValue": 2,
-      "manaCost": "{1}{W}",
-      "typeLine": "Sorcery",
-      "oracleText": "Each player chooses a number of lands they control equal to the number of lands controlled by the player who controls the fewest, then sacrifices the rest. Players discard cards and sacrifice creatures the same way.",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/c/e/ce648aa3-098b-4af0-a433-fd290bc85904.jpg?1783937636",
-      "scryfallUri": "https://scryfall.com/card/ema/2/balance?utm_source=api"
-    },
-    {
       "oracleId": "1861e642-21d5-4232-89f3-b5557f2946c1",
       "name": "Phyrexian Tower",
       "colorIdentity": [
@@ -1616,6 +1602,20 @@
       "scryfallUri": "https://scryfall.com/card/mom/190/invasion-of-ikoria-zilortha-apex-of-ikoria?utm_source=api"
     },
     {
+      "oracleId": "2251e34e-4ce8-4452-9dc6-d8cce8583996",
+      "name": "Stock Up",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{2}{U}",
+      "typeLine": "Sorcery",
+      "oracleText": "Look at the top five cards of your library. Put two of them into your hand and the rest on the bottom of your library in any order.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/0/a/0a786855-6eb4-42c0-a528-4842db46809d.jpg?1783907902",
+      "scryfallUri": "https://scryfall.com/card/dft/67/stock-up?utm_source=api"
+    },
+    {
       "oracleId": "229d6627-1292-4ae1-8849-b0f956fa6540",
       "name": "Grim Monolith",
       "colorIdentity": [],
@@ -1923,20 +1923,6 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/0/e/0e51d796-7279-4c06-87f0-37adbdaa41df.jpg?1783931543",
       "scryfallUri": "https://scryfall.com/card/thb/161/underworld-breach?utm_source=api"
-    },
-    {
-      "oracleId": "282dfeaa-6243-4f92-838a-5cb54fa85184",
-      "name": "Three Steps Ahead",
-      "colorIdentity": [
-        "U"
-      ],
-      "manaValue": 1,
-      "manaCost": "{U}",
-      "typeLine": "Instant",
-      "oracleText": "Spree (Choose one or more additional costs.)\n+ {1}{U} — Counter target spell.\n+ {3} — Create a token that's a copy of target artifact or creature you control.\n+ {2} — Draw two cards, then discard a card.",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/8/f/8fffd839-2337-4a14-9312-cee085a17f4b.jpg?1783911837",
-      "scryfallUri": "https://scryfall.com/card/otj/75/three-steps-ahead?utm_source=api"
     },
     {
       "oracleId": "2876e74f-a242-4995-9702-0b737a1ab67a",
@@ -2466,8 +2452,8 @@
       "typeLine": "Artifact",
       "oracleText": "You may play lands from your graveyard.",
       "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/c/1/c1509ead-4e13-4111-b1cb-2aec5c51fd8d.jpg?1794579688",
-      "scryfallUri": "https://scryfall.com/card/nac/345/crucible-of-worlds?utm_source=api"
+      "imageUri": "https://cards.scryfall.io/normal/front/7/f/7f4893ef-f983-418b-b7a4-5f073c844545.jpg?1783921793",
+      "scryfallUri": "https://scryfall.com/card/2x2/303/crucible-of-worlds?utm_source=api"
     },
     {
       "oracleId": "33db6dc8-2c88-4a7f-8d4d-3bc9fb6544b2",
@@ -4303,20 +4289,6 @@
       "scryfallUri": "https://scryfall.com/card/clb/274/elminster?utm_source=api"
     },
     {
-      "oracleId": "56956afd-db53-4542-816b-490c8b0bbcf7",
-      "name": "Serum Visions",
-      "colorIdentity": [
-        "U"
-      ],
-      "manaValue": 1,
-      "manaCost": "{U}",
-      "typeLine": "Sorcery",
-      "oracleText": "Draw a card. Scry 2.",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/5/b/5b75eb6b-d76c-4b92-b042-13493f9ef164.jpg?1783911938",
-      "scryfallUri": "https://scryfall.com/card/otc/112/serum-visions?utm_source=api"
-    },
-    {
       "oracleId": "56e05b17-aa1d-483d-857c-4cab4f12aa8a",
       "name": "Triplicate Titan",
       "colorIdentity": [],
@@ -5565,6 +5537,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/b/6/b6bc3f71-b4ce-4c05-be3c-7a0faad476c3.jpg?1783923890",
       "scryfallUri": "https://scryfall.com/card/neo/89/blade-of-the-oni?utm_source=api"
+    },
+    {
+      "oracleId": "6df1c314-b97b-4bbc-8b7e-a07785347a49",
+      "name": "Occult Epiphany",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 1,
+      "manaCost": "{X}{U}",
+      "typeLine": "Instant",
+      "oracleText": "Draw X cards, then discard X cards. Create a 1/1 white Spirit creature token with flying for each card type among cards discarded this way.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/5/e5fcfaff-2fd0-46d8-b863-ad25558c9e95.jpg?1789599813",
+      "scryfallUri": "https://scryfall.com/card/frc/43/occult-epiphany?utm_source=api"
     },
     {
       "oracleId": "6e26a525-2584-490d-b106-621c1a30e1fd",
@@ -7103,6 +7089,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/9/3/939c6e19-4b27-4023-bb9c-ae440f91e21c.jpg?1783931515",
       "scryfallUri": "https://scryfall.com/card/thb/236/shadowspear?utm_source=api"
+    },
+    {
+      "oracleId": "8b7a3613-f1bd-4262-9b11-b631167c2c2d",
+      "name": "Foundation Breaker",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 4,
+      "manaCost": "{3}{G}",
+      "typeLine": "Creature — Elemental",
+      "oracleText": "When this creature enters, you may destroy target artifact or enchantment.\nEvoke {1}{G} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/d/9/d990b59f-2ad1-4224-9f1e-2574eadce1a3.jpg?1783904546",
+      "scryfallUri": "https://scryfall.com/card/ecc/108/foundation-breaker?utm_source=api"
     },
     {
       "oracleId": "8be11473-6edf-4f45-b541-11858655fb5f",
@@ -8879,20 +8879,6 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/a/d/ad0fc934-f49d-4607-a52b-aea5c1d5d342.jpg?1783914989",
       "scryfallUri": "https://scryfall.com/card/woc/10/malleable-impostor?utm_source=api"
-    },
-    {
-      "oracleId": "acf4d685-a718-42f7-9a7a-dee069ae8db2",
-      "name": "Council's Judgment",
-      "colorIdentity": [
-        "W"
-      ],
-      "manaValue": 3,
-      "manaCost": "{1}{W}{W}",
-      "typeLine": "Sorcery",
-      "oracleText": "Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/4/0/4005e82f-0b30-4165-87e2-51250c00adb0.jpg?1783911948",
-      "scryfallUri": "https://scryfall.com/card/otc/79/councils-judgment?utm_source=api"
     },
     {
       "oracleId": "acfa77fd-3610-4f12-9c3c-bd860ce91700",
@@ -11754,6 +11740,20 @@
       "scryfallUri": "https://scryfall.com/card/sth/35/leap?utm_source=api"
     },
     {
+      "oracleId": "e89e1fae-bac3-4cc0-a233-24b9e08a5290",
+      "name": "Fall from Favor",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{2}{U}",
+      "typeLine": "Enchantment — Aura",
+      "oracleText": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/2/9/29679998-2fb4-4fb4-9048-27b6bf6b79e8.jpg?1783915698",
+      "scryfallUri": "https://scryfall.com/card/cmm/93/fall-from-favor?utm_source=api"
+    },
+    {
       "oracleId": "e8d78a83-c932-4b55-8f75-7094c672c3a9",
       "name": "Unexpectedly Absent",
       "colorIdentity": [
@@ -12441,6 +12441,20 @@
       "scryfallUri": "https://scryfall.com/card/ncc/344/kess-dissident-mage?utm_source=api"
     },
     {
+      "oracleId": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "name": "Thieving Skydiver",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{U}",
+      "typeLine": "Creature — Merfolk Rogue",
+      "oracleText": "Kicker {X}. X can't be 0. (You may pay an additional {X} as you cast this spell.)\nFlying\nWhen this creature enters, if it was kicked, gain control of target artifact with mana value X or less. If that artifact is an Equipment, attach it to this creature.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/0/6/06996ff1-7f57-4e73-940a-a58c4482cadd.jpg?1783911936",
+      "scryfallUri": "https://scryfall.com/card/otc/118/thieving-skydiver?utm_source=api"
+    },
+    {
       "oracleId": "f55a3781-fe33-4301-9bb5-6a54b9c13c4f",
       "name": "Raise the Palisade",
       "colorIdentity": [
@@ -12783,20 +12797,6 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/5/0/5032d71d-d9f8-498c-97d1-271c2e9c1c47.jpg?1783903790",
       "scryfallUri": "https://scryfall.com/card/soc/202/rite-of-replication?utm_source=api"
-    },
-    {
-      "oracleId": "fb81f95c-70f8-4eb7-8d15-15d0ae23ec03",
-      "name": "Mystical Tutor",
-      "colorIdentity": [
-        "U"
-      ],
-      "manaValue": 1,
-      "manaCost": "{U}",
-      "typeLine": "Instant",
-      "oracleText": "Search your library for an instant or sorcery card, reveal it, then shuffle and put that card on top.",
-      "isLand": false,
-      "imageUri": "https://cards.scryfall.io/normal/front/3/6/36fa9a0b-b0c9-43ea-ba11-99d7982f974e.jpg?1783918491",
-      "scryfallUri": "https://scryfall.com/card/dmr/60/mystical-tutor?utm_source=api"
     },
     {
       "oracleId": "fb868840-09fa-49b1-85cb-b08ad065e972",
