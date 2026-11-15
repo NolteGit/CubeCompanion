@@ -16,7 +16,8 @@
     "cube:resolve": "tsx scripts/cube/resolve.ts",
     "cube:validate": "tsx scripts/cube/validate.ts",
     "cube:archive": "tsx scripts/cube/archive.ts",
-    "cube:release": "tsx scripts/cube/release.ts"
+    "cube:release": "tsx scripts/cube/release.ts",
+    "cube:apply-diff": "tsx scripts/cube/applyDiff.ts"
   },
   "dependencies": {
     "react": "^19.3.1",
