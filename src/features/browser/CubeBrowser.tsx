@@ -131,17 +131,6 @@ function splitColumn(group: CardGroup, pool: BrowserPool): ColumnSection[] {
     }))
   }
 
-  if (group.key === 'colorless') {
-    const byType = new Map<string, BrowserCard[]>()
-    for (const card of group.cards) {
-      const type = primaryType(card)
-      const cards = byType.get(type) ?? []
-      cards.push(card)
-      byType.set(type, cards)
-    }
-    return [...byType.entries()].map(([key, cards]) => ({ key, label: key, cards }))
-  }
-
   const creatures = group.cards.filter((card) => card.typeLine.includes('Creature'))
   const noncreatures = group.cards.filter((card) => !card.typeLine.includes('Creature'))
   return [
