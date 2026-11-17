@@ -21,7 +21,6 @@ import {
   type BasicLand,
   type BasicLandCounts,
 } from '../../domain/draft/deck'
-import { DraftCardInspection } from './DraftCardInspection'
 import './draft.css'
 
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
@@ -126,20 +125,18 @@ function DraftCardButton({
   compact?: boolean
 }) {
   return (
-    <DraftCardInspection card={card}>
-      <button
-        type="button"
-        className={`draft-card${selected ? ' draft-card--selected' : ''}`}
-        onClick={onClick}
-        disabled={disabled}
-        aria-pressed={selected}
-        title={`${action}: ${card.name}`}
-      >
-        {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-card-placeholder">No image</span>}
-        <span className="draft-card-name">{card.name}</span>
-        {!compact && <small>{card.manaCost || card.typeLine}</small>}
-      </button>
-    </DraftCardInspection>
+    <button
+      type="button"
+      className={`draft-card${selected ? ' draft-card--selected' : ''}`}
+      onClick={onClick}
+      disabled={disabled}
+      aria-pressed={selected}
+      title={`${action}: ${card.name}`}
+    >
+      {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-card-placeholder">No image</span>}
+      <span className="draft-card-name">{card.name}</span>
+      {!compact && <small>{card.manaCost || card.typeLine}</small>}
+    </button>
   )
 }
 
