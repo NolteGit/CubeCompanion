@@ -405,6 +405,7 @@
 .draft-agents-commanders { display: flex; flex-wrap: wrap; gap: 7px; }
 .draft-agents-commanders span { display: inline-flex; gap: 7px; align-items: center; padding: 4px 8px 4px 4px; border: 1px solid #d6b558; border-radius: 7px; color: #ffe3a4; background: rgb(126 94 33 / 13%); font-size: .72rem; font-weight: 650; }
 .draft-agents-commanders img { display: block; width: 29px; height: 40px; object-fit: cover; border-radius: 3px; }
+.draft-agents-provisional { margin: 0; color: var(--text-muted); font-size: .73rem; }
 .draft-agents-valid, .draft-agents-warning { padding: 8px 10px; border: 1px solid rgb(74 174 119 / 36%); border-radius: 7px; color: #a9eec6; background: rgb(36 109 73 / 11%); font-size: .73rem; }
 .draft-agents-warning { border-color: rgb(224 151 98 / 45%); color: #ffd2ab; background: rgb(116 62 32 / 14%); }
 .draft-agents .draft-board { min-width: 0; }
