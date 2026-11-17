@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { agentCurveCenter, buildAgentDeck, chooseAgentPick, createDraftAgents, fixingLandColors, AGENT_RULES } from '../../src/domain/draft/agents'
+import { buildAgentDeck, chooseAgentPick, createDraftAgents, fixingLandColors, AGENT_RULES } from '../../src/domain/draft/agents'
 import { checkDraftDeck } from '../../src/domain/draft/deck'
 import { pickDraftCard, startDraft } from '../../src/domain/draft/engine'
 import type { CubeCard } from '../../src/domain/cube/types'
@@ -139,19 +139,33 @@ describe('lightweight playable-pick heuristics', () => {
     expect(chooseAgentPick(pack, [...fiveFixers, anyColor], [commander3], 0)).toBe(0)
   })
 
-  it('prefers a low curve for cheap commanders and a higher one for expensive commanders', () => {
+  it('keeps all agents centered on 2–3 mana and allows a few costly picks for expensive commanders', () => {
     const cheapCommander = { ...card('cheap-commander', ['W']), manaValue: 2 }
     const expensiveCommander = { ...card('expensive-commander', ['W']), manaValue: 6 }
-    const cheapCard = {
-      ...card('cheap', ['W']), manaValue: 2, manaCost: '{1}{W}', typeLine: 'Creature',
-    }
-    const expensiveCard = {
-      ...card('expensive', ['W']), manaValue: 4, manaCost: '{3}{W}', typeLine: 'Creature',
-    }
-    expect(agentCurveCenter([cheapCommander])).toBe(2.3)
-    expect(agentCurveCenter([expensiveCommander])).toBeCloseTo(3.7)
-    expect(chooseAgentPick([cheapCard, expensiveCard], [], [cheapCommander], 0)).toBe(0)
-    expect(chooseAgentPick([cheapCard, expensiveCard], [], [expensiveCommander], 0)).toBe(1)
+    const spellAt = (manaValue: number) => ({
+      ...card('mv-' + manaValue, ['W']), manaValue, manaCost: '{W}', typeLine: 'Creature',
+    })
+    const one = spellAt(1)
+    const two = spellAt(2)
+    const three = spellAt(3)
+    const four = spellAt(4)
+    const six = spellAt(6)
+
+    expect(AGENT_RULES.curveCenter).toBe(2.5)
+    expect(chooseAgentPick([two, four], [], [cheapCommander], 0)).toBe(0)
+    expect(chooseAgentPick([two, four], [], [expensiveCommander], 0)).toBe(0)
+    expect(chooseAgentPick([three, four], [], [expensiveCommander], 0)).toBe(0)
+    expect(chooseAgentPick([two, six], [], [expensiveCommander], 0)).toBe(0)
+
+    // At equal distance from 2.5, only the expensive commander tips toward 4.
+    expect(chooseAgentPick([one, four], [], [cheapCommander], 0)).toBe(0)
+    expect(chooseAgentPick([one, four], [], [expensiveCommander], 0)).toBe(1)
+
+    // Expensive cards become less attractive once a few are already drafted.
+    const highPicks = Array.from({ length: 5 }, (_, i) => ({
+      ...spellAt(5), oracleId: 'high-' + i,
+    }))
+    expect(chooseAgentPick([three, six], highPicks, [expensiveCommander], 0)).toBe(0)
   })
 
   it('penalizes demanding colored pips more heavily for three-color commanders', () => {
