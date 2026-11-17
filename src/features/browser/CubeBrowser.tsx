@@ -6,6 +6,7 @@ import { commanderCards, draftCards, releaseInfo } from './data'
 import { cardTint } from './cardTint'
 import { CardCollection } from './CardCollection'
 import { HoverCard } from './HoverCard'
+import { groupColorManaCards, MANA_VALUE_LABELS } from './manaColumns'
 import {
   CARD_TYPE_OPTIONS,
   COMMANDER_SECTION_OPTIONS,
@@ -111,7 +112,7 @@ function filteredSubgroups(
     .map(([key, group]) => ({ key: `mv-${key}`, label: `MV ${key}`, cards: group }))
 }
 
-function splitColumn(group: CardGroup, pool: BrowserPool): ColumnSection[] {
+function splitColumn(group: CardGroup, pool: BrowserPool, activeType: CardTypeFilter): ColumnSection[] {
   if (pool === 'commanders') {
     return [{ key: 'commanders', label: 'Commanders', cards: group.cards }]
   }
@@ -129,6 +130,12 @@ function splitColumn(group: CardGroup, pool: BrowserPool): ColumnSection[] {
       label: GUILD_LABELS[key] ?? (key === 'other' ? 'Other' : key),
       cards,
     }))
+  }
+
+  // In an Artifact-only view, show every matching artifact in one Noncreature
+  // section (including artifact creatures). No matching card is filtered out.
+  if (activeType === 'artifact') {
+    return [{ key: 'noncreature', label: 'Noncreature', cards: group.cards }]
   }
 
   const creatures = group.cards.filter((card) => card.typeLine.includes('Creature'))
@@ -329,8 +336,14 @@ function CubeBrowserContent({
     [pool, visibleCards],
   )
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all' || sort !== 'cube')
-  const denseColumns = view === 'list' && !hasFilters && sort === 'cube' && groups.length > 0
-  const groupedFilteredResults = view === 'list' && hasFilters && sort === 'cube' && groups.length > 0
+  // A type-only filter retains the familiar columns for each cube section.
+  const denseColumns = view === 'list' && section === 'all' && !query.trim() && sort === 'cube' && groups.length > 0
+  // A single color gets the same creature/noncreature mana layout as deckbuilding.
+  // Guild and land sections retain their positional grouping.
+  const colorManaBoard = view === 'list' && pool === 'draft' && sort === 'cube' &&
+    section !== 'all' && section !== 'multicolor' && section !== 'land' && groups.length === 1
+  const colorManaColumns = colorManaBoard ? groupColorManaCards(groups[0].cards, type) : []
+  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && sort === 'cube' && groups.length > 0
 
   function clearFilters() {
     setQuery('')
@@ -561,7 +574,7 @@ function CubeBrowserContent({
                 <span>{group.cards.length}</span>
               </header>
               <div className="column-sections">
-                {splitColumn(group, pool).map((columnSection) => (
+                {splitColumn(group, pool, type).map((columnSection) => (
                   <section className="column-section" key={columnSection.key}>
                     <header>
                       <strong>{columnSection.label}</strong>
@@ -579,6 +592,45 @@ function CubeBrowserContent({
             </section>
           ))}
         </div>
+      ) : colorManaBoard ? (
+        <section className={`color-mana-board cube-theme cube-theme--${groups[0].key}`} aria-label={`${groups[0].label} cards by mana value`}>
+          <header className="color-mana-board-heading">
+            <span className="section-dot" aria-hidden="true" />
+            <strong>{groups[0].label}</strong>
+            <span>{groups[0].cards.length} cards</span>
+          </header>
+          <div className="color-mana-scroll" role="region" aria-label="Creature and noncreature mana columns" tabIndex={0}>
+            <div className="color-mana-content">
+              <div className="color-mana-labels" aria-hidden="true">
+                {MANA_VALUE_LABELS.map((label) => <span key={label}>{label}</span>)}
+              </div>
+              {(['creatures', 'noncreatures'] as const).map((kind) => {
+                const count = colorManaColumns.reduce((sum, column) => sum + column[kind].length, 0)
+                if (count === 0) return null
+                return (
+                  <section className="color-mana-row" key={kind} aria-label={kind === 'creatures' ? 'Creatures' : 'Noncreatures'}>
+                    <header className="color-mana-row-heading">
+                      <strong>{kind === 'creatures' ? 'Creatures' : 'Noncreatures'}</strong>
+                      <span>{count} cards</span>
+                    </header>
+                    <div className="color-mana-row-columns">
+                      {colorManaColumns.map((column) => (
+                        <div className="color-mana-cell" key={column.label}>
+                          <CardCollection
+                            cards={column[kind]}
+                            view="list"
+                            rowAction={removeAction}
+                            workingAddedIds={workingAddedIds}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )
+              })}
+            </div>
+          </div>
+        </section>
       ) : groupedFilteredResults ? (
         <div className="filtered-results">
           <div className="filtered-results-heading">
