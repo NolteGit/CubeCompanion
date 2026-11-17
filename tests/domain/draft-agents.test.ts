@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildAgentDeck, chooseAgentPick, createDraftAgents, AGENT_RULES } from '../../src/domain/draft/agents'
+import { agentCurveCenter, buildAgentDeck, chooseAgentPick, createDraftAgents, fixingLandColors, AGENT_RULES } from '../../src/domain/draft/agents'
 import { checkDraftDeck } from '../../src/domain/draft/deck'
 import { pickDraftCard, startDraft } from '../../src/domain/draft/engine'
 import type { CubeCard } from '../../src/domain/cube/types'
@@ -84,5 +84,121 @@ describe('draft agents', () => {
     expect(result).toEqual(play())
     expect(result.selections.map((picks) => picks.length)).toEqual([20, 20, 20])
     expect(new Set(result.selections.flat().map((pick) => pick.oracleId)).size).toBe(60)
+  })
+})
+
+
+describe('lightweight playable-pick heuristics', () => {
+  const commander3 = { ...card('esper-commander', ['W', 'U', 'B']), manaValue: 5 }
+  const commander2 = { ...card('azorius-commander', ['W', 'U']), manaValue: 2 }
+  const fixingDual = {
+    ...card('dual-land', ['W', 'U'], true),
+    typeLine: 'Land',
+    oracleText: '{T}: Add {W} or {U}.',
+  }
+  const fetchedDual = {
+    ...card('fetchland', [], true),
+    typeLine: 'Land',
+    oracleText: '{T}, Pay 1 life, Sacrifice this land: Search your library for a Plains or Island card, put it onto the battlefield, then shuffle.',
+  }
+  const anyColor = {
+    ...card('any-color', [], true),
+    typeLine: 'Land',
+    oracleText: '{T}: Add one mana of any color.',
+  }
+  const spell = {
+    ...card('castable', ['U']), manaValue: 3, manaCost: '{2}{U}', typeLine: 'Creature — Wizard',
+  }
+
+  it('recognizes duals, fetchlands, triomes and any-color lands without external tags', () => {
+    expect(fixingLandColors(fixingDual, [commander3])).toEqual(['W', 'U'])
+    expect(fixingLandColors(fetchedDual, [commander3])).toEqual(['W', 'U'])
+    expect(fixingLandColors(anyColor, [commander3])).toEqual(['W', 'U', 'B'])
+    expect(fixingLandColors({
+      ...card('triome', ['W', 'U', 'B'], true),
+      typeLine: 'Land — Plains Island Swamp',
+      oracleText: '({T}: Add {W}, {U}, or {B}.)',
+    }, [commander3])).toEqual(['W', 'U', 'B'])
+    expect(fixingLandColors({
+      ...card('utility', [], true),
+      typeLine: 'Land', oracleText: '{T}: Add {C}.',
+    }, [commander3])).toEqual([])
+    expect(fixingLandColors({
+      ...card('basic-cycle', [], true),
+      typeLine: 'Land', oracleText: 'Basic landcycling {1}',
+    }, [commander2])).toEqual(['W', 'U'])
+  })
+
+  it('prioritizes a sixth 3-color fixer, but returns to spells once the soft target is met', () => {
+    const pack = [spell, fetchedDual]
+    expect(chooseAgentPick(pack, [], [commander3], 0)).toBe(1)
+    const fiveFixers = Array.from({ length: 5 }, (_, index) => ({
+      ...fixingDual, oracleId: 'fixer-' + index, name: 'fixer-' + index,
+    }))
+    expect(chooseAgentPick(pack, fiveFixers, [commander3], 0)).toBe(1)
+    expect(chooseAgentPick(pack, [...fiveFixers, anyColor], [commander3], 0)).toBe(0)
+  })
+
+  it('prefers a low curve for cheap commanders and a higher one for expensive commanders', () => {
+    const cheapCommander = { ...card('cheap-commander', ['W']), manaValue: 2 }
+    const expensiveCommander = { ...card('expensive-commander', ['W']), manaValue: 6 }
+    const cheapCard = {
+      ...card('cheap', ['W']), manaValue: 2, manaCost: '{1}{W}', typeLine: 'Creature',
+    }
+    const expensiveCard = {
+      ...card('expensive', ['W']), manaValue: 4, manaCost: '{3}{W}', typeLine: 'Creature',
+    }
+    expect(agentCurveCenter([cheapCommander])).toBe(2.3)
+    expect(agentCurveCenter([expensiveCommander])).toBe(3.7)
+    expect(chooseAgentPick([cheapCard, expensiveCard], [], [cheapCommander], 0)).toBe(0)
+    expect(chooseAgentPick([cheapCard, expensiveCard], [], [expensiveCommander], 0)).toBe(1)
+  })
+
+  it('penalizes demanding colored pips more heavily for three-color commanders', () => {
+    const easier = {
+      ...card('single-colored', ['W']), manaValue: 3, manaCost: '{2}{W}', typeLine: 'Creature',
+    }
+    const harder = {
+      ...card('triple-colored', ['W']), manaValue: 3, manaCost: '{W}{W}{W}', typeLine: 'Creature',
+    }
+    const multi = {
+      ...card('three-color-pips', ['W', 'U', 'B']), manaValue: 3, manaCost: '{W}{U}{B}', typeLine: 'Creature',
+    }
+    expect(chooseAgentPick([harder, easier], [], [commander3], 0)).toBe(1)
+    expect(chooseAgentPick([multi, easier], [], [commander3], 0)).toBe(1)
+    // Demanding mana costs remain preferable to off-color cards.
+    expect(chooseAgentPick([multi, card('off-color', ['R'])], [], [commander3], 0)).toBe(0)
+  })
+
+  it('nudges the creature share without enforcing an inflexible deck quota', () => {
+    const creature = {
+      ...card('creature', ['U']), manaValue: 3, manaCost: '{2}{U}', typeLine: 'Creature',
+    }
+    const noncreature = {
+      ...card('spell', ['U']), manaValue: 3, manaCost: '{2}{U}', typeLine: 'Instant',
+    }
+    const tenNoncreatures = Array.from({ length: 10 }, (_, i) => ({
+      ...noncreature, oracleId: 'noncreature-' + i,
+    }))
+    const tenCreatures = Array.from({ length: 10 }, (_, i) => ({
+      ...creature, oracleId: 'creature-' + i,
+    }))
+    expect(chooseAgentPick([noncreature, creature], tenNoncreatures, [commander2], 0)).toBe(1)
+    expect(chooseAgentPick([noncreature, creature], tenCreatures, [commander2], 0)).toBe(0)
+  })
+
+  it('retains drafted fixing in the finished deck ahead of incidental utility lands', () => {
+    const spells = Array.from({ length: 35 }, (_, index) => ({
+      ...spell, oracleId: 'spell-' + index,
+    }))
+    const utilityLands = Array.from({ length: 25 }, (_, index) => ({
+      ...card('utility-' + index, [], true),
+      typeLine: 'Land', oracleText: '{T}: Add {C}.',
+    }))
+    const deck = buildAgentDeck([commander3], [...spells, ...utilityLands, anyColor])
+    expect(deck.total).toBe(60)
+    expect(deck.landCount).toBe(24)
+    expect(deck.mainDeck.map((entry) => entry.oracleId)).toContain(anyColor.oracleId)
+    expect(deck.valid).toBe(true)
   })
 })
