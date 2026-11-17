@@ -80,7 +80,7 @@ export function SampleHandDialog({ selectedCards, basics, deckLabel, onClose }: 
         <header className="draft-sample-header">
           <div>
             <h3>Sample hand <span>{shownCount} / {deck.length}</span></h3>
-            <p>Shuffled from {deckLabel ? `Agent deck: ${deckLabel}` : 'your current main deck'}. Commanders stay in the command zone.</p>
+            <p>Shuffled from {deckLabel ? `${deckLabel}'s main deck` : 'your current main deck'}. Commanders stay in the command zone.</p>
           </div>
           <div className="draft-sample-actions">
             <button type="button" onClick={newHand} disabled={deck.length === 0}>New hand</button>
@@ -93,7 +93,7 @@ export function SampleHandDialog({ selectedCards, basics, deckLabel, onClose }: 
         </div>
         <footer className="draft-sample-footer">
           <span>{deck.length - shownCount} cards left in library</span>
-          {deck.length < 7 && <span>Your deck currently has fewer than seven main-deck cards.</span>}
+          {deck.length < 7 && <span>This deck currently has fewer than seven main-deck cards.</span>}
           <span>Preview only — drawing does not change your deck</span>
         </footer>
       </div>
