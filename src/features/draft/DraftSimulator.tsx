@@ -11,6 +11,7 @@ import {
 } from '../../domain/draft/engine'
 import {
   BASIC_LANDS,
+  canPairCommanders,
   checkDraftDeck,
   emptyBasicLands,
   isCommanderLegal,
@@ -20,13 +21,13 @@ import {
 import './draft.css'
 
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
-type PoolFilter = 'all' | 'available' | 'included'
 
-const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v2'
+const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v3'
+const PREVIOUS_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v2'
 const LEGACY_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v1'
 
 interface SavedDraft {
-  version: 2
+  version: 3
   snapshotId: string
   phase: Phase
   players: number
@@ -44,25 +45,43 @@ function readSavedDraft(): SavedDraft | null {
   try {
     // Upgrade prior sessions without losing their drafted cards or deck choices.
     const raw = window.sessionStorage.getItem(DRAFT_STORAGE_KEY)
-    const legacyRaw = raw ? null : window.sessionStorage.getItem(LEGACY_DRAFT_STORAGE_KEY)
-    if (!raw && !legacyRaw) return null
-    const parsed = JSON.parse(raw ?? legacyRaw!) as SavedDraft & { commander?: BrowserCard | null }
+    const previousRaw = raw ? null : window.sessionStorage.getItem(PREVIOUS_DRAFT_STORAGE_KEY)
+    const legacyRaw = raw || previousRaw ? null : window.sessionStorage.getItem(LEGACY_DRAFT_STORAGE_KEY)
+    if (!raw && !previousRaw && !legacyRaw) return null
+    const parsed = JSON.parse(raw ?? previousRaw ?? legacyRaw!) as Omit<SavedDraft, 'version'> & {
+      version: number
+      commander?: BrowserCard | null
+    }
     if (parsed.snapshotId !== releaseInfo.snapshotId) return null
     if (!['setup', 'commander', 'draft', 'build'].includes(parsed.phase)) return null
     if (!Array.isArray(parsed.selectedIds) || !parsed.basics || !Array.isArray(parsed.commanderOffer)) return null
     if (parsed.phase !== 'setup' && !parsed.session) return null
-    if (raw) {
-      if (parsed.version !== 2 || !Array.isArray(parsed.commanderCandidates) || !Array.isArray(parsed.activeCommanderIds)) return null
+    if (raw || previousRaw) {
+      if (parsed.version !== (raw ? 3 : 2) || !Array.isArray(parsed.commanderCandidates) || !Array.isArray(parsed.activeCommanderIds)) return null
       if ((parsed.phase === 'draft' || parsed.phase === 'build') && parsed.commanderCandidates.length === 0) return null
-      return parsed
+      if (raw) return parsed as SavedDraft
+      // V2 did not offer the deck board during drafting. Include all old picks and options.
+      return {
+        ...parsed,
+        version: 3,
+        selectedIds: parsed.phase === 'draft'
+          ? parsed.session?.selections[0].map((card) => card.oracleId) ?? []
+          : parsed.selectedIds,
+        activeCommanderIds: parsed.phase === 'draft'
+          ? parsed.commanderCandidates.map((card) => card.oracleId)
+          : parsed.activeCommanderIds,
+      }
     }
     const oldCommander = parsed.commander
     if ((parsed.phase === 'draft' || parsed.phase === 'build') && !oldCommander) return null
     return {
       ...parsed,
-      version: 2,
+      version: 3,
       commanderCandidates: oldCommander ? [oldCommander] : [],
       activeCommanderIds: oldCommander ? [oldCommander.oracleId] : [],
+      selectedIds: parsed.phase === 'draft'
+        ? parsed.session?.selections[0].map((card) => card.oracleId) ?? []
+        : parsed.selectedIds,
     }
   } catch {
     return null
@@ -75,12 +94,14 @@ function DraftCardButton({
   selected = false,
   disabled = false,
   action,
+  compact = false,
 }: {
   card: BrowserCard
   onClick: () => void
   selected?: boolean
   disabled?: boolean
   action: string
+  compact?: boolean
 }) {
   return (
     <button
@@ -93,7 +114,7 @@ function DraftCardButton({
     >
       {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-card-placeholder">No image</span>}
       <span className="draft-card-name">{card.name}</span>
-      <small>{card.manaCost || card.typeLine}</small>
+      {!compact && <small>{card.manaCost || card.typeLine}</small>}
     </button>
   )
 }
@@ -109,6 +130,57 @@ function createDecklist(commanders: readonly BrowserCard[], pool: readonly Brows
   return lines.join('\n')
 }
 
+/** A compact overlapping side-pool card with a full viewport preview on hover/focus. */
+function SidePoolCard({
+  card, commander = false, offColor = false, onRestore,
+}: {
+  card: BrowserCard
+  commander?: boolean
+  offColor?: boolean
+  onRestore: () => void
+}) {
+  const [preview, setPreview] = useState<{ left: number; top: number } | null>(null)
+
+  function previewAt(element: HTMLButtonElement) {
+    const rect = element.getBoundingClientRect()
+    const width = 270
+    const height = 420
+    const left = Math.max(12, rect.left - width - 14)
+    const top = Math.min(
+      Math.max(76, rect.top - 35),
+      Math.max(76, window.innerHeight - height - 12),
+    )
+    setPreview({ left, top })
+  }
+
+  return (
+    <div className="draft-aside-card-shell">
+      <button
+        type="button"
+        className={`draft-aside-card${commander ? ' draft-aside-card--commander' : ''}${offColor ? ' draft-aside-card--offcolor' : ''}`}
+        onClick={onRestore}
+        onMouseEnter={(event) => previewAt(event.currentTarget)}
+        onMouseLeave={() => setPreview(null)}
+        onFocus={(event) => previewAt(event.currentTarget)}
+        onBlur={() => setPreview(null)}
+        aria-label={`Restore ${card.name} to your ${commander ? 'commanders' : 'deck'}`}
+        title={`Restore ${card.name}`}
+      >
+        {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-aside-placeholder">{card.name}</span>}
+        {commander && <span className="draft-aside-card-badge">CMD</span>}
+        {offColor && <span className="draft-aside-card-warning">!</span>}
+      </button>
+      {preview && (
+        <aside className="draft-aside-preview" style={preview} aria-hidden="true">
+          {card.imageUri ? <img src={card.imageUri} alt="" /> : <div className="draft-aside-placeholder">{card.name}</div>}
+          <strong>{card.name}</strong>
+          <small>{card.manaCost || card.typeLine}</small>
+        </aside>
+      )}
+    </div>
+  )
+}
+
 export function DraftSimulator() {
   const [savedDraft] = useState(readSavedDraft)
   const [phase, setPhase] = useState<Phase>(savedDraft?.phase ?? 'setup')
@@ -122,12 +194,11 @@ export function DraftSimulator() {
   const [selected, setSelected] = useState<Set<string>>(() => new Set(savedDraft?.selectedIds ?? []))
   const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
   const [message, setMessage] = useState('')
-  const [poolQuery, setPoolQuery] = useState('')
-  const [poolFilter, setPoolFilter] = useState<PoolFilter>('all')
+  const [deckExpanded, setDeckExpanded] = useState(savedDraft?.phase === 'build')
 
   useEffect(() => {
     const saved: SavedDraft = {
-      version: 2,
+      version: 3,
       snapshotId: releaseInfo.snapshotId,
       phase, players, packsPerPlayer, cardsPerPack, session,
       commanderOffer, commanderCandidates, activeCommanderIds, selectedIds: [...selected], basics,
@@ -143,11 +214,20 @@ export function DraftSimulator() {
   const activeCommanders = commanderCandidates.filter((card) => activeCommanderIds.includes(card.oracleId))
   const deck = checkDraftDeck(activeCommanders, draftPool, selected, basics)
   const selectedCards = draftPool.filter((card) => selected.has(card.oracleId))
-  const visiblePool = draftPool
-    .filter((card) => card.name.toLocaleLowerCase('en-US').includes(poolQuery.trim().toLocaleLowerCase('en-US')))
-    .filter((card) => poolFilter === 'all' || (selected.has(card.oracleId) === (poolFilter === 'included')))
-    .slice()
+  const sidePoolCards = draftPool.filter((card) => !selected.has(card.oracleId))
     .sort((left, right) => left.manaValue - right.manaValue || left.name.localeCompare(right.name))
+  const sidePoolCommanders = commanderCandidates.filter((card) => !activeCommanderIds.includes(card.oracleId))
+  const setAsideCount = sidePoolCards.length + sidePoolCommanders.length
+  const offColorCards = activeCommanders.length > 0
+    ? selectedCards.filter((card) => !isCommanderLegal(card, activeCommanders))
+    : []
+  const incompatibleCommanders = activeCommanders.length === 2 && !canPairCommanders(activeCommanders[0], activeCommanders[1])
+  const visibleDeckIssues = phase === 'draft'
+    ? deck.issues.filter((issue) => !issue.startsWith('The deck needs exactly 60 cards'))
+    : deck.issues
+  const deckCheckLabel = visibleDeckIssues.length === 0
+    ? (phase === 'draft' ? 'Rules OK so far' : '✓ Deck valid')
+    : `${visibleDeckIssues.length} ${phase === 'draft' ? 'rule warning' : 'deck check'}${visibleDeckIssues.length === 1 ? '' : 's'}`
 
   function reset() {
     setPhase('setup')
@@ -158,8 +238,7 @@ export function DraftSimulator() {
     setSelected(new Set())
     setBasics(emptyBasicLands())
     setMessage('')
-    setPoolQuery('')
-    setPoolFilter('all')
+    setDeckExpanded(false)
   }
 
   function begin() {
@@ -170,6 +249,9 @@ export function DraftSimulator() {
       setCommanderOffer(dealCommanderPack(commanderCards))
       setCommanderCandidates([])
       setActiveCommanderIds([])
+      setSelected(new Set())
+      setBasics(emptyBasicLands())
+      setDeckExpanded(false)
       setPhase('commander')
       setMessage('')
     } catch (error) {
@@ -182,7 +264,12 @@ export function DraftSimulator() {
     try {
       const next = pickDraftCard(session, oracleId)
       setSession(next)
-      if (next.complete) setPhase('build')
+      // Every drafted card starts in the deck. Set-aside decisions are reversible.
+      setSelected((old) => new Set(old).add(oracleId))
+      if (next.complete) {
+        setDeckExpanded(true)
+        setPhase('build')
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not make pick.')
     }
@@ -209,6 +296,12 @@ export function DraftSimulator() {
     })
   }
 
+  function setAsideOffColor() {
+    if (incompatibleCommanders) return
+    const offColorIds = new Set(offColorCards.map((card) => card.oracleId))
+    setSelected((old) => new Set([...old].filter((id) => !offColorIds.has(id))))
+  }
+
   function adjustBasic(land: BasicLand, amount: number) {
     setBasics((old) => ({ ...old, [land]: Math.max(0, Math.min(60, old[land] + amount)) }))
   }
@@ -228,11 +321,11 @@ export function DraftSimulator() {
 
   return (
     <section className="draft-view" aria-label="Multiplayer draft simulator">
-      <header className="draft-heading">
+      <header className={`draft-heading${phase === 'draft' || phase === 'build' ? ' draft-heading--compact' : ''}`}>
         <div>
           <span className="draft-eyebrow">Draft simulator</span>
           <h2>Draft & build</h2>
-          <p>Draft from the published cube against random-pick opponents, then build a 60-card commander deck.</p>
+          {(phase === 'setup' || phase === 'commander') && <p>Draft from the published cube against random-pick opponents, then build a 60-card commander deck.</p>}
         </div>
         {phase !== 'setup' && <button type="button" className="draft-reset" onClick={reset}>New draft</button>}
       </header>
@@ -287,138 +380,130 @@ export function DraftSimulator() {
           </div>
           <div className="draft-commander-confirm">
             <span>{commanderCandidates.length} / 2 commander possibilities selected</span>
-            <button type="button" className="draft-primary" disabled={commanderCandidates.length !== 2} onClick={() => setPhase('draft')}>
+            <button type="button" className="draft-primary" disabled={commanderCandidates.length !== 2} onClick={() => {
+              setActiveCommanderIds(commanderCandidates.map((card) => card.oracleId))
+              setDeckExpanded(false)
+              setPhase('draft')
+            }}>
               Start drafting
             </button>
           </div>
         </div>
       )}
 
-      {phase === 'draft' && session && (
-        <div className="draft-layout">
-          <div className="draft-panel">
-            <div className="draft-stage-header">
-              <div>
-                <h3>Pack {session.round + 1} of {session.options.packsPerPlayer} · Pick {session.pick + 1} of {session.options.cardsPerPack}</h3>
-                <p>Passing {draftDirection(session.round)} · {session.packs[0].length} cards to choose from</p>
+      {(phase === 'draft' || phase === 'build') && session && (
+        <section className="draft-workspace" aria-label="Your deck and side pool">
+          <div className="draft-workspace-bar">
+            <div className="draft-workspace-summary">
+              <div className="draft-workspace-title">
+                <strong>Your deck <span className={phase === 'build' && !deck.valid ? 'draft-workspace-count--invalid' : deck.valid ? 'draft-workspace-count--valid' : ''}>{deck.total} / 60</span></strong>
+                <small>{selectedCards.length} picks · {setAsideCount} aside</small>
               </div>
-              <span className="draft-progress">{session.selections[0].length} picked</span>
+              <details className={`draft-header-checks${visibleDeckIssues.length ? ' draft-header-checks--warning' : ' draft-header-checks--clear'}`}>
+                <summary aria-live="polite">{deckCheckLabel}</summary>
+                <div className="draft-header-checks-panel">
+                  <strong>{phase === 'draft' ? 'During the draft' : 'Final deck checks'}</strong>
+                  {phase === 'draft' && <p>The 60-card total is checked after the last pick.</p>}
+                  {visibleDeckIssues.length > 0
+                    ? <ul>{visibleDeckIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul>
+                    : <p>{phase === 'draft' ? 'No commander or color conflicts yet.' : 'Your 60-card deck passes all checks.'}</p>}
+                  {incompatibleCommanders && (
+                    <div className="draft-header-checks-actions" role="group" aria-label="Choose one commander">
+                      {activeCommanders.map((commander) => (
+                        <button type="button" key={commander.oracleId} onClick={() => setActiveCommanderIds([commander.oracleId])}>
+                          Use {commander.name} only
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {offColorCards.length > 0 && !incompatibleCommanders && (
+                    <button type="button" className="draft-header-checks-fix" onClick={setAsideOffColor}>
+                      Set aside {offColorCards.length} off-color
+                    </button>
+                  )}
+                </div>
+              </details>
+              <div className="draft-commander-chips" aria-label="Commander choices">
+                {commanderCandidates.map((card) => {
+                  const active = activeCommanderIds.includes(card.oracleId)
+                  return (
+                    <details key={card.oracleId} className={`draft-commander-chip${active ? ' active' : ' aside'}`}>
+                      <summary title={`Preview ${card.name}`}>
+                        <span aria-hidden="true">★</span> {card.name}{!active && <em> · aside</em>}
+                      </summary>
+                      <div className="draft-commander-preview">
+                        {card.imageUri ? <img src={card.imageUri} alt="" /> : <strong>{card.name}</strong>}
+                        <small>{active ? 'In deck — click its gold-outlined card to set aside' : 'Set aside — click it in the side pool to restore'}</small>
+                      </div>
+                    </details>
+                  )
+                })}
+                {incompatibleCommanders && <span className="draft-commander-pair-hint">Choose one at the end</span>}
+              </div>
             </div>
-            <div className="draft-card-grid">
-              {session.packs[0].map((card) => <DraftCardButton key={card.oracleId} card={card} action="Draft" onClick={() => chooseCard(card.oracleId)} />)}
+            <div className="draft-workspace-actions">
+              <button
+                type="button"
+                className="draft-workspace-toggle"
+                aria-controls="draft-deck-workspace-content"
+                aria-expanded={deckExpanded}
+                onClick={() => setDeckExpanded((old) => !old)}
+              >
+                <span className="draft-workspace-toggle-label">{deckExpanded ? 'Hide deck' : 'Show deck'}</span>
+                <span className="draft-workspace-chevron" aria-hidden="true">{deckExpanded ? '▲' : '▼'}</span>
+              </button>
+              {phase === 'build' && <button type="button" className="draft-primary draft-copy-decklist" onClick={() => void copyDecklist()}>Copy decklist</button>}
             </div>
           </div>
-          <aside className="draft-panel draft-side">
-            <h3>My picks</h3>
-            <p>Commander options: {commanderCandidates.map((card) => card.name).join(' / ')} · {session.selections[0].length} cards</p>
-            <ol className="draft-pick-list">
-              {session.selections[0].map((card) => <li key={card.oracleId}>{card.name}</li>)}
-            </ol>
-          </aside>
-        </div>
-      )}
-
-      {phase === 'build' && session && (
-        <div className="draft-build-view">
-          <section className="draft-panel draft-final-commanders" aria-label="Choose final commanders">
-            <div className="draft-final-commander-heading">
-              <div>
-                <h3>Choose your final commander(s)</h3>
-                <p>Play either option alone or both together. You can change your choice while building.</p>
-              </div>
-              <span className="draft-progress">{activeCommanders.length} / 2 active</span>
-            </div>
-            <div className="draft-final-commander-options">
-              {commanderCandidates.map((card) => {
-                const active = activeCommanderIds.includes(card.oracleId)
-                return (
-                  <button
-                    type="button"
-                    key={card.oracleId}
-                    className={`draft-final-commander-option${active ? ' active' : ''}`}
-                    aria-pressed={active}
-                    onClick={() => toggleActiveCommander(card.oracleId)}
-                  >
-                    {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-final-commander-image-placeholder" />}
-                    <span>
-                      <strong>{card.name}</strong>
-                      <small>{active ? 'In command zone' : 'Available option'}</small>
-                    </span>
-                    <span className="draft-final-commander-toggle" aria-hidden="true">{active ? '✓' : '+'}</span>
-                  </button>
-                )
-              })}
-            </div>
-            <p className="draft-final-commander-note">Cube house rule: two commanders share their combined color identity and both count toward 60 cards. Official Partner restrictions are not checked.</p>
-          </section>
-          <header className="draft-build-heading">
-            <div>
-              <h3>Build your deck</h3>
-              <p>Pick cards from your drafted pool. They appear immediately in the deck overview, and you can remove them directly from the board.</p>
-            </div>
-            <div className="draft-build-actions">
-              <span className={`draft-build-count${deck.valid ? ' draft-build-count--valid' : ''}`}>{deck.total} / 60 cards</span>
-              <button type="button" className="draft-primary" onClick={() => void copyDecklist()}>Copy decklist</button>
-            </div>
-          </header>
-          <div className="draft-build-layout">
-            <div className="draft-build-board">
+          {deckExpanded && (
+            <div id="draft-deck-workspace-content" className="draft-workspace-content">
               <DeckOverview
                 commanders={activeCommanders}
                 selectedCards={selectedCards}
                 basics={basics}
                 onRemoveCard={toggleDeck}
+                onRemoveCommander={(card) => toggleActiveCommander(card.oracleId)}
                 onAdjustBasic={adjustBasic}
               />
-              <div className={`draft-validation${deck.valid ? ' draft-validation--valid' : ''}`} aria-live="polite">
-                {deck.valid ? <strong>60-card deck valid</strong> : deck.issues.map((issue) => <p key={issue}>{issue}</p>)}
-              </div>
+              <aside className="draft-side-pool" aria-label="Cards set aside">
+                <h3>Side pool <span>{setAsideCount}</span></h3>
+                {setAsideCount === 0 ? (
+                  <p className="draft-side-pool-empty">All picks in deck</p>
+                ) : (
+                  <div className="draft-side-pool-list">
+                    {sidePoolCommanders.map((card) => (
+                      <SidePoolCard key={card.oracleId} card={card} commander onRestore={() => toggleActiveCommander(card.oracleId)} />
+                    ))}
+                    {sidePoolCards.map((card) => (
+                      <SidePoolCard
+                        key={card.oracleId}
+                        card={card}
+                        offColor={activeCommanders.length > 0 && !isCommanderLegal(card, activeCommanders)}
+                        onRestore={() => toggleDeck(card)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </aside>
             </div>
-            <aside className="draft-panel draft-pool-panel" aria-label="Drafted card pool">
-              <div className="draft-pool-header">
-                <h3>Drafted pool <span>{selected.size} / {draftPool.length} included</span></h3>
-                <p>Click a card to add it to the visual deck, or click again to remove it.</p>
-              </div>
-              <label className="draft-pool-search">
-                <span>Find a card</span>
-                <input type="search" value={poolQuery} onChange={(event) => setPoolQuery(event.target.value)} placeholder="Search drafted cards…" />
-              </label>
-              <div className="draft-pool-filters" role="group" aria-label="Filter drafted cards">
-                {(['all', 'available', 'included'] as const).map((filter) => (
-                  <button key={filter} type="button" aria-pressed={poolFilter === filter} className={poolFilter === filter ? 'active' : ''} onClick={() => setPoolFilter(filter)}>
-                    {filter === 'all' ? 'All' : filter === 'available' ? 'Available' : 'In deck'}
-                  </button>
-                ))}
-              </div>
-              <div className="draft-pool-items">
-                {visiblePool.map((card) => {
-                  const included = selected.has(card.oracleId)
-                  const offColor = activeCommanders.length > 0 && !isCommanderLegal(card, activeCommanders)
-                  return (
-                    <button
-                      key={card.oracleId}
-                      type="button"
-                      className={`draft-pool-card${included ? ' draft-pool-card--included' : ''}${offColor ? ' draft-pool-card--offcolor' : ''}`}
-                      aria-pressed={included}
-                      title={`${included ? 'Remove' : 'Add'} ${card.name}${offColor ? ' (outside commander colors)' : ''}`}
-                      onClick={() => toggleDeck(card)}
-                    >
-                      {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-pool-placeholder" />}
-                      <span className="draft-pool-card-content">
-                        <strong>{card.name}</strong>
-                        <small>{card.manaCost || card.typeLine}</small>
-                        {offColor && <em>Off-color</em>}
-                      </span>
-                      <span className="draft-pool-card-action" aria-hidden="true">{included ? '✓' : '+'}</span>
-                    </button>
-                  )
-                })}
-                {visiblePool.length === 0 && <p className="draft-pool-empty">No cards match this filter.</p>}
-              </div>
-            </aside>
-          </div>
-        </div>
+          )}
+        </section>
       )}
+
+      {phase === 'draft' && session && (
+        <section className="draft-panel draft-pack" aria-label="Current draft pack">
+          <div className="draft-stage-header">
+            <div>
+              <h3>Pack {session.round + 1} of {session.options.packsPerPlayer} · Pick {session.pick + 1} of {session.options.cardsPerPack}</h3>
+              <p>{draftDirection(session.round) === 'left' ? '←' : '→'} Passing {draftDirection(session.round)} · {session.packs[0].length} remaining</p>
+            </div>
+          </div>
+          <div className="draft-card-grid draft-pack-grid">
+            {session.packs[0].map((card) => <DraftCardButton key={card.oracleId} card={card} action="Draft" compact onClick={() => chooseCard(card.oracleId)} />)}
+          </div>
+        </section>
+      )}
+
       {message && <p className="draft-message" role="status">{message}</p>}
     </section>
   )

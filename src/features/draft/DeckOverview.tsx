@@ -7,16 +7,17 @@ interface DeckOverviewProps {
   selectedCards: readonly BrowserCard[]
   basics: BasicLandCounts
   onRemoveCard: (card: BrowserCard) => void
+  onRemoveCommander: (card: BrowserCard) => void
   onAdjustBasic: (land: BasicLand, amount: number) => void
 }
 
-function DeckCard({ card, onRemove }: { card: BrowserCard; onRemove: () => void }) {
+function DeckCard({ card, onRemove, isCommander = false, offColor = false }: { card: BrowserCard; onRemove: () => void; isCommander?: boolean; offColor?: boolean }) {
   return (
     <button
       type="button"
-      className="draft-board-card"
-      title={`Remove ${card.name} from deck`}
-      aria-label={`Remove ${card.name} from deck`}
+      className={`draft-board-card${isCommander ? ' draft-board-card--commander' : ''}${offColor ? ' draft-board-card--offcolor' : ''}`}
+      title={`Move ${card.name} to the side pool${offColor ? ' — outside commander colors' : ''}`}
+      aria-label={`Move ${card.name} to the side pool${offColor ? ', outside commander colors' : ''}`}
       onClick={onRemove}
     >
       {card.imageUri ? (
@@ -24,7 +25,8 @@ function DeckCard({ card, onRemove }: { card: BrowserCard; onRemove: () => void 
       ) : (
         <span className="draft-board-placeholder">{card.name}</span>
       )}
-      <span className="draft-board-remove" aria-hidden="true">×</span>
+      {isCommander && <span className="draft-board-commander-mark" aria-hidden="true">CMD</span>}
+      {offColor && <span className="draft-board-offcolor-mark" aria-hidden="true">!</span>}
     </button>
   )
 }
@@ -34,11 +36,17 @@ function CreatureOrSpellRow({
   count,
   columns,
   onRemoveCard,
+  onRemoveCommander,
+  commanderIds,
+  offColor,
 }: {
   title: string
   count: number
   columns: readonly BrowserCard[][]
   onRemoveCard: (card: BrowserCard) => void
+  onRemoveCommander: (card: BrowserCard) => void
+  commanderIds: ReadonlySet<string>
+  offColor: (card: BrowserCard) => boolean
 }) {
   return (
     <section className="draft-board-row" aria-label={title}>
@@ -48,10 +56,10 @@ function CreatureOrSpellRow({
       </div>
       <div className="draft-board-columns">
         {columns.map((cards, index) => (
-          <div className="draft-board-column" key={MANA_VALUE_BUCKETS[index]}>
+          <div className={`draft-board-column${cards.length === 0 ? ' draft-board-column--empty' : ''}`} key={MANA_VALUE_BUCKETS[index]}>
             <div className="draft-board-stack">
               {cards.map((card) => (
-                <DeckCard key={card.oracleId} card={card} onRemove={() => onRemoveCard(card)} />
+                <DeckCard key={card.oracleId} card={card} isCommander={commanderIds.has(card.oracleId)} offColor={offColor(card)} onRemove={() => commanderIds.has(card.oracleId) ? onRemoveCommander(card) : onRemoveCard(card)} />
               ))}
             </div>
           </div>
@@ -66,33 +74,22 @@ export function DeckOverview({
   selectedCards,
   basics,
   onRemoveCard,
+  onRemoveCommander,
   onAdjustBasic,
 }: DeckOverviewProps) {
-  const grouped = groupDraftDeck(selectedCards)
+  const grouped = groupDraftDeck([...commanders, ...selectedCards])
+  const commanderIds = new Set(commanders.map((card) => card.oracleId))
+  const identity = new Set(commanders.flatMap((card) => card.colorIdentity))
+  const offColor = (card: BrowserCard) => commanders.length > 0 && !commanderIds.has(card.oracleId) && card.colorIdentity.some((color) => !identity.has(color))
   const basicCount = BASIC_LANDS.reduce((sum, land) => sum + basics[land], 0)
   const landCount = basicCount + grouped.lands.length
 
   return (
     <section className="draft-panel draft-board" aria-label="Visual deck overview">
-      <header className="draft-board-header">
-        <div>
-          <h3>Deck overview</h3>
-          <p>Mana value increases left to right. Click a card to remove it from your deck.</p>
-        </div>
-      </header>
-
-      <div className="draft-board-commanders" aria-label="Active commanders">
-        {commanders.length === 0 && <p className="draft-board-no-commander">Choose your commander(s) above to start building.</p>}
-        {commanders.map((commander) => (
-          <div className="draft-board-commander" key={commander.oracleId}>
-            {commander.imageUri ? <img src={commander.imageUri} alt="" /> : <div className="draft-board-commander-placeholder" />}
-            <div>
-              <span>Commander · 1 card</span>
-              <strong>{commander.name}</strong>
-              <small>{commander.manaCost || commander.typeLine}</small>
-            </div>
-          </div>
-        ))}
+      <div className="draft-board-legend" aria-label="Deck card legend">
+        <span><i className="draft-legend-commander" /> Commander</span>
+        <span><i className="draft-legend-offcolor" /> Off-color</span>
+        <span>Click a card to set aside</span>
       </div>
 
       <div className="draft-board-curve-scroll" role="region" aria-label="Mana curve by type" tabIndex={0}>
@@ -100,18 +97,24 @@ export function DeckOverview({
           <div className="draft-board-column-titles">
             {MANA_VALUE_BUCKETS.map((label) => <span key={label}>{label}</span>)}
           </div>
-          <CreatureOrSpellRow
+          {grouped.creatureCount > 0 && <CreatureOrSpellRow
             title="Creatures"
             count={grouped.creatureCount}
             columns={grouped.columns.map((column) => column.creatures)}
             onRemoveCard={onRemoveCard}
-          />
-          <CreatureOrSpellRow
+            onRemoveCommander={onRemoveCommander}
+            commanderIds={commanderIds}
+            offColor={offColor}
+          />}
+          {grouped.noncreatureCount > 0 && <CreatureOrSpellRow
             title="Noncreatures"
             count={grouped.noncreatureCount}
             columns={grouped.columns.map((column) => column.noncreatures)}
             onRemoveCard={onRemoveCard}
-          />
+            onRemoveCommander={onRemoveCommander}
+            commanderIds={commanderIds}
+            offColor={offColor}
+          />}
         </div>
       </div>
 
@@ -122,7 +125,7 @@ export function DeckOverview({
         </div>
         {grouped.lands.length > 0 && (
           <div className="draft-board-land-cards">
-            {grouped.lands.map((card) => <DeckCard key={card.oracleId} card={card} onRemove={() => onRemoveCard(card)} />)}
+            {grouped.lands.map((card) => <DeckCard key={card.oracleId} card={card} isCommander={commanderIds.has(card.oracleId)} offColor={offColor(card)} onRemove={() => commanderIds.has(card.oracleId) ? onRemoveCommander(card) : onRemoveCard(card)} />)}
           </div>
         )}
         <div className="draft-board-basics">
@@ -138,7 +141,6 @@ export function DeckOverview({
             </div>
           ))}
         </div>
-        <p className="draft-land-note">Basic lands are unlimited and do not come from the cube.</p>
       </section>
     </section>
   )
