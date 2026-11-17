@@ -21,6 +21,9 @@ export const AGENT_RULES = {
   twoColorFixingTarget: 3,
   creatureShareLow: 0.5,
   creatureShareHigh: 0.7,
+  curveCenter: 2.5,
+  curveBonus: 6, // Soft preference, not a target deck distribution.
+  curveSpread: 1.7,
 } as const
 
 export interface DraftAgent<T extends CubeCard> {
@@ -169,22 +172,24 @@ function isCreature(card: AgentPickCard): boolean {
 }
 
 /**
- * A low-cost commander favors a mana curve centered near 2.3, while expensive
- * commanders allow a wider/higher curve near 3.7. This is only a pick nudge.
+ * Every agent prefers the same low-cost curve centered at 2–3 mana. Expensive
+ * commanders merely soften the penalty for a few expensive spells; they never
+ * move the curve's peak. This is a small nudge, not a composition rule.
  */
-export function agentCurveCenter(commanders: readonly AgentPickCard[]): number {
+function commanderHighCostAllowance(commanders: readonly AgentPickCard[]): number {
   const costs = commanders.map((card) => card.manaValue).filter(
     (value): value is number => value !== undefined && Number.isFinite(value),
   )
-  if (costs.length === 0) return 2.8
+  if (costs.length === 0) return 0
   const average = costs.reduce((sum, cost) => sum + cost, 0) / costs.length
-  return Math.max(2.3, Math.min(3.7, 2.3 + (average - 3) * (1.4 / 3)))
+  return Math.max(0, Math.min(1, (average - 3) / 3))
 }
 
 /**
  * Soft rules only: stay inside commander identity, value 3-color mana fixing,
- * reward cards near the commander-shaped curve and slightly prefer easier
- * colored costs. A 50–70% creature share is a nudge, never a deck quota.
+ * give a small preference to 2–3 mana cards and tolerate some higher costs
+ * with expensive commanders. Easier colored costs and a 50–70% creature share
+ * are also soft nudges, never deck quotas.
  * Equal scores use the seeded random roll supplied by the draft engine.
  */
 export function chooseAgentPick<T extends AgentPickCard>(
@@ -204,7 +209,11 @@ export function chooseAgentPick<T extends AgentPickCard>(
   ).length
   const creatures = draftedSpells.filter(isCreature).length
   const creatureRatio = draftedSpells.length === 0 ? 0.6 : creatures / draftedSpells.length
-  const center = agentCurveCenter(commanders)
+  const center = AGENT_RULES.curveCenter
+  const highCostAllowance = commanderHighCostAllowance(commanders)
+  const highCostPicks = draftedSpells.filter(
+    (pick) => pick.manaValue !== undefined && pick.manaValue >= 5,
+  ).length
   const scores = pack.map((card) => {
     if (!isCommanderLegal(card, commanders)) return card.isLand ? -10 : 0
 
@@ -229,15 +238,23 @@ export function chooseAgentPick<T extends AgentPickCard>(
 
     const cost = card.manaValue
     const manaValue = cost !== undefined && Number.isFinite(cost) ? cost : center
-    const distance = (manaValue - center) / 1.45
-    const curveBonus = 16 * Math.exp(-0.5 * distance * distance)
+    const distance = (manaValue - center) / AGENT_RULES.curveSpread
+    const curveBonus = AGENT_RULES.curveBonus * Math.exp(-0.5 * distance * distance)
+    // A high-cost commander tolerates a few 4+ mana spells, but 2–3 stays best.
+    const higherCostTolerance = manaValue > 3
+      ? highCostAllowance * Math.min(2, (manaValue - 3) * 0.65)
+      : 0
+    const expensiveCardCrowding = manaValue >= 5
+      ? Math.min(3, highCostPicks * 0.6)
+      : 0
     const sameCost = draftedSpells.filter((pick) => pick.manaValue === cost).length
-    const saturationPenalty = cost === undefined ? 0 : Math.min(9, sameCost * 1.2)
+    const saturationPenalty = cost === undefined ? 0 : Math.min(3, sameCost * 0.45)
     const creatureBonus = isCreature(card)
       ? creatureRatio < AGENT_RULES.creatureShareLow ? 5 : 0
       : creatureRatio > AGENT_RULES.creatureShareHigh ? 5 : 0
 
-    return 100 + curveBonus + creatureBonus - saturationPenalty
+    return 100 + curveBonus + higherCostTolerance + creatureBonus
+      - saturationPenalty - expensiveCardCrowding
       - coloredManaPenalty(card, commanderColors.size)
   })
   const best = Math.max(...scores)
