@@ -413,11 +413,9 @@
 .draft-agents-valid, .draft-agents-warning { padding: 8px 10px; border: 1px solid rgb(74 174 119 / 36%); border-radius: 7px; color: #a9eec6; background: rgb(36 109 73 / 11%); font-size: .73rem; }
 .draft-agents-warning { border-color: rgb(224 151 98 / 45%); color: #ffd2ab; background: rgb(116 62 32 / 14%); }
 .draft-agents .draft-board { min-width: 0; }
+.draft-agents-workspace { padding: 10px 0 0; }
+.draft-agent-aside-card { cursor: default; }
 .draft-board-card--readonly { cursor: default; }
 .draft-board-card--readonly:hover { transform: none; }
 .draft-agent-basic-count { font-size: .76rem; color: #c4f1d6; font-weight: 750; font-variant-numeric: tabular-nums; }
-.draft-agents-side { padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px; }
-.draft-agents-side summary { font-size: .74rem; cursor: pointer; }
-.draft-agents-side > div { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.draft-agents-side span { padding: 4px 7px; border-radius: 5px; background: var(--surface-raised); color: var(--text-muted); font-size: .69rem; }
 @media (max-width: 650px) { .draft-agents-header, .draft-agents-deck-header { flex-wrap: wrap; } }
