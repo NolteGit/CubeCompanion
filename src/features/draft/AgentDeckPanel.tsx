@@ -33,6 +33,21 @@ export function AgentDeckPanel({ agents, session, phase, onSampleHand }: AgentDe
           <p>{phase === 'draft'
             ? 'Deck information is hidden to avoid influencing your picks.'
             : 'Inspect the finished drafts, their deck construction and sample hands.'}</p>
+          <details className="draft-agents-rules">
+            <summary>How agents draft</summary>
+            <p>
+              Agents randomly use one multicolor or two monocolor commanders. They favor cards
+              within those colors, easy-to-cast mana costs, and useful fixing lands (roughly
+              six for three colors, three for two). Their mild mana-curve preference stays
+              near mana value 2–3, with some higher-cost flexibility for expensive commanders.
+              A 50–70% creature share is only a nudge, not a quota.
+            </p>
+            <p>
+              Decks aim for 24 lands, never more than 25, and unused picks remain available
+              as side-deck options. Agents do not evaluate card power or specific synergies.
+              Every preference is a heuristic, not a guarantee.
+            </p>
+          </details>
         </div>
         <button
           type="button"
