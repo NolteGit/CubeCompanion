@@ -1,6 +1,7 @@
 import type { BrowserCard } from '../browser/types'
 import { MANA_VALUE_BUCKETS, groupDraftDeck } from '../../domain/draft/overview'
 import { BASIC_LANDS, type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
+import { BASIC_LAND_IMAGE_URIS } from './basicLandImages'
 
 interface DeckOverviewProps {
   commanders: readonly BrowserCard[]
@@ -137,15 +138,15 @@ export function DeckOverview({
             {grouped.lands.map((card) => <DeckCard key={card.oracleId} card={card} isCommander={commanderIds.has(card.oracleId)} offColor={offColor(card)} readOnly={readOnly} onRemove={() => commanderIds.has(card.oracleId) ? onRemoveCommander(card) : onRemoveCard(card)} />)}
           </div>
         )}
-        <div className="draft-board-basics">
+        <div className="draft-board-basics draft-board-basics--cards" aria-label="Basic lands">
           {BASIC_LANDS.map((land) => (
-            <div key={land} className="draft-board-basic">
-              <span className={`draft-basic-symbol draft-basic-symbol--${land.toLowerCase()}`} aria-hidden="true" />
-              <span className="draft-board-basic-name">{land}</span>
+            <div key={land} className={`draft-board-basic-tile${basics[land] === 0 ? ' draft-board-basic-tile--empty' : ''}`} title={land}>
+              <img className="draft-board-basic-image" src={BASIC_LAND_IMAGE_URIS[land]} alt="" loading="lazy" />
+              <span className="draft-board-basic-tile-name">{land}</span>
               {readOnly ? (
                 <output className="draft-agent-basic-count" aria-label={`${land} count`}>{basics[land]}</output>
               ) : (
-                <div className="draft-board-basic-controls">
+                <div className="draft-board-basic-card-controls">
                   <button type="button" aria-label={`Remove ${land}`} disabled={basics[land] === 0} onClick={() => onAdjustBasic(land, -1)}>−</button>
                   <output aria-label={`${land} count`}>{basics[land]}</output>
                   <button type="button" aria-label={`Add ${land}`} onClick={() => onAdjustBasic(land, 1)}>+</button>
