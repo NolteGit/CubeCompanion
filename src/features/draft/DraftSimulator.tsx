@@ -427,15 +427,15 @@ export function DraftSimulator() {
                 {commanderCandidates.map((card) => {
                   const active = activeCommanderIds.includes(card.oracleId)
                   return (
-                    <details key={card.oracleId} className={`draft-commander-chip${active ? ' active' : ' aside'}`}>
-                      <summary title={`Preview ${card.name}`}>
+                    <div key={card.oracleId} className={`draft-commander-chip${active ? ' active' : ' aside'}`}>
+                      <span className="draft-commander-chip-name" tabIndex={0} aria-label={`Preview ${card.name}${active ? ', in deck' : ', set aside'}`}>
                         <span aria-hidden="true">★</span> {card.name}{!active && <em> · aside</em>}
-                      </summary>
+                      </span>
                       <div className="draft-commander-preview">
                         {card.imageUri ? <img src={card.imageUri} alt="" /> : <strong>{card.name}</strong>}
                         <small>{active ? 'In deck — click its gold-outlined card to set aside' : 'Set aside — click it in the side pool to restore'}</small>
                       </div>
-                    </details>
+                    </div>
                   )
                 })}
                 {incompatibleCommanders && <span className="draft-commander-pair-hint">Choose one at the end</span>}

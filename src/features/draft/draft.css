@@ -275,13 +275,12 @@
 .draft-workspace-title small { color: var(--text-muted); font-size: .68rem; white-space: nowrap; }
 .draft-commander-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; min-width: 0; }
 .draft-commander-chip { position: relative; min-width: 0; }
-.draft-commander-chip summary { display: block; max-width: 280px; padding: 5px 9px; border: 1px solid #f7cb53; border-radius: 7px; background: rgb(124 87 13 / 16%); color: #ffe6a0; cursor: pointer; font-size: .7rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; list-style: none; }
-.draft-commander-chip summary::-webkit-details-marker { display: none; }
-.draft-commander-chip.aside summary { border-color: rgb(177 179 188 / 38%); color: var(--text-muted); background: transparent; }
-.draft-commander-chip summary:hover, .draft-commander-chip summary:focus-visible { outline: 2px solid rgb(255 213 98 / 56%); outline-offset: 1px; }
-.draft-commander-chip summary em { font-weight: 450; font-style: normal; }
+.draft-commander-chip-name { display: block; max-width: 280px; padding: 5px 9px; border: 1px solid #f7cb53; border-radius: 7px; background: rgb(124 87 13 / 16%); color: #ffe6a0; cursor: default; font-size: .7rem; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; list-style: none; }
+.draft-commander-chip.aside .draft-commander-chip-name { border-color: rgb(177 179 188 / 38%); color: var(--text-muted); background: transparent; }
+.draft-commander-chip-name:hover, .draft-commander-chip-name:focus-visible { outline: 2px solid rgb(255 213 98 / 56%); outline-offset: 1px; }
+.draft-commander-chip-name em { font-weight: 450; font-style: normal; }
 .draft-commander-preview { display: none; position: absolute; z-index: 130; left: 0; top: calc(100% + 8px); width: 224px; padding: 8px; border: 1px solid #f7cb53; border-radius: 9px; background: #111b22; box-shadow: 0 18px 40px rgb(0 0 0 / 58%); }
-.draft-commander-chip:hover .draft-commander-preview, .draft-commander-chip:focus-within .draft-commander-preview, .draft-commander-chip[open] .draft-commander-preview { display: grid; gap: 5px; }
+.draft-commander-chip:hover .draft-commander-preview, .draft-commander-chip-name:focus-visible + .draft-commander-preview { display: grid; gap: 5px; }
 .draft-commander-preview img { display: block; width: 100%; aspect-ratio: 488 / 680; object-fit: cover; border-radius: 5px; }
 .draft-commander-preview small { color: var(--text-muted); font-size: .67rem; line-height: 1.35; }
 .draft-commander-pair-hint { color: #f4b1c2; font-size: .65rem; }
