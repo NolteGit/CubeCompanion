@@ -388,6 +388,10 @@
 .draft-agents-header h3 { margin: 0; font-size: .95rem; }
 .draft-agents-header h3 span { margin-left: 6px; color: var(--text-muted); font-size: .7rem; font-weight: 500; }
 .draft-agents-header p { margin: 4px 0 0; color: var(--text-muted); font-size: .72rem; }
+.draft-agents-rules { margin-top: 6px; max-width: 680px; color: var(--text-muted); font-size: .67rem; line-height: 1.45; }
+.draft-agents-rules summary { display: list-item; width: fit-content; color: var(--text-muted); cursor: pointer; opacity: .75; }
+.draft-agents-rules summary:hover, .draft-agents-rules summary:focus-visible { opacity: 1; }
+.draft-agents-rules p { margin: 6px 0 0; font-size: inherit; line-height: inherit; }
 .draft-agents-toggle, .draft-agents-spoiler button, .draft-agents-seats button { padding: 7px 11px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--surface-raised); color: var(--text); font-size: .73rem; font-weight: 750; cursor: pointer; }
 .draft-agents-toggle { flex: 0 0 auto; }
 .draft-agents-toggle:hover, .draft-agents-spoiler button:hover, .draft-agents-seats button:hover { border-color: var(--accent); }
