@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { type BasicLandCounts } from '../../domain/draft/deck'
+import { type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
 import { sampleDeckCards, shuffleSampleDeck, type SampleHandCard, type SampleHandSourceCard } from '../../domain/draft/sampleHand'
+import { BASIC_LAND_IMAGE_URIS } from './basicLandImages'
 
 interface SampleHandDialogProps {
   selectedCards: readonly SampleHandSourceCard[]
@@ -14,10 +15,11 @@ const LAND_GLYPHS: Readonly<Record<string, string>> = {
 }
 
 function SampleCard({ card, position }: { card: SampleHandCard; position: number }) {
+  const imageUri = card.basicLand ? BASIC_LAND_IMAGE_URIS[card.name as BasicLand] : card.imageUri
   return (
     <div className="draft-sample-card" title={card.name}>
-      {card.imageUri ? (
-        <img src={card.imageUri} alt={card.name} loading="eager" />
+      {imageUri ? (
+        <img src={imageUri} alt={card.name} loading="eager" />
       ) : (
         <div className={`draft-sample-placeholder${card.basicLand ? ` draft-sample-basic--${card.name.toLowerCase()}` : ''}`}>
           <strong>{card.name}</strong>
