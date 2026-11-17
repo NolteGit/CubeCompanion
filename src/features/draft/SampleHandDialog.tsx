@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { type BasicLandCounts } from '../../domain/draft/deck'
+import { type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
 import { sampleDeckCards, shuffleSampleDeck, type SampleHandCard, type SampleHandSourceCard } from '../../domain/draft/sampleHand'
+import { BASIC_LAND_IMAGE_URIS } from './basicLandImages'
 
 interface SampleHandDialogProps {
   selectedCards: readonly SampleHandSourceCard[]
   basics: BasicLandCounts
+  deckLabel?: string
   onClose: () => void
 }
 
@@ -13,10 +15,11 @@ const LAND_GLYPHS: Readonly<Record<string, string>> = {
 }
 
 function SampleCard({ card, position }: { card: SampleHandCard; position: number }) {
+  const imageUri = card.basicLand ? BASIC_LAND_IMAGE_URIS[card.name as BasicLand] : card.imageUri
   return (
     <div className="draft-sample-card" title={card.name}>
-      {card.imageUri ? (
-        <img src={card.imageUri} alt={card.name} loading="eager" />
+      {imageUri ? (
+        <img src={imageUri} alt={card.name} loading="eager" />
       ) : (
         <div className={`draft-sample-placeholder${card.basicLand ? ` draft-sample-basic--${card.name.toLowerCase()}` : ''}`}>
           <strong>{card.name}</strong>
@@ -32,7 +35,7 @@ function SampleCard({ card, position }: { card: SampleHandCard; position: number
   )
 }
 
-export function SampleHandDialog({ selectedCards, basics, onClose }: SampleHandDialogProps) {
+export function SampleHandDialog({ selectedCards, basics, deckLabel, onClose }: SampleHandDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const cardsRef = useRef<HTMLDivElement>(null)
   const deck = useMemo(() => sampleDeckCards(selectedCards, basics), [selectedCards, basics])
@@ -79,7 +82,7 @@ export function SampleHandDialog({ selectedCards, basics, onClose }: SampleHandD
         <header className="draft-sample-header">
           <div>
             <h3>Sample hand <span>{shownCount} / {deck.length}</span></h3>
-            <p>Shuffled from your current main deck. Commanders stay in the command zone.</p>
+            <p>Shuffled from {deckLabel ? `${deckLabel}'s main deck` : 'your current main deck'}. Commanders stay in the command zone.</p>
           </div>
           <div className="draft-sample-actions">
             <button type="button" onClick={newHand} disabled={deck.length === 0}>New hand</button>
@@ -92,7 +95,7 @@ export function SampleHandDialog({ selectedCards, basics, onClose }: SampleHandD
         </div>
         <footer className="draft-sample-footer">
           <span>{deck.length - shownCount} cards left in library</span>
-          {deck.length < 7 && <span>Your deck currently has fewer than seven main-deck cards.</span>}
+          {deck.length < 7 && <span>This deck currently has fewer than seven main-deck cards.</span>}
           <span>Preview only — drawing does not change your deck</span>
         </footer>
       </div>
