@@ -3,6 +3,7 @@ import { commanderCards, draftCards, releaseInfo } from '../browser/data'
 import type { BrowserCard } from '../browser/types'
 import { dealCommanderPack } from '../playtest/deal'
 import { DeckOverview } from './DeckOverview'
+import { SampleHandDialog } from './SampleHandDialog'
 import {
   draftDirection,
   pickDraftCard,
@@ -195,6 +196,7 @@ export function DraftSimulator() {
   const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
   const [message, setMessage] = useState('')
   const [deckExpanded, setDeckExpanded] = useState(savedDraft?.phase === 'build')
+  const [sampleHandOpen, setSampleHandOpen] = useState(false)
 
   useEffect(() => {
     const saved: SavedDraft = {
@@ -444,6 +446,13 @@ export function DraftSimulator() {
             <div className="draft-workspace-actions">
               <button
                 type="button"
+                className="draft-sample-trigger"
+                disabled={selectedCards.length + BASIC_LANDS.reduce((sum, land) => sum + basics[land], 0) === 0}
+                onClick={() => setSampleHandOpen(true)}
+                title="Deal seven random cards from your current main deck"
+              >Sample hand</button>
+              <button
+                type="button"
                 className="draft-workspace-toggle"
                 aria-controls="draft-deck-workspace-content"
                 aria-expanded={deckExpanded}
@@ -504,6 +513,7 @@ export function DraftSimulator() {
         </section>
       )}
 
+      {sampleHandOpen && <SampleHandDialog selectedCards={selectedCards} basics={basics} onClose={() => setSampleHandOpen(false)} />}
       {message && <p className="draft-message" role="status">{message}</p>}
     </section>
   )
