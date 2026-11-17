@@ -83,11 +83,16 @@ export function AgentDeckPanel({ agents, session, phase, onSampleHand }: AgentDe
             <button
               type="button"
               className="draft-sample-trigger"
-              disabled={deck.mainDeck.length + deck.landCount - deck.mainDeck.filter((card) => card.isLand).length === 0}
+              disabled={picked.length === 0}
               onClick={() => onSampleHand(deck.mainDeck, deck.basics, `Agent ${agent.seat + 1}`)}
             >Sample hand</button>
           </div>
 
+          {phase === 'draft' && (
+            <p className="draft-agents-provisional">
+              Provisional build from picks so far. Added basic lands are planning slots, not drafted cards.
+            </p>
+          )}
           {phase === 'build' && (
             <div className={deck.valid ? 'draft-agents-valid' : 'draft-agents-warning'} role="status">
               {deck.valid
