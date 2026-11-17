@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { buildAgentDeck, type DraftAgent } from '../../domain/draft/agents'
 import type { BasicLandCounts } from '../../domain/draft/deck'
 import type { DraftSession } from '../../domain/draft/engine'
@@ -13,14 +13,13 @@ interface AgentDeckPanelProps {
 }
 
 export function AgentDeckPanel({ agents, session, phase, onSampleHand }: AgentDeckPanelProps) {
-  const [expanded, setExpanded] = useState(phase === 'build')
+  // Changing from drafting to deck building automatically opens the inspector.
+  // An explicit toggle within the current phase still takes precedence.
+  const [expansion, setExpansion] = useState({ phase, expanded: phase === 'build' })
+  const expanded = expansion.phase === phase ? expansion.expanded : phase === 'build'
   const [revealed, setRevealed] = useState(false)
   const [activeSeat, setActiveSeat] = useState(1)
   const hidden = phase === 'draft' && !revealed
-
-  useEffect(() => {
-    if (phase === 'build') setExpanded(true)
-  }, [phase])
 
   const agent = agents.find((entry) => entry.seat === activeSeat) ?? agents[0]
   const picked = agent ? session.selections[agent.seat] ?? [] : []
@@ -40,7 +39,7 @@ export function AgentDeckPanel({ agents, session, phase, onSampleHand }: AgentDe
           className="draft-agents-toggle"
           aria-expanded={expanded}
           onClick={() => {
-            setExpanded((old) => !old)
+            setExpansion({ phase, expanded: !expanded })
             if (expanded) setRevealed(false)
           }}
         >{expanded ? 'Hide opponents' : 'View opponents'}</button>
