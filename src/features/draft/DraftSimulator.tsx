@@ -21,6 +21,7 @@ import {
   type BasicLand,
   type BasicLandCounts,
 } from '../../domain/draft/deck'
+import { DraftCardInspection } from './DraftCardInspection'
 import './draft.css'
 
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
@@ -125,18 +126,20 @@ function DraftCardButton({
   compact?: boolean
 }) {
   return (
-    <button
-      type="button"
-      className={`draft-card${selected ? ' draft-card--selected' : ''}`}
-      onClick={onClick}
-      disabled={disabled}
-      aria-pressed={selected}
-      title={`${action}: ${card.name}`}
-    >
-      {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-card-placeholder">No image</span>}
-      <span className="draft-card-name">{card.name}</span>
-      {!compact && <small>{card.manaCost || card.typeLine}</small>}
-    </button>
+    <DraftCardInspection card={card}>
+      <button
+        type="button"
+        className={`draft-card${selected ? ' draft-card--selected' : ''}`}
+        onClick={onClick}
+        disabled={disabled}
+        aria-pressed={selected}
+        title={`${action}: ${card.name}`}
+      >
+        {card.imageUri ? <img src={card.imageUri} alt="" loading="lazy" /> : <span className="draft-card-placeholder">No image</span>}
+        <span className="draft-card-name">{card.name}</span>
+        {!compact && <small>{card.manaCost || card.typeLine}</small>}
+      </button>
+    </DraftCardInspection>
   )
 }
 
@@ -475,7 +478,7 @@ export function DraftSimulator() {
                     </div>
                   )
                 })}
-                {incompatibleCommanders && <span className="draft-commander-pair-hint">Choose one at the end</span>}
+                {incompatibleCommanders && <span className="draft-commander-pair-hint">{phase === 'build' ? 'Choose your final commander below' : 'Choose one at the end'}</span>}
               </div>
             </div>
             <div className="draft-workspace-actions">
@@ -499,6 +502,15 @@ export function DraftSimulator() {
               {phase === 'build' && <button type="button" className="draft-primary draft-copy-decklist" onClick={() => void copyDecklist()}>Copy decklist</button>}
             </div>
           </div>
+          {phase === 'build' && incompatibleCommanders && (
+            <div className="draft-final-commander" role="group" aria-label="Final commander choice">
+              <strong>Choose your final commander</strong>
+              <span>These two cannot be paired. The other stays in your side pool.</span>
+              {activeCommanders.map((card) => (
+                <button type="button" key={card.oracleId} onClick={() => setActiveCommanderIds([card.oracleId])}>Use {card.name} only</button>
+              ))}
+            </div>
+          )}
           {deckExpanded && (
             <div id="draft-deck-workspace-content" className="draft-workspace-content">
               <DeckOverview

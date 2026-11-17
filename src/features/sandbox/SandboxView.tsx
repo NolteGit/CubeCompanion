@@ -26,7 +26,7 @@ interface EditorNotice {
   message: string
 }
 
-interface UndoEntry {
+export interface UndoEntry {
   state: SandboxState
   label: string
 }
@@ -170,14 +170,15 @@ function DiffSection({
 
 interface SandboxViewProps {
   onChangeCount?: (count: number) => void
+  undoEntry: UndoEntry | null
+  onUndoEntryChange: (entry: UndoEntry | null) => void
 }
 
-export function SandboxView({ onChangeCount }: SandboxViewProps = {}) {
+export function SandboxView({ onChangeCount, undoEntry, onUndoEntryChange: setUndoEntry }: SandboxViewProps) {
   const [state, setState] = useState<SandboxState>(initialState)
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
   const [editorNotice, setEditorNotice] = useState<EditorNotice | null>(null)
-  const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null)
   const [adding, setAdding] = useState(false)
   const [search, setSearch] = useState('')
 

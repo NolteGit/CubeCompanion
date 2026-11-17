@@ -12,7 +12,7 @@ import {
 import { MaybeList } from '../features/browser/MaybeList'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
 import { DraftSimulator } from '../features/draft/DraftSimulator'
-import { SandboxView } from '../features/sandbox/SandboxView'
+import { SandboxView, type UndoEntry } from '../features/sandbox/SandboxView'
 import { loadSandboxState, saveSandboxState } from '../features/sandbox/storage'
 import {
   applySandboxCard,
@@ -178,6 +178,7 @@ function App() {
   const [page, setPage] = useState<AppPage>(() => pageFromHash(window.location.hash))
   const [cardList, setCardList] = useState<LibraryList>('draft')
   const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
+  const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null)
   const totalCards = draftCards.length + commanderCards.length
 
   useEffect(() => {
@@ -220,6 +221,7 @@ function App() {
     )
     const next = applySandboxCard(current, card, pool)
     if (next === current) return 'unchanged'
+    setUndoEntry({ state: current, label: `Add ${card.name}` })
 
     saveSandboxState(next, window.sessionStorage)
     setPendingChangeCount(
@@ -237,6 +239,7 @@ function App() {
     )
     const poolCards = pool === 'draft' ? current.draftCards : current.commanders
     const isPresent = poolCards.some((entry) => entry.oracleId === card.oracleId)
+    setUndoEntry({ state: current, label: `${isPresent ? 'Remove' : 'Restore'} ${card.name}` })
     const next = isPresent
       ? removeSandboxCard(current, pool, card.oracleId)
       : applySandboxCard(current, card, pool)
@@ -261,7 +264,7 @@ function App() {
     }
     if (page === 'analysis') return <AnalysisDashboard />
     if (page === 'sandbox') {
-      return <SandboxView onChangeCount={setPendingChangeCount} />
+      return <SandboxView onChangeCount={setPendingChangeCount} undoEntry={undoEntry} onUndoEntryChange={setUndoEntry} />
     }
     if (page === 'draft') return <DraftSimulator />
     if (page === 'history') return <HistoryBrowser />

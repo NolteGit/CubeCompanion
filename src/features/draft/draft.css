@@ -441,3 +441,27 @@
 .draft-board-basic-card-controls output { min-width: 14px; color: #c4f1d6; font-size: .69rem; font-weight: 750; font-variant-numeric: tabular-nums; text-align: center; }
 .draft-board-basic-tile .draft-agent-basic-count { margin-top: auto; padding: 4px 0; border-radius: 4px; background: var(--surface-raised); text-align: center; }
 @media (max-width: 650px) { .draft-agents-header, .draft-agents-deck-header { flex-wrap: wrap; } }
+
+/* Card inspection never commits a pick. The dialog also works on touch. */
+.draft-inspect-card { min-width: 0; position: relative; }
+.draft-inspect-card > .draft-card { width: 100%; }
+.draft-inspect-trigger { display: block; width: 100%; margin-top: 3px; padding: 5px; border: 1px solid var(--border); border-radius: 5px; color: var(--text-muted); background: var(--surface); cursor: pointer; font-size: .7rem; }
+.draft-inspect-trigger:hover, .draft-inspect-trigger:focus-visible { color: var(--text); border-color: var(--accent); }
+.draft-inspect-hover { position: fixed; z-index: 400; width: 290px; max-height: calc(100dvh - 16px); overflow: hidden; padding: 8px; border: 1px solid var(--accent); border-radius: 10px; background: #101b22; color: #eef5f8; box-shadow: 0 12px 40px #0009; pointer-events: none; }
+.draft-inspect-hover img { width: 100%; max-height: calc(100dvh - 65px); object-fit: contain; border-radius: 6px; }
+.draft-inspect-hover strong { display: block; font-size: .8rem; }
+.draft-inspect-dialog { width: min(430px, calc(100vw - 24px)); max-height: 90dvh; padding: 0; border: 1px solid #4b6978; border-radius: 12px; background: #101b22; color: #eef5f8; }
+.draft-inspect-dialog::backdrop { background: #01080cce; }
+.draft-inspect-surface { padding: 14px; }
+.draft-inspect-surface header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+.draft-inspect-surface button { min-width: 36px; min-height: 36px; border: 1px solid #4b6978; border-radius: 6px; background: #1a2b35; color: white; cursor: pointer; font-size: 1.2rem; }
+.draft-inspect-surface img { display: block; max-height: 60dvh; width: 100%; object-fit: contain; }
+.draft-inspect-surface p { white-space: pre-line; font-size: .8rem; line-height: 1.5; }
+.draft-final-commander { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px; border-top: 1px solid var(--border); }
+.draft-final-commander span { flex-basis: 100%; color: var(--text-muted); font-size: .75rem; }
+.draft-final-commander button { padding: 8px 12px; border: 1px solid #d6b558; border-radius: 7px; color: #ffe3a4; background: #352e1c; cursor: pointer; }
+.draft-basic-fallback { display: flex; aspect-ratio: 488 / 680; flex-direction: column; justify-content: space-between; align-items: center; padding: 8px; border-radius: 5px; text-align: center; }
+.draft-basic-fallback strong, .draft-basic-fallback small { font-size: .65rem; }
+.draft-basic-fallback > span { font-size: 2rem; }
+.draft-sample-card > .draft-basic-fallback { width: 100%; }
+@media (hover: none) { .draft-inspect-hover { display: none; } .draft-inspect-trigger { min-height: 36px; } }

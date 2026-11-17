@@ -101,7 +101,10 @@
   grid-template-columns: repeat(8, minmax(152px, 1fr));
   align-items: start;
   gap: 5px;
-  min-width: 1180px;
+  min-width: 0;
+  max-width: 100%;
+  scrollbar-color: #648476 #18252b;
+  scrollbar-width: auto;
   overflow-x: auto;
   padding-bottom: 8px;
 }
@@ -111,7 +114,10 @@
   grid-template-columns: repeat(8, minmax(152px, 1fr));
   align-items: start;
   gap: 10px 5px;
-  min-width: 1180px;
+  min-width: 0;
+  max-width: 100%;
+  scrollbar-color: #648476 #18252b;
+  scrollbar-width: auto;
   overflow-x: auto;
   padding-bottom: 8px;
 }
