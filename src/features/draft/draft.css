@@ -418,4 +418,18 @@
 .draft-board-card--readonly { cursor: default; }
 .draft-board-card--readonly:hover { transform: none; }
 .draft-agent-basic-count { font-size: .76rem; color: #c4f1d6; font-weight: 750; font-variant-numeric: tabular-nums; }
+
+/* Real basic-land cards: shared by the human deck and read-only agent decks.
+   Keep the six lands compact and wrap them naturally in narrow layouts. */
+.draft-board-basics.draft-board-basics--cards { grid-template-columns: repeat(auto-fill, minmax(74px, 82px)); gap: 8px; margin-top: 8px; }
+.draft-board-basic-tile { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 3px; border: 1px solid rgb(70 87 98 / 38%); border-radius: 7px; background: rgb(9 17 22 / 52%); }
+.draft-board-basic-image { display: block; width: 100%; aspect-ratio: 488 / 680; object-fit: cover; border-radius: 4px; }
+.draft-board-basic-tile--empty .draft-board-basic-image { opacity: .7; }
+.draft-board-basic-tile-name { display: block; color: var(--text-muted); font-size: .62rem; font-weight: 750; text-align: center; }
+.draft-board-basic-card-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 3px; }
+.draft-board-basic-card-controls button { width: 100%; height: 23px; min-width: 0; padding: 0; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--surface-raised); color: var(--text); cursor: pointer; font-size: .86rem; line-height: 1; }
+.draft-board-basic-card-controls button:hover:not(:disabled), .draft-board-basic-card-controls button:focus-visible { border-color: var(--accent); background: var(--surface-hover); }
+.draft-board-basic-card-controls button:disabled { opacity: .32; cursor: not-allowed; }
+.draft-board-basic-card-controls output { min-width: 14px; color: #c4f1d6; font-size: .69rem; font-weight: 750; font-variant-numeric: tabular-nums; text-align: center; }
+.draft-board-basic-tile .draft-agent-basic-count { margin-top: auto; padding: 4px 0; border-radius: 4px; background: var(--surface-raised); text-align: center; }
 @media (max-width: 650px) { .draft-agents-header, .draft-agents-deck-header { flex-wrap: wrap; } }
