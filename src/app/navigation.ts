@@ -2,7 +2,6 @@ export type AppPage =
   | 'browse'
   | 'analysis'
   | 'sandbox'
-  | 'playtest'
   | 'draft'
   | 'history'
   | 'archive'
@@ -11,7 +10,6 @@ const HASH_BY_PAGE: Readonly<Record<AppPage, string>> = {
   browse: '#cards',
   analysis: '#analysis',
   sandbox: '#changes',
-  playtest: '#playtest',
   draft: '#draft',
   history: '#history',
   archive: '#archive',
@@ -25,7 +23,6 @@ const TITLE_BY_PAGE: Readonly<Record<AppPage, string>> = {
   browse: 'Cards · Cube Companion',
   analysis: 'Analysis · Cube Companion',
   sandbox: 'Changes · Cube Companion',
-  playtest: 'Playtest · Cube Companion',
   draft: 'Draft · Cube Companion',
   history: 'History · Cube Companion',
   archive: 'Archive · Cube Companion',
@@ -36,7 +33,10 @@ export function hashForPage(page: AppPage): string {
 }
 
 export function pageFromHash(hash: string): AppPage {
-  return PAGE_BY_HASH.get(hash.toLocaleLowerCase('en-US')) ?? 'browse'
+  const normalized = hash.toLocaleLowerCase('en-US')
+  // Old Playtest bookmarks now open the full Draft simulator.
+  if (normalized === '#playtest') return 'draft'
+  return PAGE_BY_HASH.get(normalized) ?? 'browse'
 }
 
 export function pageTitle(page: AppPage): string {
