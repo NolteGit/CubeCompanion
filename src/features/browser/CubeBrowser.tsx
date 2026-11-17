@@ -6,7 +6,7 @@ import { commanderCards, draftCards, releaseInfo } from './data'
 import { cardTint } from './cardTint'
 import { CardCollection } from './CardCollection'
 import { HoverCard } from './HoverCard'
-import { groupColorManaCards, MANA_VALUE_LABELS } from './manaColumns'
+import { groupColorManaCards, groupManaValueCards, MANA_VALUE_LABELS } from './manaColumns'
 import {
   CARD_TYPE_OPTIONS,
   COMMANDER_SECTION_OPTIONS,
@@ -111,11 +111,7 @@ function filteredSubgroups(
     .map(([key, group]) => ({ key: `mv-${key}`, label: `MV ${key}`, cards: group }))
 }
 
-function splitColumn(group: CardGroup, pool: BrowserPool, activeType: CardTypeFilter): ColumnSection[] {
-  if (pool === 'commanders') {
-    return [{ key: 'commanders', label: 'Commanders', cards: group.cards }]
-  }
-
+function splitColumn(group: CardGroup, activeType: CardTypeFilter): ColumnSection[] {
   if (group.key === 'multicolor' || group.key === 'land') {
     const byGuild = new Map<string, BrowserCard[]>()
     for (const card of group.cards) {
@@ -341,7 +337,10 @@ function CubeBrowserContent({
   const colorManaBoard = view === 'list' && pool === 'draft' &&
     section !== 'all' && section !== 'multicolor' && section !== 'land' && groups.length === 1
   const colorManaColumns = colorManaBoard ? groupColorManaCards(groups[0].cards, type) : []
-  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && groups.length > 0
+  // Commander lists use one mana row per exact color identity, without type subheadings.
+  const commanderManaBoard = view === 'list' && pool === 'commanders' &&
+    (section !== 'all' || Boolean(query.trim())) && groups.length > 0
+  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && !commanderManaBoard && groups.length > 0
 
   function clearFilters() {
     setQuery('')
@@ -554,7 +553,14 @@ function CubeBrowserContent({
                 <span>{group.cards.length}</span>
               </header>
               <div className="column-sections">
-                {splitColumn(group, pool, type).map((columnSection) => (
+                {pool === 'commanders' ? (
+                  <CardCollection
+                    cards={group.cards}
+                    view="list"
+                    rowAction={removeAction}
+                    workingAddedIds={workingAddedIds}
+                  />
+                ) : splitColumn(group, type).map((columnSection) => (
                   <section className="column-section" key={columnSection.key}>
                     <header>
                       <strong>{columnSection.label}</strong>
@@ -611,6 +617,41 @@ function CubeBrowserContent({
             </div>
           </div>
         </section>
+      ) : commanderManaBoard ? (
+        <div className="filtered-groups" aria-label="Commanders by mana value">
+          {groups.map((group) => (
+            <section
+              className={`color-mana-board cube-theme cube-theme--${group.key}`}
+              key={group.key}
+              aria-label={`${group.label} commanders by mana value`}
+            >
+              <header className="color-mana-board-heading">
+                <span className="section-dot" aria-hidden="true" />
+                <strong>{group.label}</strong>
+                <span>{group.cards.length} cards</span>
+              </header>
+              <div className="color-mana-scroll" role="region" aria-label={`${group.label} mana columns`} tabIndex={0}>
+                <div className="color-mana-content">
+                  <div className="color-mana-labels" aria-hidden="true">
+                    {MANA_VALUE_LABELS.map((label) => <span key={label}>{label}</span>)}
+                  </div>
+                  <div className="color-mana-row-columns">
+                    {groupManaValueCards(group.cards).map((column) => (
+                      <div className="color-mana-cell" key={column.label}>
+                        <CardCollection
+                          cards={column.cards}
+                          view="list"
+                          rowAction={removeAction}
+                          workingAddedIds={workingAddedIds}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          ))}
+        </div>
       ) : groupedFilteredResults ? (
         <div className="filtered-results">
           <div className="filtered-results-heading">

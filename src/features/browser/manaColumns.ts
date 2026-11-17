@@ -43,3 +43,20 @@ export function groupColorManaCards<T extends ManaCard>(
   }
   return columns
 }
+
+/** Commander view: one ordered mana row, regardless of creature, artifact, or planeswalker type. */
+export function groupManaValueCards<T extends Pick<ManaCard, 'name' | 'manaValue'>>(
+  cards: readonly T[],
+): { label: (typeof MANA_VALUE_LABELS)[number]; cards: T[] }[] {
+  const columns = MANA_VALUE_LABELS.map((label) => ({ label, cards: [] as T[] }))
+  for (const card of cards) {
+    const mana = Number.isFinite(card.manaValue)
+      ? Math.max(0, Math.min(7, Math.floor(card.manaValue)))
+      : 0
+    columns[mana].cards.push(card)
+  }
+  for (const column of columns) {
+    column.cards.sort((a, b) => a.manaValue - b.manaValue || a.name.localeCompare(b.name))
+  }
+  return columns
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { groupColorManaCards, MANA_VALUE_LABELS } from '../../src/features/browser/manaColumns'
+import { groupColorManaCards, groupManaValueCards, MANA_VALUE_LABELS } from '../../src/features/browser/manaColumns'
 
 const cards = [
   { name: 'Steel Seraph', manaValue: 6, typeLine: 'Artifact Creature — Angel' },
@@ -38,5 +38,22 @@ describe('cube browser filtered color layout', () => {
     ])
     expect(columns[7].creatures.map((card) => card.name)).toEqual(['Big Creature', 'Bigger Creature'])
     expect(columns[0].noncreatures.map((card) => card.name)).toEqual(['Token Maker'])
+  })
+
+  it('groups commanders by mana value in one row regardless of card type', () => {
+    const commanders = [
+      { name: 'Five-mana planeswalker', manaValue: 5, typeLine: 'Legendary Planeswalker' },
+      { name: 'Three-mana creature', manaValue: 3, typeLine: 'Legendary Creature' },
+      { name: 'A three-mana artifact', manaValue: 3, typeLine: 'Legendary Artifact' },
+      { name: 'Seven-mana creature', manaValue: 7, typeLine: 'Legendary Creature' },
+      { name: 'Eight-mana creature', manaValue: 8, typeLine: 'Legendary Creature' },
+    ]
+    const columns = groupManaValueCards(commanders)
+    expect(columns.map((column) => column.label)).toEqual(MANA_VALUE_LABELS)
+    expect(columns[3].cards.map((card) => card.name)).toEqual(['A three-mana artifact', 'Three-mana creature'])
+    expect(columns[5].cards.map((card) => card.name)).toEqual(['Five-mana planeswalker'])
+    expect(columns[7].cards.map((card) => card.name)).toEqual(['Seven-mana creature', 'Eight-mana creature'])
+    expect(columns.reduce((sum, column) => sum + column.cards.length, 0)).toBe(commanders.length)
+    expect(commanders[0].name).toBe('Five-mana planeswalker')
   })
 })
