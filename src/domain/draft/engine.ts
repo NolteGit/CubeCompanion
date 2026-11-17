@@ -93,9 +93,18 @@ export function startDraft<T extends DraftableCard>(
   }
 }
 
+/** Optional bot policy; absent it, the original random-pick behavior remains. */
+export type BotPickStrategy<T extends DraftableCard> = (
+  pack: readonly T[],
+  seat: number,
+  picks: readonly T[],
+  roll: number,
+) => number
+
 export function pickDraftCard<T extends DraftableCard>(
   session: DraftSession<T>,
   oracleId: string,
+  chooseBotPick?: BotPickStrategy<T>,
 ): DraftSession<T> {
   if (session.complete) throw new Error('The draft is already complete.')
   const humanPick = session.packs[0]?.find((card) => card.oracleId === oracleId)
@@ -107,7 +116,12 @@ export function pickDraftCard<T extends DraftableCard>(
     if (seat === 0) return pack.filter((card) => card.oracleId !== oracleId)
     const [roll, next] = nextRandom(rngState)
     rngState = next
-    const pickIndex = Math.floor(roll * pack.length)
+    const pickIndex = chooseBotPick
+      ? chooseBotPick(pack, seat, session.selections[seat], roll)
+      : Math.floor(roll * pack.length)
+    if (!Number.isInteger(pickIndex) || pickIndex < 0 || pickIndex >= pack.length) {
+      throw new Error(`Bot at seat ${seat} made an invalid pick.`)
+    }
     chosen.push(pack[pickIndex])
     return pack.filter((_, index) => index !== pickIndex)
   })
