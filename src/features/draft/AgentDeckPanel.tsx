@@ -114,25 +114,35 @@ export function AgentDeckPanel({ agents, session, phase, onSampleHand }: AgentDe
                 : `Incomplete deck: ${deck.issues.join(' ')}`}
             </div>
           )}
-          <DeckOverview
-            commanders={deck.commanders}
-            selectedCards={deck.mainDeck}
-            basics={deck.basics}
-            readOnly
-            onRemoveCard={() => {}}
-            onRemoveCommander={() => {}}
-            onAdjustBasic={() => {}}
-          />
-          {deck.sidePool.length > 0 && (
-            <details className="draft-agents-side">
-              <summary>Set aside · {deck.sidePool.length} picks</summary>
-              <div>
-                {deck.sidePool.map((card) => (
-                  <span key={card.oracleId} title={card.typeLine}>{card.name}</span>
-                ))}
-              </div>
-            </details>
-          )}
+          <div className="draft-workspace-content draft-agents-workspace">
+            <DeckOverview
+              commanders={deck.commanders}
+              selectedCards={deck.mainDeck}
+              basics={deck.basics}
+              readOnly
+              onRemoveCard={() => {}}
+              onRemoveCommander={() => {}}
+              onAdjustBasic={() => {}}
+            />
+            <aside className="draft-side-pool draft-agent-side-pool" aria-label="Opponent side pool">
+              <h3>Side pool <span>{deck.sidePool.length}</span></h3>
+              {deck.sidePool.length === 0 ? (
+                <p className="draft-side-pool-empty">No cards set aside</p>
+              ) : (
+                <div className="draft-side-pool-list">
+                  {deck.sidePool.map((card) => (
+                    <div key={card.oracleId} className="draft-aside-card-shell">
+                      <div className="draft-aside-card draft-agent-aside-card" title={card.name}>
+                        {card.imageUri
+                          ? <img src={card.imageUri} alt={card.name} loading="lazy" />
+                          : <span className="draft-aside-placeholder">{card.name}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </aside>
+          </div>
         </div>
       )}
     </section>
