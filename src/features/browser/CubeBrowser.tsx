@@ -17,7 +17,6 @@ import {
 import type {
   BrowserCard,
   BrowserPool,
-  BrowserSort,
   BrowserView,
   CardGroup,
   CardTypeFilter,
@@ -280,7 +279,6 @@ function CubeBrowserContent({
   const [query, setQuery] = useState('')
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
-  const [sort, setSort] = useState<BrowserSort>('cube')
   const [queuedRemovalIds, setQueuedRemovalIds] = useState<ReadonlySet<string>>(() => {
     const initialDiff = sandboxDiff(sandboxState, draftCards, commanderCards)
     const removedCards = pool === 'draft'
@@ -325,8 +323,8 @@ function CubeBrowserContent({
   )
   const sectionOptions = pool === 'draft' ? DRAFT_SECTION_OPTIONS : COMMANDER_SECTION_OPTIONS
   const visibleCards = useMemo(
-    () => filterAndSortCards(sourceCards, pool, { query, section, type, sort }),
-    [pool, query, section, sort, sourceCards, type],
+    () => filterAndSortCards(sourceCards, pool, { query, section, type, sort: 'cube' }),
+    [pool, query, section, sourceCards, type],
   )
   const groups = useMemo(
     () => groupCards(visibleCards, pool).map((group) => ({
@@ -335,21 +333,20 @@ function CubeBrowserContent({
     })),
     [pool, visibleCards],
   )
-  const hasFilters = Boolean(query || section !== 'all' || type !== 'all' || sort !== 'cube')
+  const hasFilters = Boolean(query || section !== 'all' || type !== 'all')
   // A type-only filter retains the familiar columns for each cube section.
-  const denseColumns = view === 'list' && section === 'all' && !query.trim() && sort === 'cube' && groups.length > 0
+  const denseColumns = view === 'list' && section === 'all' && !query.trim() && groups.length > 0
   // A single color gets the same creature/noncreature mana layout as deckbuilding.
   // Guild and land sections retain their positional grouping.
-  const colorManaBoard = view === 'list' && pool === 'draft' && sort === 'cube' &&
+  const colorManaBoard = view === 'list' && pool === 'draft' &&
     section !== 'all' && section !== 'multicolor' && section !== 'land' && groups.length === 1
   const colorManaColumns = colorManaBoard ? groupColorManaCards(groups[0].cards, type) : []
-  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && sort === 'cube' && groups.length > 0
+  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && groups.length > 0
 
   function clearFilters() {
     setQuery('')
     setSection('all')
     setType('all')
-    setSort('cube')
   }
 
   function queueRemoval(card: BrowserCard) {
@@ -535,23 +532,6 @@ function CubeBrowserContent({
             ))}
           </div>
 
-          <div className="sort-control" role="group" aria-label="Sort cards">
-            <span>Sort</span>
-            {([
-              ['cube', 'Cube'],
-              ['name', 'Name'],
-              ['mana', 'Mana'],
-            ] as const).map(([value, label]) => (
-              <button
-                type="button"
-                className={sort === value ? 'active' : ''}
-                key={value}
-                onClick={() => setSort(value)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -681,7 +661,7 @@ function CubeBrowserContent({
               <strong>{visibleCards.length}</strong>
               <span>matching cards</span>
             </div>
-            <span>{sort === 'name' ? 'Sorted by name' : sort === 'mana' ? 'Sorted by mana value' : 'Image view'}</span>
+            <span>Image view</span>
           </div>
           <CardCollection
             cards={visibleCards}
