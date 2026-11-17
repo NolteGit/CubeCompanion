@@ -189,8 +189,8 @@ export function agentCurveCenter(commanders: readonly AgentPickCard[]): number {
  */
 export function chooseAgentPick<T extends AgentPickCard>(
   pack: readonly T[],
-  drafted: readonly T[],
-  commanders: readonly T[],
+  drafted: readonly AgentPickCard[],
+  commanders: readonly AgentPickCard[],
   roll: number,
 ): number {
   if (pack.length === 0) throw new Error('An opponent cannot pick from an empty pack.')
@@ -255,10 +255,10 @@ const LAND_FOR_COLOR: Record<ColorSymbol, BasicLand> = {
  * with 45 picks. In that case we return an explicitly incomplete deck rather
  * than using off-color cards or exceeding the land cap.
  */
-export function buildAgentDeck<T extends AgentPickCard>(
-  commanders: readonly T[],
-  picks: readonly T[],
-): AgentDeck<T> {
+export function buildAgentDeck<C extends AgentPickCard, P extends AgentPickCard>(
+  commanders: readonly C[],
+  picks: readonly P[],
+): AgentDeck<C | P> {
   const eligible = picks.filter((card) => isCommanderLegal(card, commanders))
   const spells = eligible.filter((card) => !card.isLand)
   const draftedLands = eligible.filter((card) => card.isLand)
