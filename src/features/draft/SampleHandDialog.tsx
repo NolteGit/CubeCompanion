@@ -5,6 +5,7 @@ import { sampleDeckCards, shuffleSampleDeck, type SampleHandCard, type SampleHan
 interface SampleHandDialogProps {
   selectedCards: readonly SampleHandSourceCard[]
   basics: BasicLandCounts
+  deckLabel?: string
   onClose: () => void
 }
 
@@ -32,7 +33,7 @@ function SampleCard({ card, position }: { card: SampleHandCard; position: number
   )
 }
 
-export function SampleHandDialog({ selectedCards, basics, onClose }: SampleHandDialogProps) {
+export function SampleHandDialog({ selectedCards, basics, deckLabel, onClose }: SampleHandDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const cardsRef = useRef<HTMLDivElement>(null)
   const deck = useMemo(() => sampleDeckCards(selectedCards, basics), [selectedCards, basics])
@@ -79,7 +80,7 @@ export function SampleHandDialog({ selectedCards, basics, onClose }: SampleHandD
         <header className="draft-sample-header">
           <div>
             <h3>Sample hand <span>{shownCount} / {deck.length}</span></h3>
-            <p>Shuffled from your current main deck. Commanders stay in the command zone.</p>
+            <p>Shuffled from {deckLabel ? `Agent deck: ${deckLabel}` : 'your current main deck'}. Commanders stay in the command zone.</p>
           </div>
           <div className="draft-sample-actions">
             <button type="button" onClick={newHand} disabled={deck.length === 0}>New hand</button>
