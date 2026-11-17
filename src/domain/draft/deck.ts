@@ -9,6 +9,20 @@ export function emptyBasicLands(): BasicLandCounts {
 }
 
 type CommanderIdentity = Pick<CubeCard, 'colorIdentity'>
+type CommanderChoice = CubeCard & { oracleText?: string }
+
+/** Cube house rule: a pair needs two monocolor identities, or a compatible Partner ability. */
+export function canPairCommanders(first: CommanderChoice, second: CommanderChoice): boolean {
+  if (first.colorIdentity.length === 1 && second.colorIdentity.length === 1) return true
+  const plainPartner = (card: CommanderChoice) =>
+    /(?:^|\n)Partner(?:\s*\([^\n]*\))?(?=\n|$)/i.test(card.oracleText ?? '')
+  if (plainPartner(first) && plainPartner(second)) return true
+
+  const partnerWith = (card: CommanderChoice): string | null =>
+    card.oracleText?.match(/(?:^|\n)Partner with ([^\n(]+?)(?:\s*\(|\s*$)/i)?.[1]?.trim() ?? null
+  return partnerWith(first)?.toLowerCase() === second.name.toLowerCase()
+    && partnerWith(second)?.toLowerCase() === first.name.toLowerCase()
+}
 
 /** The cube allows either one commander or a pair with a combined color identity. */
 export function isCommanderLegal(
@@ -26,9 +40,9 @@ export interface DeckCheck {
   issues: string[]
 }
 
-/** 60 cards including one or two commanders and any number of external basics. */
+/** 60 cards including one or two eligible commanders and any number of external basics. */
 export function checkDraftDeck(
-  commanders: CubeCard | readonly CubeCard[] | null,
+  commanders: CommanderChoice | readonly CommanderChoice[] | null,
   draftPool: readonly CubeCard[],
   selectedIds: ReadonlySet<string>,
   basics: BasicLandCounts,
@@ -40,6 +54,9 @@ export function checkDraftDeck(
   const issues: string[] = []
   if (chosen.length === 0) issues.push('Choose at least one commander for your deck.')
   if (chosen.length > 2) issues.push('A deck can have at most two commanders.')
+  if (chosen.length === 2 && !canPairCommanders(chosen[0], chosen[1])) {
+    issues.push('Two commanders require both commanders to be monocolored, both to have Partner, or a matching Partner with pair.')
+  }
   const commanderIds = new Set(chosen.map((card) => card.oracleId))
   if (commanderIds.size !== chosen.length) issues.push('The same commander cannot be selected twice.')
   if (unknown.length > 0) issues.push('The deck contains cards outside your drafted pool.')

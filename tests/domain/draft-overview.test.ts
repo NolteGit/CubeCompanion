@@ -26,8 +26,8 @@ describe('draft deck visual overview', () => {
     expect(groups.columns[1].creatures.map((c) => c.name)).toEqual(['One-mana creature'])
     expect(groups.columns[3].creatures.map((c) => c.name)).toEqual(['Three-mana creature'])
     expect(groups.columns[2].noncreatures.map((c) => c.name)).toEqual(['Arcane signet'])
-    expect(groups.columns[7].creatures.map((c) => c.name)).toEqual(['Seven-mana creature'])
-    expect(groups.columns[7].noncreatures.map((c) => c.name)).toEqual(['Eight-mana sorcery'])
+    expect(groups.columns[6].creatures.map((c) => c.name)).toEqual(['Seven-mana creature'])
+    expect(groups.columns[6].noncreatures.map((c) => c.name)).toEqual(['Eight-mana sorcery'])
     expect(groups.creatureCount).toBe(3)
     expect(groups.noncreatureCount).toBe(2)
   })
@@ -48,12 +48,12 @@ describe('draft deck visual overview', () => {
     expect(cards).toEqual(originals)
   })
 
-  it('sorts 7+ by actual mana value, and handles high and fractional values safely', () => {
+  it('sorts 6+ by actual mana value, and handles high and fractional values safely', () => {
     const groups = groupDraftDeck([
       card('Z 9', 9, 'Instant'), card('B 7', 7, 'Sorcery'),
       card('A 7', 7, 'Sorcery'), card('Minus', -1, 'Artifact'),
     ])
-    expect(groups.columns[7].noncreatures.map((c) => c.name)).toEqual(['A 7', 'B 7', 'Z 9'])
+    expect(groups.columns[6].noncreatures.map((c) => c.name)).toEqual(['A 7', 'B 7', 'Z 9'])
     expect(groups.columns[0].noncreatures.map((c) => c.name)).toEqual(['Minus'])
   })
 })

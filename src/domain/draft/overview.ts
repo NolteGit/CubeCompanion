@@ -1,5 +1,5 @@
 /** Pure grouping for the draft deck's visual mana-curve overview. */
-export const MANA_VALUE_BUCKETS = ['0', '1', '2', '3', '4', '5', '6', '7+'] as const
+export const MANA_VALUE_BUCKETS = ['0', '1', '2', '3', '4', '5', '6+'] as const
 
 export interface OverviewCard {
   name: string
@@ -23,7 +23,7 @@ export interface DeckOverviewGroups<T extends OverviewCard> {
 
 function manaBucket(value: number): number {
   if (!Number.isFinite(value)) return 0
-  return Math.max(0, Math.min(7, Math.floor(value)))
+  return Math.max(0, Math.min(6, Math.floor(value)))
 }
 
 function isCreature(card: OverviewCard): boolean {

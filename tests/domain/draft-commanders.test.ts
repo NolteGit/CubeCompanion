@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { checkDraftDeck, emptyBasicLands, isCommanderLegal } from '../../src/domain/draft/deck'
+import { canPairCommanders, checkDraftDeck, emptyBasicLands, isCommanderLegal } from '../../src/domain/draft/deck'
 import type { CubeCard } from '../../src/domain/cube/types'
 
 const white: CubeCard = { oracleId: 'w', name: 'White commander', colorIdentity: ['W'], isLand: false }
@@ -30,6 +30,33 @@ describe('draft commander options', () => {
     expect(isCommanderLegal(redPick, [white, blue])).toBe(false)
     const result = checkDraftDeck([white, blue], pool, new Set(['pick-wu']), plains(57))
     expect(result).toEqual({ total: 60, valid: true, issues: [] })
+  })
+
+  it('rejects two mixed-color commanders without matching Partner, but accepts a proper Partner pair', () => {
+    const azorius: CubeCard = { oracleId: 'az', name: 'Azorius commander', colorIdentity: ['W', 'U'], isLand: false }
+    const sultai: CubeCard = { oracleId: 'sul', name: 'Sultai commander', colorIdentity: ['U', 'B', 'G'], isLand: false }
+    expect(canPairCommanders(azorius, blue)).toBe(false)
+    expect(canPairCommanders(azorius, sultai)).toBe(false)
+    expect(checkDraftDeck([azorius, blue], [], new Set(), plains(58)).issues.join(' ')).toContain('Two commanders require')
+
+    const partnerOne = { ...azorius, oracleText: 'Partner (You can have two commanders if both have partner.)' }
+    const partnerTwo = { ...sultai, oracleText: 'Partner (You can have two commanders if both have partner.)' }
+    expect(canPairCommanders(partnerOne, partnerTwo)).toBe(true)
+    expect(checkDraftDeck([partnerOne, partnerTwo], [], new Set(), { ...emptyBasicLands(), Plains: 58 }).valid).toBe(true)
+    expect(canPairCommanders(partnerOne, blue)).toBe(false)
+  })
+
+  it('accepts matching Partner with commanders, but not unrelated Partner with commanders', () => {
+    const alpha = { ...white, name: 'Alpha', oracleText: 'Partner with Beta (When this creature enters, search.)' }
+    const beta = { ...blue, name: 'Beta', oracleText: 'Partner with Alpha (When this creature enters, search.)' }
+    const gamma = { ...red, name: 'Gamma', oracleText: 'Partner with Somebody Else (When this creature enters, search.)' }
+    // The two mono-colored cards qualify on their own under the cube house rule.
+    expect(canPairCommanders(alpha, beta)).toBe(true)
+    const multiAlpha = { ...alpha, colorIdentity: ['W', 'G'] as ('W' | 'U' | 'B' | 'R' | 'G')[] }
+    const multiBeta = { ...beta, colorIdentity: ['U', 'B'] as ('W' | 'U' | 'B' | 'R' | 'G')[] }
+    const multiGamma = { ...gamma, colorIdentity: ['B', 'R'] as ('W' | 'U' | 'B' | 'R' | 'G')[] }
+    expect(canPairCommanders(multiAlpha, multiBeta)).toBe(true)
+    expect(canPairCommanders(multiAlpha, multiGamma)).toBe(false)
   })
 
   it('switches back to one commander without counting the unused option', () => {
