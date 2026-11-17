@@ -11,7 +11,6 @@ import {
 } from '../features/browser/data'
 import { MaybeList } from '../features/browser/MaybeList'
 import { HistoryBrowser } from '../features/history/HistoryBrowser'
-import { PlaytestTable } from '../features/playtest/PlaytestTable'
 import { DraftSimulator } from '../features/draft/DraftSimulator'
 import { SandboxView } from '../features/sandbox/SandboxView'
 import { loadSandboxState, saveSandboxState } from '../features/sandbox/storage'
@@ -38,7 +37,6 @@ type NavIcon =
   | 'list'
   | 'analysis'
   | 'changes'
-  | 'playtest'
   | 'draft'
   | 'history'
   | 'archive'
@@ -110,14 +108,6 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M5 7h12l-3-3M19 17H7l3 3M17 7l-3 3M7 17l3-3" />
-      </svg>
-    )
-  }
-  if (icon === 'playtest') {
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m9 7 8 5-8 5V7Z" />
-        <rect x="4" y="4" width="16" height="16" rx="2.5" />
       </svg>
     )
   }
@@ -273,7 +263,6 @@ function App() {
     if (page === 'sandbox') {
       return <SandboxView onChangeCount={setPendingChangeCount} />
     }
-    if (page === 'playtest') return <PlaytestTable />
     if (page === 'draft') return <DraftSimulator />
     if (page === 'history') return <HistoryBrowser />
     return <ArchiveBrowser />
@@ -349,12 +338,6 @@ function App() {
               icon="draft"
               active={page === 'draft'}
               onClick={() => navigate('draft')}
-            />
-            <SidebarNavButton
-              label="Playtest"
-              icon="playtest"
-              active={page === 'playtest'}
-              onClick={() => navigate('playtest')}
             />
             <SidebarNavButton
               label="History"
