@@ -37,9 +37,12 @@ already-published Scryfall mana value, mana cost, type line and Oracle text.
   card's score, especially in three-color decks. Repeated symbols of one color
   carry a further penalty. Hybrid/Phyrexian symbols count less than fixed pips.
   Generic mana does not incur a colored-cost penalty.
-- **Mana curve:** A cheap commander's pick preference peaks near 2.3 mana
-  value, while a commander costing around six peaks near 3.7. A mild penalty
-  for already crowded mana values helps avoid piles of identical costs.
+- **Mana curve:** All agents retain a gentle preference for mana value 2–3
+  (centered around 2.5), regardless of commander cost. Higher-cost commanders
+  only get a small allowance to take some 4+ mana spells. A mild penalty for
+  repeated mana values and already-drafted 5+ mana cards discourages a top-heavy
+  pile without forcing a distribution. The curve bonus is intentionally much
+  weaker than colored mana constraints or early three-color fixing needs.
 - **Creatures:** A soft 50–70% creature preference among drafted nonlands
   nudges future picks if the deck drifts below or above that range. It never
   rejects otherwise legal picks or forces a deck-building quota.
