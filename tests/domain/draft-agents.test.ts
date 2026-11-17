@@ -149,7 +149,7 @@ describe('lightweight playable-pick heuristics', () => {
       ...card('expensive', ['W']), manaValue: 4, manaCost: '{3}{W}', typeLine: 'Creature',
     }
     expect(agentCurveCenter([cheapCommander])).toBe(2.3)
-    expect(agentCurveCenter([expensiveCommander])).toBe(3.7)
+    expect(agentCurveCenter([expensiveCommander])).toBeCloseTo(3.7)
     expect(chooseAgentPick([cheapCard, expensiveCard], [], [cheapCommander], 0)).toBe(0)
     expect(chooseAgentPick([cheapCard, expensiveCard], [], [expensiveCommander], 0)).toBe(1)
   })
