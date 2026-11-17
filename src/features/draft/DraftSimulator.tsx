@@ -3,6 +3,8 @@ import { commanderCards, draftCards, releaseInfo } from '../browser/data'
 import type { BrowserCard } from '../browser/types'
 import { dealCommanderPack } from '../playtest/deal'
 import { DeckOverview } from './DeckOverview'
+import { AgentDeckPanel } from './AgentDeckPanel'
+import { chooseAgentPick, createDraftAgents, type DraftAgent } from '../../domain/draft/agents'
 import { SampleHandDialog } from './SampleHandDialog'
 import {
   draftDirection,
@@ -23,18 +25,20 @@ import './draft.css'
 
 type Phase = 'setup' | 'commander' | 'draft' | 'build'
 
-const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v3'
-const PREVIOUS_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v2'
+const DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v4'
+const PREVIOUS_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v3'
+const OLDER_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v2'
 const LEGACY_DRAFT_STORAGE_KEY = 'cubecompanion:draft-simulator:v1'
 
 interface SavedDraft {
-  version: 3
+  version: 4
   snapshotId: string
   phase: Phase
   players: number
   packsPerPlayer: number
   cardsPerPack: number
   session: DraftSession<BrowserCard> | null
+  agents: DraftAgent<BrowserCard>[]
   commanderOffer: BrowserCard[]
   commanderCandidates: BrowserCard[]
   activeCommanderIds: string[]
@@ -44,45 +48,61 @@ interface SavedDraft {
 
 function readSavedDraft(): SavedDraft | null {
   try {
-    // Upgrade prior sessions without losing their drafted cards or deck choices.
+    // All previous session versions remain readable, including mid-draft picks.
     const raw = window.sessionStorage.getItem(DRAFT_STORAGE_KEY)
-    const previousRaw = raw ? null : window.sessionStorage.getItem(PREVIOUS_DRAFT_STORAGE_KEY)
-    const legacyRaw = raw || previousRaw ? null : window.sessionStorage.getItem(LEGACY_DRAFT_STORAGE_KEY)
-    if (!raw && !previousRaw && !legacyRaw) return null
-    const parsed = JSON.parse(raw ?? previousRaw ?? legacyRaw!) as Omit<SavedDraft, 'version'> & {
+    const v3 = raw ? null : window.sessionStorage.getItem(PREVIOUS_DRAFT_STORAGE_KEY)
+    const v2 = raw || v3 ? null : window.sessionStorage.getItem(OLDER_DRAFT_STORAGE_KEY)
+    const v1 = raw || v3 || v2 ? null : window.sessionStorage.getItem(LEGACY_DRAFT_STORAGE_KEY)
+    if (!raw && !v3 && !v2 && !v1) return null
+    const parsed = JSON.parse(raw ?? v3 ?? v2 ?? v1!) as Omit<SavedDraft, 'version' | 'agents'> & {
       version: number
+      agents?: DraftAgent<BrowserCard>[]
       commander?: BrowserCard | null
     }
     if (parsed.snapshotId !== releaseInfo.snapshotId) return null
     if (!['setup', 'commander', 'draft', 'build'].includes(parsed.phase)) return null
     if (!Array.isArray(parsed.selectedIds) || !parsed.basics || !Array.isArray(parsed.commanderOffer)) return null
     if (parsed.phase !== 'setup' && !parsed.session) return null
-    if (raw || previousRaw) {
-      if (parsed.version !== (raw ? 3 : 2) || !Array.isArray(parsed.commanderCandidates) || !Array.isArray(parsed.activeCommanderIds)) return null
-      if ((parsed.phase === 'draft' || parsed.phase === 'build') && parsed.commanderCandidates.length === 0) return null
-      if (raw) return parsed as SavedDraft
-      // V2 did not offer the deck board during drafting. Include all old picks and options.
-      return {
-        ...parsed,
-        version: 3,
-        selectedIds: parsed.phase === 'draft'
-          ? parsed.session?.selections[0].map((card) => card.oracleId) ?? []
-          : parsed.selectedIds,
-        activeCommanderIds: parsed.phase === 'draft'
-          ? parsed.commanderCandidates.map((card) => card.oracleId)
-          : parsed.activeCommanderIds,
+
+    let commanderCandidates = parsed.commanderCandidates
+    let activeCommanderIds = parsed.activeCommanderIds
+    let selectedIds = parsed.selectedIds
+    if (v1) {
+      if (parsed.version !== 1) return null
+      const oldCommander = parsed.commander
+      if ((parsed.phase === 'draft' || parsed.phase === 'build') && !oldCommander) return null
+      commanderCandidates = oldCommander ? [oldCommander] : []
+      activeCommanderIds = oldCommander ? [oldCommander.oracleId] : []
+    } else {
+      const expectedVersion = raw ? 4 : v3 ? 3 : 2
+      if (parsed.version !== expectedVersion || !Array.isArray(commanderCandidates) || !Array.isArray(activeCommanderIds)) return null
+    }
+    if ((parsed.phase === 'draft' || parsed.phase === 'build') && commanderCandidates.length === 0) return null
+
+    if (v1 || v2) {
+      if (parsed.phase === 'draft') {
+        selectedIds = parsed.session?.selections[0].map((card) => card.oracleId) ?? []
+        if (v2) activeCommanderIds = commanderCandidates.map((card) => card.oracleId)
       }
     }
-    const oldCommander = parsed.commander
-    if ((parsed.phase === 'draft' || parsed.phase === 'build') && !oldCommander) return null
+
+    const agents = parsed.phase === 'setup' ? [] : (
+      raw && Array.isArray(parsed.agents) && parsed.agents.length === parsed.players - 1
+        ? parsed.agents
+        : createDraftAgents(
+          commanderCards,
+          parsed.players - 1,
+          parsed.session?.options.seed ?? 0,
+          new Set(parsed.commanderOffer.map((card) => card.oracleId)),
+        )
+    )
     return {
       ...parsed,
-      version: 3,
-      commanderCandidates: oldCommander ? [oldCommander] : [],
-      activeCommanderIds: oldCommander ? [oldCommander.oracleId] : [],
-      selectedIds: parsed.phase === 'draft'
-        ? parsed.session?.selections[0].map((card) => card.oracleId) ?? []
-        : parsed.selectedIds,
+      version: 4,
+      agents,
+      commanderCandidates,
+      activeCommanderIds,
+      selectedIds,
     }
   } catch {
     return null
@@ -189,6 +209,7 @@ export function DraftSimulator() {
   const [packsPerPlayer, setPacksPerPlayer] = useState(savedDraft?.packsPerPlayer ?? 4)
   const [cardsPerPack, setCardsPerPack] = useState(savedDraft?.cardsPerPack ?? 15)
   const [session, setSession] = useState<DraftSession<BrowserCard> | null>(savedDraft?.session ?? null)
+  const [agents, setAgents] = useState<DraftAgent<BrowserCard>[]>(savedDraft?.agents ?? [])
   const [commanderOffer, setCommanderOffer] = useState<BrowserCard[]>(savedDraft?.commanderOffer ?? [])
   const [commanderCandidates, setCommanderCandidates] = useState<BrowserCard[]>(savedDraft?.commanderCandidates ?? [])
   const [activeCommanderIds, setActiveCommanderIds] = useState<string[]>(savedDraft?.activeCommanderIds ?? [])
@@ -196,13 +217,13 @@ export function DraftSimulator() {
   const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
   const [message, setMessage] = useState('')
   const [deckExpanded, setDeckExpanded] = useState(savedDraft?.phase === 'build')
-  const [sampleHandOpen, setSampleHandOpen] = useState(false)
+  const [sampleHandDeck, setSampleHandDeck] = useState<{ cards: readonly BrowserCard[]; basics: BasicLandCounts; label?: string } | null>(null)
 
   useEffect(() => {
     const saved: SavedDraft = {
-      version: 3,
+      version: 4,
       snapshotId: releaseInfo.snapshotId,
-      phase, players, packsPerPlayer, cardsPerPack, session,
+      phase, players, packsPerPlayer, cardsPerPack, session, agents,
       commanderOffer, commanderCandidates, activeCommanderIds, selectedIds: [...selected], basics,
     }
     try {
@@ -210,7 +231,7 @@ export function DraftSimulator() {
     } catch {
       // The draft still works if private browsing disables storage.
     }
-  }, [phase, players, packsPerPlayer, cardsPerPack, session, commanderOffer, commanderCandidates, activeCommanderIds, selected, basics])
+  }, [phase, players, packsPerPlayer, cardsPerPack, session, agents, commanderOffer, commanderCandidates, activeCommanderIds, selected, basics])
   const totalNeeded = players * packsPerPlayer * cardsPerPack
   const draftPool = session?.selections[0] ?? []
   const activeCommanders = commanderCandidates.filter((card) => activeCommanderIds.includes(card.oracleId))
@@ -234,6 +255,8 @@ export function DraftSimulator() {
   function reset() {
     setPhase('setup')
     setSession(null)
+    setAgents([])
+    setSampleHandDeck(null)
     setCommanderOffer([])
     setCommanderCandidates([])
     setActiveCommanderIds([])
@@ -247,8 +270,17 @@ export function DraftSimulator() {
     if (totalNeeded > draftCards.length) return
     try {
       const next = startDraft(draftCards, { players, packsPerPlayer, cardsPerPack, seed: Date.now() })
+      const offer = dealCommanderPack(commanderCards)
+      const nextAgents = createDraftAgents(
+        commanderCards,
+        players - 1,
+        next.options.seed,
+        new Set(offer.map((card) => card.oracleId)),
+      )
       setSession(next)
-      setCommanderOffer(dealCommanderPack(commanderCards))
+      setAgents(nextAgents)
+      setSampleHandDeck(null)
+      setCommanderOffer(offer)
       setCommanderCandidates([])
       setActiveCommanderIds([])
       setSelected(new Set())
@@ -264,7 +296,10 @@ export function DraftSimulator() {
   function chooseCard(oracleId: string) {
     if (!session || session.complete) return
     try {
-      const next = pickDraftCard(session, oracleId)
+      const next = pickDraftCard(session, oracleId, (pack, seat, picks, roll) => {
+        const agent = agents.find((entry) => entry.seat === seat)
+        return agent ? chooseAgentPick(pack, picks, agent.commanders, roll) : Math.floor(roll * pack.length)
+      })
       setSession(next)
       // Every drafted card starts in the deck. Set-aside decisions are reversible.
       setSelected((old) => new Set(old).add(oracleId))
@@ -327,7 +362,7 @@ export function DraftSimulator() {
         <div>
           <span className="draft-eyebrow">Draft simulator</span>
           <h2>Draft & build</h2>
-          {(phase === 'setup' || phase === 'commander') && <p>Draft from the published cube against random-pick opponents, then build a 60-card commander deck.</p>}
+          {(phase === 'setup' || phase === 'commander') && <p>Draft from the published cube against commander-driven opponents, then build a 60-card commander deck.</p>}
         </div>
         {phase !== 'setup' && <button type="button" className="draft-reset" onClick={reset}>New draft</button>}
       </header>
@@ -335,7 +370,7 @@ export function DraftSimulator() {
       {phase === 'setup' && (
         <div className="draft-panel draft-setup">
           <h3>New multiplayer draft</h3>
-          <p>One human, the remaining seats controlled by random bots. No card appears in more than one pack.</p>
+          <p>One human and commander-driven draft agents. Each agent chooses a random commander configuration and prioritizes on-color picks. No card appears in more than one pack.</p>
           <div className="draft-settings">
             <label>Players (including you)
               <select value={players} onChange={(event) => setPlayers(Number(event.target.value))}>
@@ -448,7 +483,7 @@ export function DraftSimulator() {
                 type="button"
                 className="draft-sample-trigger"
                 disabled={selectedCards.length + BASIC_LANDS.reduce((sum, land) => sum + basics[land], 0) === 0}
-                onClick={() => setSampleHandOpen(true)}
+                onClick={() => setSampleHandDeck({ cards: selectedCards, basics })}
                 title="Deal seven random cards from your current main deck"
               >Sample hand</button>
               <button
@@ -513,7 +548,22 @@ export function DraftSimulator() {
         </section>
       )}
 
-      {sampleHandOpen && <SampleHandDialog selectedCards={selectedCards} basics={basics} onClose={() => setSampleHandOpen(false)} />}
+      {(phase === 'draft' || phase === 'build') && session && agents.length > 0 && (
+        <AgentDeckPanel
+          agents={agents}
+          session={session}
+          phase={phase}
+          onSampleHand={(cards, deckBasics, label) => setSampleHandDeck({ cards, basics: deckBasics, label })}
+        />
+      )}
+      {sampleHandDeck && (
+        <SampleHandDialog
+          selectedCards={sampleHandDeck.cards}
+          basics={sampleHandDeck.basics}
+          deckLabel={sampleHandDeck.label}
+          onClose={() => setSampleHandDeck(null)}
+        />
+      )}
       {message && <p className="draft-message" role="status">{message}</p>}
     </section>
   )
