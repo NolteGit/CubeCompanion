@@ -133,12 +133,7 @@ export function DeckOverview({
           <strong>Lands</strong>
           <span>{landCount} cards · {grouped.lands.length} drafted</span>
         </div>
-        {grouped.lands.length > 0 && (
-          <div className="draft-board-land-cards">
-            {grouped.lands.map((card) => <DeckCard key={card.oracleId} card={card} isCommander={commanderIds.has(card.oracleId)} offColor={offColor(card)} readOnly={readOnly} onRemove={() => commanderIds.has(card.oracleId) ? onRemoveCommander(card) : onRemoveCard(card)} />)}
-          </div>
-        )}
-        <div className="draft-board-basics draft-board-basics--cards" aria-label="Basic lands">
+        <div className="draft-board-land-line" aria-label="Basic and drafted lands">
           {BASIC_LANDS.map((land) => (
             <div key={land} className={`draft-board-basic-tile${basics[land] === 0 ? ' draft-board-basic-tile--empty' : ''}`} title={land}>
               <img className="draft-board-basic-image" src={BASIC_LAND_IMAGE_URIS[land]} alt="" loading="lazy" />
@@ -152,6 +147,17 @@ export function DeckOverview({
                   <button type="button" aria-label={`Add ${land}`} onClick={() => onAdjustBasic(land, 1)}>+</button>
                 </div>
               )}
+            </div>
+          ))}
+          {grouped.lands.map((card) => (
+            <div className="draft-board-land-slot" key={card.oracleId}>
+              <DeckCard
+                card={card}
+                isCommander={commanderIds.has(card.oracleId)}
+                offColor={offColor(card)}
+                readOnly={readOnly}
+                onRemove={() => commanderIds.has(card.oracleId) ? onRemoveCommander(card) : onRemoveCard(card)}
+              />
             </div>
           ))}
         </div>
