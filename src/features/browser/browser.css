@@ -831,17 +831,6 @@
   gap: 8px;
 }
 
-.filter-status > span {
-  color: var(--text-muted);
-  font-size: 0.67rem;
-  white-space: nowrap;
-}
-
-.filter-status strong {
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-
 .cube-columns {
   display: grid;
   grid-template-columns: repeat(8, minmax(152px, 1fr));

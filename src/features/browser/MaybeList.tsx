@@ -239,7 +239,6 @@ function MaybeDraftPool({
     <section className="maybe-pool">
       <header className="maybe-pool-heading">
         <strong>Main Cube ideas</strong>
-        <span>{cards.length}</span>
       </header>
 
       <div className="maybe-columns">
@@ -282,7 +281,6 @@ function MaybeCommanderPool({
     <section className="maybe-pool">
       <header className="maybe-pool-heading">
         <strong>Commander ideas</strong>
-        <span>{cards.length}</span>
       </header>
 
       <div className="maybe-commander-columns">
@@ -324,7 +322,6 @@ export function MaybeList({ onAddToChanges }: MaybeListProps) {
   const draftIdeas = useMemo(() => filterIdeas(maybeDraftCards, query), [query])
   const commanderIdeas = useMemo(() => filterIdeas(maybeCommanderCards, query), [query])
   const visibleCount = draftIdeas.length + commanderIdeas.length
-  const totalCount = maybeDraftCards.length + maybeCommanderCards.length
 
   function addIdea(card: BrowserCard, pool: SandboxPool) {
     const result = onAddToChanges(card, pool)
@@ -344,7 +341,6 @@ export function MaybeList({ onAddToChanges }: MaybeListProps) {
           <h2>Maybe</h2>
           <p>Source inclusion ideas. Use + to queue a card in the current Changes session.</p>
         </div>
-        <strong>{totalCount} ideas</strong>
       </header>
 
       <div className="maybe-search-row">
@@ -360,7 +356,6 @@ export function MaybeList({ onAddToChanges }: MaybeListProps) {
             aria-label="Search Maybe list"
           />
         </label>
-        <span><strong>{visibleCount}</strong> of {totalCount}</span>
       </div>
 
       {visibleCount === 0 ? (

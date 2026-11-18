@@ -299,7 +299,6 @@ function CubeBrowserContent({
     }),
     [sandboxState],
   )
-  const workingPoolCards = pool === 'draft' ? sandboxState.draftCards : sandboxState.commanders
   const officialPoolCards = pool === 'draft' ? draftCards : commanderCards
   const addedPoolCards = pool === 'draft' ? pendingDiff.addedDraft : pendingDiff.addedCommanders
   const sourceCards = useMemo(
@@ -519,18 +518,16 @@ function CubeBrowserContent({
               </button>
             ))}
           </div>
-
-          <div className="filter-status">
-            <span>
-              <strong>{visibleCards.length}</strong> shown · {workingPoolCards.length} working
-            </span>
-            {(poolAddedCount > 0 || poolRemovedCount > 0) && (
-              <span className="working-preview-status">
-                Working <b>+{poolAddedCount}</b> <b>−{poolRemovedCount}</b>
-              </span>
-            )}
-            {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
-          </div>
+          {(hasFilters || poolAddedCount > 0 || poolRemovedCount > 0) && (
+            <div className="filter-status">
+              {(poolAddedCount > 0 || poolRemovedCount > 0) && (
+                <span className="working-preview-status">
+                  Working <b>+{poolAddedCount}</b> <b>−{poolRemovedCount}</b>
+                </span>
+              )}
+              {hasFilters && <button className="clear-filters" onClick={clearFilters}>Reset</button>}
+            </div>
+          )}
         </div>
 
         <div className="filter-row filter-row-secondary">
