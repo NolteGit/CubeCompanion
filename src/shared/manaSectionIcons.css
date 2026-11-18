@@ -1,0 +1,282 @@
+/* Mana and card-type symbols in section headings.
+   The same art is used by the Color / Type filter. Text labels stay visible.
+   Keep the original colored background so an unavailable SVG degrades to a dot.
+   Legacy group names without a matching symbol also retain their dots. */
+
+:is(.cube-theme--white, .cube-theme--1-W, .archive-color-column--white, .diff-color-group--white) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/W.svg');
+}
+:is(.cube-theme--blue, .cube-theme--1-U, .archive-color-column--blue, .diff-color-group--blue) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/U.svg');
+}
+:is(.cube-theme--black, .cube-theme--1-B, .archive-color-column--black, .diff-color-group--black) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/B.svg');
+}
+:is(.cube-theme--red, .cube-theme--1-R, .archive-color-column--red, .diff-color-group--red) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/R.svg');
+}
+:is(.cube-theme--green, .cube-theme--1-G, .archive-color-column--green, .diff-color-group--green) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/G.svg');
+}
+:is(.cube-theme--colorless, .cube-theme--0-color, .archive-color-column--colorless, .diff-color-group--colorless) {
+  --mana-section-image: url('https://svgs.scryfall.io/card-symbols/C.svg');
+}
+:is(
+  .cube-theme--multicolor,
+  .cube-theme[class*='cube-theme--2-'],
+  .cube-theme[class*='cube-theme--3-'],
+  .cube-theme[class*='cube-theme--4-'],
+  .cube-theme[class*='cube-theme--5-'],
+  .archive-color-column--multicolor,
+  .diff-color-group--multicolor
+) {
+  --mana-section-image: url('https://files.mtg.wiki/M.svg');
+}
+:is(.cube-theme--land, .archive-color-column--land, .diff-color-group--land) {
+  --mana-section-image: url('/icons/card-types/land.svg');
+}
+
+/* Works for Cube, Commanders, Maybe, Archive and Changes with no JSX changes. */
+:is(.section-dot, .archive-color-dot, .diff-color-dot) {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  background-image: var(--mana-section-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  box-shadow: none;
+}
+
+/* Archive and Changes headers previously allocated only 9px for their dots. */
+.archive-color-column > header,
+.archive-commander-group > header,
+.diff-color-group > header {
+  grid-template-columns: 17px minmax(0, 1fr) auto;
+}
+
+/* Combined mana symbols for known 2–5-color identities.
+   Reuse the same W/U/B/R/G SVGs as the Color filter. The original gold M icon
+   remains for the general Multicolor category and any unknown identity. */
+.cube-theme.cube-theme--2-WU {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-UB {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-BR {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-RG {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-WG {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-WB {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-UR {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-BG {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-WR {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--2-UG {
+  --mana-identity-width: 33px;
+  --mana-identity-size: 15px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 18px center;
+}
+.cube-theme.cube-theme--3-WUB {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-WUR {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-WUG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-WBR {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-WBG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-WRG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-UBR {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-UBG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-URG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--3-BRG {
+  --mana-identity-width: 46px;
+  --mana-identity-size: 14px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 16px center, 32px center;
+}
+.cube-theme.cube-theme--4-WUBR {
+  --mana-identity-width: 55px;
+  --mana-identity-size: 13px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg');
+  --mana-identity-positions: 0px center, 14px center, 28px center, 42px center;
+}
+.cube-theme.cube-theme--4-WUBG {
+  --mana-identity-width: 55px;
+  --mana-identity-size: 13px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 14px center, 28px center, 42px center;
+}
+.cube-theme.cube-theme--4-WURG {
+  --mana-identity-width: 55px;
+  --mana-identity-size: 13px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 14px center, 28px center, 42px center;
+}
+.cube-theme.cube-theme--4-WBRG {
+  --mana-identity-width: 55px;
+  --mana-identity-size: 13px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 14px center, 28px center, 42px center;
+}
+.cube-theme.cube-theme--4-UBRG {
+  --mana-identity-width: 55px;
+  --mana-identity-size: 13px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 14px center, 28px center, 42px center;
+}
+.cube-theme.cube-theme--5-WUBRG {
+  --mana-identity-width: 64px;
+  --mana-identity-size: 12px;
+  --mana-identity-icons: url('https://svgs.scryfall.io/card-symbols/W.svg'), url('https://svgs.scryfall.io/card-symbols/U.svg'), url('https://svgs.scryfall.io/card-symbols/B.svg'), url('https://svgs.scryfall.io/card-symbols/R.svg'), url('https://svgs.scryfall.io/card-symbols/G.svg');
+  --mana-identity-positions: 0px center, 13px center, 26px center, 39px center, 52px center;
+}
+
+/* Use the actual mana identity in Cube, Commanders, Maybe, and Archive. */
+:is(
+  .cube-theme.cube-theme--2-WU,
+  .cube-theme.cube-theme--2-UB,
+  .cube-theme.cube-theme--2-BR,
+  .cube-theme.cube-theme--2-RG,
+  .cube-theme.cube-theme--2-WG,
+  .cube-theme.cube-theme--2-WB,
+  .cube-theme.cube-theme--2-UR,
+  .cube-theme.cube-theme--2-BG,
+  .cube-theme.cube-theme--2-WR,
+  .cube-theme.cube-theme--2-UG,
+  .cube-theme.cube-theme--3-WUB,
+  .cube-theme.cube-theme--3-WUR,
+  .cube-theme.cube-theme--3-WUG,
+  .cube-theme.cube-theme--3-WBR,
+  .cube-theme.cube-theme--3-WBG,
+  .cube-theme.cube-theme--3-WRG,
+  .cube-theme.cube-theme--3-UBR,
+  .cube-theme.cube-theme--3-UBG,
+  .cube-theme.cube-theme--3-URG,
+  .cube-theme.cube-theme--3-BRG,
+  .cube-theme.cube-theme--4-WUBR,
+  .cube-theme.cube-theme--4-WUBG,
+  .cube-theme.cube-theme--4-WURG,
+  .cube-theme.cube-theme--4-WBRG,
+  .cube-theme.cube-theme--4-UBRG,
+  .cube-theme.cube-theme--5-WUBRG
+) :is(.section-dot, .archive-color-dot) {
+  width: var(--mana-identity-width);
+  height: 16px;
+  flex: 0 0 var(--mana-identity-width);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: var(--mana-identity-icons);
+  background-position: var(--mana-identity-positions);
+  background-repeat: no-repeat;
+  background-size: var(--mana-identity-size) var(--mana-identity-size);
+  box-shadow: none;
+  filter: none;
+}
+
+/* Archive commander headings use a CSS grid, so reserve the correct icon width. */
+.archive-commander-group.cube-theme > header {
+  grid-template-columns: var(--mana-identity-width, 17px) minmax(0, 1fr) auto;
+}
+
+/* The multicolor filter has guild tiles without a pre-existing icon element. */
+.guild-results-group.cube-theme > header {
+  justify-content: flex-start;
+}
+.guild-results-group.cube-theme > header::before {
+  display: block;
+  width: var(--mana-identity-width, 32px);
+  height: 16px;
+  flex: 0 0 var(--mana-identity-width, 32px);
+  background-image: var(--mana-identity-icons);
+  background-position: var(--mana-identity-positions);
+  background-repeat: no-repeat;
+  background-size: var(--mana-identity-size) var(--mana-identity-size);
+  content: '';
+}
+.guild-results-group.cube-theme > header strong {
+  flex: 1;
+}

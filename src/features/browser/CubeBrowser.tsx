@@ -7,6 +7,7 @@ import { cardTint } from './cardTint'
 import { CardCollection } from './CardCollection'
 import { HoverCard } from './HoverCard'
 import { groupColorManaCards, groupManaValueCards, MANA_VALUE_LABELS } from './manaColumns'
+import { selectBrowserLayout, sortLandCards } from './resultLayouts'
 import {
   CARD_TYPE_OPTIONS,
   COMMANDER_SECTION_OPTIONS,
@@ -331,11 +332,18 @@ function CubeBrowserContent({
     [pool, visibleCards],
   )
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all')
-  // Preserve the full color columns for nonland type-only filters.
-  const denseColumns = view === 'list' && section === 'all' && type !== 'land' && !query.trim() && groups.length > 0
-  // Color pairs are easier to scan by guild; lands have no useful mana-value split.
-  const multicolorGuildView = view === 'list' && pool === 'draft' && section === 'multicolor' && type !== 'land' && groups.length === 1
-  const landListView = view === 'list' && pool === 'draft' && type === 'land'
+  const resultLayout = selectBrowserLayout({
+    pool, view, section, type, query,
+    visibleCount: visibleCards.length,
+    groupCount: groups.length,
+  })
+  const denseColumns = resultLayout === 'columns'
+  const multicolorGuildView = resultLayout === 'guilds'
+  const landListView = resultLayout === 'lands'
+  const compactManaBoard = resultLayout === 'compact-mana'
+  const colorManaBoard = resultLayout === 'mana'
+  const commanderManaBoard = resultLayout === 'commander-mana'
+  const groupedFilteredResults = resultLayout === 'grouped'
   const guildOrder = Object.keys(GUILD_LABELS)
   const guildGroups = multicolorGuildView
     ? splitColumn(groups[0], type).sort((left, right) => {
@@ -344,14 +352,11 @@ function CubeBrowserContent({
         return (leftPosition < 0 ? guildOrder.length : leftPosition) - (rightPosition < 0 ? guildOrder.length : rightPosition)
       })
     : []
-  // Single colors retain their creature/noncreature mana-value board.
-  const colorManaBoard = view === 'list' && pool === 'draft' &&
-    section !== 'all' && section !== 'multicolor' && section !== 'land' && groups.length === 1
   const colorManaColumns = colorManaBoard ? groupColorManaCards(groups[0].cards, type) : []
-  // Commander lists use one mana row per exact color identity, without type subheadings.
-  const commanderManaBoard = view === 'list' && pool === 'commanders' &&
-    (section !== 'all' || Boolean(query.trim())) && groups.length > 0
-  const groupedFilteredResults = view === 'list' && !denseColumns && !colorManaBoard && !commanderManaBoard && groups.length > 0
+  const compactManaColumns = compactManaBoard
+    ? groupManaValueCards(groups[0].cards).filter((column) => column.cards.length > 0)
+    : []
+  const landCards = landListView ? sortLandCards(visibleCards) : []
 
   function clearFilters() {
     setQuery('')
@@ -610,35 +615,72 @@ function CubeBrowserContent({
           ))}
         </div>
       ) : landListView ? (
-        <div className="land-results" aria-label="Land cards">
+        <section className="land-results" aria-label="Land cards alphabetically">
+          <header className="land-results-heading">
+            <strong>Lands</strong>
+            <span>{landCards.length} cards · alphabetical</span>
+          </header>
           <CardCollection
-            cards={visibleCards}
+            cards={landCards}
             view="list"
             rowAction={removeAction}
             workingAddedIds={workingAddedIds}
           />
-        </div>
+        </section>
+      ) : compactManaBoard ? (
+        <section className={`compact-mana-board cube-theme cube-theme--${groups[0].key}`} aria-label={`${groups[0].label} cards by occupied mana value`}>
+          <header className="compact-mana-heading">
+            <span className="section-dot" aria-hidden="true" />
+            <strong>{groups[0].label}{type !== 'all' ? ` · ${CARD_TYPE_OPTIONS.find((entry) => entry.value === type)?.label ?? type}` : ''}</strong>
+            <span>{groups[0].cards.length} cards</span>
+          </header>
+          <div className="compact-mana-groups">
+            {compactManaColumns.map((column) => (
+              <section className="compact-mana-group" key={column.label}>
+                <header>
+                  <strong>MV {column.label}</strong>
+                  <span>{column.cards.length}</span>
+                </header>
+                <CardCollection
+                  cards={column.cards}
+                  view="list"
+                  rowAction={removeAction}
+                  workingAddedIds={workingAddedIds}
+                />
+              </section>
+            ))}
+          </div>
+        </section>
       ) : colorManaBoard ? (
         <section className={`color-mana-board cube-theme cube-theme--${groups[0].key}`} aria-label={`${groups[0].label} cards by mana value`}>
           <header className="color-mana-board-heading">
             <span className="section-dot" aria-hidden="true" />
-            <strong>{groups[0].label}</strong>
+            <strong>{groups[0].label}{type !== 'all' ? ` · ${CARD_TYPE_OPTIONS.find((option) => option.value === type)?.label ?? type}` : ''}</strong>
             <span>{groups[0].cards.length} cards</span>
           </header>
           <div className="color-mana-scroll" role="region" aria-label="Creature and noncreature mana columns" tabIndex={0}>
             <div className="color-mana-content">
               <div className="color-mana-labels" aria-hidden="true">
-                {MANA_VALUE_LABELS.map((label) => <span key={label}>{label}</span>)}
+                {MANA_VALUE_LABELS.map((label, index) => (
+                  <span key={label}>
+                    {label}
+                    {type !== 'all' && (
+                      <small>({colorManaColumns[index].creatures.length + colorManaColumns[index].noncreatures.length})</small>
+                    )}
+                  </span>
+                ))}
               </div>
               {(['creatures', 'noncreatures'] as const).map((kind) => {
                 const count = colorManaColumns.reduce((sum, column) => sum + column[kind].length, 0)
                 if (count === 0) return null
                 return (
                   <section className="color-mana-row" key={kind} aria-label={kind === 'creatures' ? 'Creatures' : 'Noncreatures'}>
-                    <header className="color-mana-row-heading">
-                      <strong>{kind === 'creatures' ? 'Creatures' : 'Noncreatures'}</strong>
-                      <span>{count} cards</span>
-                    </header>
+                    {type === 'all' && (
+                      <header className="color-mana-row-heading">
+                        <strong>{kind === 'creatures' ? 'Creatures' : 'Noncreatures'}</strong>
+                        <span>{count} cards</span>
+                      </header>
+                    )}
                     <div className="color-mana-row-columns">
                       {colorManaColumns.map((column) => (
                         <div className={`color-mana-cell${column[kind].length === 0 ? ' color-mana-cell--empty' : ''}`} key={column.label}>
