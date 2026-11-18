@@ -4,6 +4,10 @@ export const BASIC_LANDS = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest', '
 export type BasicLand = (typeof BASIC_LANDS)[number]
 export type BasicLandCounts = Record<BasicLand, number>
 
+// Wastes is still supported internally for potential colorless bot decks,
+// but the human drafter only needs the five colored basics.
+export const PLAYER_BASIC_LANDS = BASIC_LANDS.filter((land) => land !== 'Wastes')
+
 export function emptyBasicLands(): BasicLandCounts {
   return { Plains: 0, Island: 0, Swamp: 0, Mountain: 0, Forest: 0, Wastes: 0 }
 }

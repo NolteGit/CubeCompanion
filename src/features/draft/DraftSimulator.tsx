@@ -214,7 +214,12 @@ export function DraftSimulator() {
   const [commanderCandidates, setCommanderCandidates] = useState<BrowserCard[]>(savedDraft?.commanderCandidates ?? [])
   const [activeCommanderIds, setActiveCommanderIds] = useState<string[]>(savedDraft?.activeCommanderIds ?? [])
   const [selected, setSelected] = useState<Set<string>>(() => new Set(savedDraft?.selectedIds ?? []))
-  const [basics, setBasics] = useState<BasicLandCounts>(savedDraft?.basics ?? emptyBasicLands())
+  // Old draft sessions may have Wastes; do not retain hidden lands in the player deck.
+  const [basics, setBasics] = useState<BasicLandCounts>(() => ({
+    ...emptyBasicLands(),
+    ...savedDraft?.basics,
+    Wastes: 0,
+  }))
   const [message, setMessage] = useState('')
   const [deckExpanded, setDeckExpanded] = useState(savedDraft?.phase === 'build')
   const [sampleHandDeck, setSampleHandDeck] = useState<{ cards: readonly BrowserCard[]; basics: BasicLandCounts; label?: string } | null>(null)

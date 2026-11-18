@@ -1,6 +1,6 @@
 import type { BrowserCard } from '../browser/types'
 import { MANA_VALUE_BUCKETS, groupDraftDeck } from '../../domain/draft/overview'
-import { BASIC_LANDS, type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
+import { BASIC_LANDS, PLAYER_BASIC_LANDS, type BasicLand, type BasicLandCounts } from '../../domain/draft/deck'
 import { BasicLandImage } from './BasicLandImage'
 
 interface DeckOverviewProps {
@@ -134,7 +134,7 @@ export function DeckOverview({
           <span>{landCount} cards · {grouped.lands.length} drafted</span>
         </div>
         <div className="draft-board-land-line" aria-label="Basic and drafted lands">
-          {BASIC_LANDS.map((land) => (
+          {(readOnly && basics.Wastes > 0 ? BASIC_LANDS : PLAYER_BASIC_LANDS).map((land) => (
             <div key={land} className={`draft-board-basic-tile${basics[land] === 0 ? ' draft-board-basic-tile--empty' : ''}`} title={land}>
               <BasicLandImage className="draft-board-basic-image" land={land} />
               <span className="draft-board-basic-tile-name">{land}</span>
