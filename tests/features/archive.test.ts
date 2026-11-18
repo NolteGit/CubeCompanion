@@ -91,6 +91,28 @@ describe('archive records', () => {
     ])
   })
 
+  it('keeps workbook and published-history cards together without duplicates', () => {
+    const records = buildArchiveRecords(
+      [
+        { name: 'Workbook Only', pool: 'draft', section: 'red' },
+        { name: 'Shared Card', pool: 'draft', section: 'blue' },
+      ],
+      [snapshot([
+        card('shared', 'Shared Card', { section: 'blue' }),
+        card('former', 'History Only', { section: 'green' }),
+      ])],
+      [],
+      [],
+    )
+    const shown = filterArchiveRecords(records, { query: '', pool: 'all', source: 'all' })
+    expect(shown.map((record) => record.name)).toEqual([
+      'History Only', 'Shared Card', 'Workbook Only',
+    ])
+    expect(shown.find((record) => record.name === 'Shared Card')?.sources).toEqual([
+      'history', 'workbook',
+    ])
+  })
+
   it('filters by query, pool, and source', () => {
     const records = buildArchiveRecords(
       [

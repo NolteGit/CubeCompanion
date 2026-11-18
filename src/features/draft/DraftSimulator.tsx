@@ -245,11 +245,17 @@ export function DraftSimulator() {
     ? selectedCards.filter((card) => !isCommanderLegal(card, activeCommanders))
     : []
   const incompatibleCommanders = activeCommanders.length === 2 && !canPairCommanders(activeCommanders[0], activeCommanders[1])
+  // Two commander candidates are allowed during drafting, even when they cannot pair.
+  // Keep this as a pending choice, not a violation, until the build phase.
+  const commanderChoicePending = phase === 'draft' && incompatibleCommanders
   const visibleDeckIssues = phase === 'draft'
-    ? deck.issues.filter((issue) => !issue.startsWith('The deck needs exactly 60 cards'))
+    ? deck.issues.filter((issue) =>
+      !issue.startsWith('The deck needs exactly 60 cards')
+      && !(commanderChoicePending && issue.startsWith('Two commanders require '))
+    )
     : deck.issues
   const deckCheckLabel = visibleDeckIssues.length === 0
-    ? (phase === 'draft' ? 'Rules OK so far' : '✓ Deck valid')
+    ? (commanderChoicePending ? 'Commander choice pending' : phase === 'draft' ? 'Rules OK so far' : '✓ Deck valid')
     : `${visibleDeckIssues.length} ${phase === 'draft' ? 'rule warning' : 'deck check'}${visibleDeckIssues.length === 1 ? '' : 's'}`
 
   function reset() {
@@ -436,14 +442,16 @@ export function DraftSimulator() {
                 <strong>Your deck <span className={phase === 'build' && !deck.valid ? 'draft-workspace-count--invalid' : deck.valid ? 'draft-workspace-count--valid' : ''}>{deck.total} / 60</span></strong>
                 <small>{selectedCards.length} picks · {setAsideCount} aside</small>
               </div>
-              <details className={`draft-header-checks${visibleDeckIssues.length ? ' draft-header-checks--warning' : ' draft-header-checks--clear'}`}>
+              <details className={`draft-header-checks${visibleDeckIssues.length ? ' draft-header-checks--warning' : commanderChoicePending ? ' draft-header-checks--pending' : ' draft-header-checks--clear'}`}>
                 <summary aria-live="polite">{deckCheckLabel}</summary>
                 <div className="draft-header-checks-panel">
                   <strong>{phase === 'draft' ? 'During the draft' : 'Final deck checks'}</strong>
                   {phase === 'draft' && <p>The 60-card total is checked after the last pick.</p>}
                   {visibleDeckIssues.length > 0
                     ? <ul>{visibleDeckIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul>
-                    : <p>{phase === 'draft' ? 'No commander or color conflicts yet.' : 'Your 60-card deck passes all checks.'}</p>}
+                    : <p>{commanderChoicePending
+                      ? 'Keep both options during the draft. Choose your final commander when drafting ends.'
+                      : phase === 'draft' ? 'No commander or color conflicts yet.' : 'Your 60-card deck passes all checks.'}</p>}
                   {incompatibleCommanders && (
                     <div className="draft-header-checks-actions" role="group" aria-label="Choose one commander">
                       {activeCommanders.map((commander) => (

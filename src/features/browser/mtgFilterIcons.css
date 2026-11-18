@@ -1,0 +1,29 @@
+/* Magic: The Gathering filter glyphs. Decorative only; labels remain visible.
+   The type glyphs are local and use a muted light tone on the dark background. */
+.type-chips .filter-chip[data-card-type]::before {
+  display: inline-block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  background: center / contain no-repeat;
+  content: none;
+}
+
+.type-chips .filter-chip[data-card-type='creature']::before { content: ''; background-image: url('/icons/card-types/creature.svg'); }
+.type-chips .filter-chip[data-card-type='instant']::before { content: ''; background-image: url('/icons/card-types/instant.svg'); }
+.type-chips .filter-chip[data-card-type='sorcery']::before { content: ''; background-image: url('/icons/card-types/sorcery.svg'); }
+.type-chips .filter-chip[data-card-type='artifact']::before { content: ''; background-image: url('/icons/card-types/artifact.svg'); }
+.type-chips .filter-chip[data-card-type='enchantment']::before { content: ''; background-image: url('/icons/card-types/enchantment.svg'); }
+.type-chips .filter-chip[data-card-type='planeswalker']::before { content: ''; background-image: url('/icons/card-types/planeswalker.svg'); }
+.type-chips .filter-chip[data-card-type='land']::before { content: ''; background-image: url('/icons/card-types/land.svg'); }
+
+/* Keep a colored-dot fallback for the external multicolor symbol. */
+.section-chips .cube-theme--multicolor .filter-chip-dot {
+  width: 17px;
+  height: 17px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.section-chips .cube-theme--multicolor .filter-chip-dot { background-image: url('https://files.mtg.wiki/M.svg'); }

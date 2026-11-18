@@ -43,16 +43,6 @@ type NavIcon =
 
 type LibraryList = BrowserList | 'maybe'
 
-interface NavItem {
-  page: AppPage
-  label: string
-  icon: NavIcon
-}
-
-const WORKSPACE_NAV: readonly NavItem[] = [
-  { page: 'analysis', label: 'Analysis', icon: 'analysis' },
-]
-
 function CubeMark() {
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true">
@@ -179,7 +169,6 @@ function App() {
   const [cardList, setCardList] = useState<LibraryList>('draft')
   const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
   const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null)
-  const totalCards = draftCards.length + commanderCards.length
 
   useEffect(() => {
     function syncPageFromUrl() {
@@ -273,69 +262,47 @@ function App() {
 
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <div className="brand">
-          <span className="brand-mark"><CubeMark /></span>
-          <strong>Cube Companion</strong>
-        </div>
-        <div className="cube-title">
-          <strong>MTG Commander Cube</strong>
-          <span>{totalCards} cards</span>
-          <span className="current-chip" title={`Snapshot ${releaseInfo.snapshotId}`}>Current</span>
-        </div>
-      </header>
-
       <div className="app-body">
         <aside className="app-sidebar">
-          <div className="sidebar-nav-stack">
-            <nav className="sidebar-nav-section" aria-label="Library">
-              <span className="sidebar-section-label">Library</span>
-              <SidebarNavButton
-                label="Cube"
-                icon="cards"
-                count={draftCards.length}
-                active={page === 'browse' && cardList === 'draft'}
-                onClick={() => openCardList('draft')}
-              />
-              <SidebarNavButton
-                label="Commanders"
-                icon="commanders"
-                count={commanderCards.length}
-                active={page === 'browse' && cardList === 'commanders'}
-                onClick={() => openCardList('commanders')}
-              />
-              <SidebarNavButton
-                label="Maybe"
-                icon="maybe"
-                count={maybeDraftCards.length + maybeCommanderCards.length}
-                active={page === 'browse' && cardList === 'maybe'}
-                onClick={() => openCardList('maybe')}
-              />
-              <SidebarNavButton
-                label="Changes"
-                icon="changes"
-                count={pendingChangeCount}
-                active={page === 'sandbox'}
-                onClick={() => navigate('sandbox')}
-              />
-            </nav>
-
-            <nav className="sidebar-nav-section" aria-label="Workspace">
-              <span className="sidebar-section-label">Workspace</span>
-              {WORKSPACE_NAV.map((item) => (
-                <SidebarNavButton
-                  key={item.page}
-                  label={item.label}
-                  icon={item.icon}
-                  active={page === item.page}
-                  onClick={() => navigate(item.page)}
-                />
-              ))}
-            </nav>
+          <div className="sidebar-brand">
+            <span className="brand-mark"><CubeMark /></span>
+            <strong>Cube Companion</strong>
           </div>
-
-          <nav className="sidebar-nav-section sidebar-tools" aria-label="Tools">
-            <span className="sidebar-section-label">Tools</span>
+          <nav className="sidebar-nav-section" aria-label="Main navigation">
+            <SidebarNavButton
+              label="Cube"
+              icon="cards"
+              count={draftCards.length}
+              active={page === 'browse' && cardList === 'draft'}
+              onClick={() => openCardList('draft')}
+            />
+            <SidebarNavButton
+              label="Commanders"
+              icon="commanders"
+              count={commanderCards.length}
+              active={page === 'browse' && cardList === 'commanders'}
+              onClick={() => openCardList('commanders')}
+            />
+            <SidebarNavButton
+              label="Maybe"
+              icon="maybe"
+              count={maybeDraftCards.length + maybeCommanderCards.length}
+              active={page === 'browse' && cardList === 'maybe'}
+              onClick={() => openCardList('maybe')}
+            />
+            <SidebarNavButton
+              label="Changes"
+              icon="changes"
+              count={pendingChangeCount}
+              active={page === 'sandbox'}
+              onClick={() => navigate('sandbox')}
+            />
+            <SidebarNavButton
+              label="Analysis"
+              icon="analysis"
+              active={page === 'analysis'}
+              onClick={() => navigate('analysis')}
+            />
             <SidebarNavButton
               label="Draft"
               icon="draft"

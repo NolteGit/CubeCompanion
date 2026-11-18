@@ -10,7 +10,6 @@ import {
   filterArchiveRecords,
   type ArchivePoolFilter,
   type ArchiveRecord,
-  type ArchiveSourceFilter,
 } from './archive'
 import { workbookArchiveEntries } from './data'
 import './archive.css'
@@ -71,15 +70,9 @@ const COMMANDER_GROUP_INDEX = new Map<string, number>(
 )
 
 const POOL_OPTIONS: readonly { value: ArchivePoolFilter; label: string }[] = [
-  { value: 'all', label: 'All pools' },
+  { value: 'all', label: 'All' },
   { value: 'draft', label: 'Cube' },
   { value: 'commander', label: 'Commanders' },
-]
-
-const SOURCE_OPTIONS: readonly { value: ArchiveSourceFilter; label: string }[] = [
-  { value: 'all', label: 'All sources' },
-  { value: 'workbook', label: 'Workbook' },
-  { value: 'history', label: 'History' },
 ]
 
 function normalizedName(value: string): string {
@@ -342,7 +335,6 @@ function ArchiveCommanderBoard({
 export function ArchiveBrowser() {
   const [query, setQuery] = useState('')
   const [pool, setPool] = useState<ArchivePoolFilter>('all')
-  const [source, setSource] = useState<ArchiveSourceFilter>('all')
   const [sort, setSort] = useState<ArchiveSort>('name')
   const records = useMemo(
     () => buildArchiveRecords(
@@ -353,9 +345,10 @@ export function ArchiveBrowser() {
     ),
     [],
   )
+  // Preserve every deduplicated entry regardless of its original source.
   const visible = useMemo(
-    () => filterArchiveRecords(records, { query, pool, source }),
-    [pool, query, records, source],
+    () => filterArchiveRecords(records, { query, pool, source: 'all' }),
+    [pool, query, records],
   )
   const visibleItems = useMemo(
     () => visible.map((record, index) => ({
@@ -364,17 +357,14 @@ export function ArchiveBrowser() {
     })),
     [visible],
   )
-  const workbookCount = records.filter((record) => record.sources.includes('workbook')).length
-  const historyCount = records.filter((record) => record.sources.includes('history')).length
   const activeCount = records.filter((record) => record.active).length
-  const hasFilters = Boolean(query || pool !== 'all' || source !== 'all' || sort !== 'name')
+  const hasFilters = Boolean(query || pool !== 'all' || sort !== 'name')
   const visibleDraft = visibleItems.filter((item) => item.record.pool === 'draft')
   const visibleCommanders = visibleItems.filter((item) => item.record.pool === 'commander')
 
   function clearFilters() {
     setQuery('')
     setPool('all')
-    setSource('all')
     setSort('name')
   }
 
@@ -384,19 +374,9 @@ export function ArchiveBrowser() {
         <div>
           <span className="archive-eyebrow">Historical reference</span>
           <h2>Archive</h2>
-          <p>Search cards recorded in the workbook archive and published cube history.</p>
+          <p><strong>{records.length}</strong> recorded cards · <strong>{activeCount}</strong> active in the current cube</p>
         </div>
       </header>
-
-      <div className="archive-summary-line">
-        <div className="archive-summary-stats">
-          <span><strong>{records.length}</strong> known</span>
-          <span><strong>{workbookCount}</strong> workbook</span>
-          <span><strong>{historyCount}</strong> history</span>
-          <span className="active"><strong>{activeCount}</strong> active</span>
-        </div>
-        <p>Workbook names and historical sections are preserved as recorded.</p>
-      </div>
 
       <label className="archive-search">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -419,33 +399,9 @@ export function ArchiveBrowser() {
               <button
                 type="button"
                 className={pool === option.value ? 'active' : ''}
+                aria-pressed={pool === option.value}
                 key={option.value}
                 onClick={() => setPool(option.value)}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="archive-filter-status">
-            <span className="archive-active-legend">
-              <span className="archive-active-dot" aria-hidden="true" />
-              Active in current cube
-            </span>
-            <span><strong>{visible.length}</strong> of {records.length}</span>
-            {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
-          </div>
-        </div>
-
-        <div className="archive-filter-row archive-filter-row-secondary">
-          <span className="archive-filter-row-label">Source</span>
-          <div className="archive-filter-chips" role="group" aria-label="Archive source">
-            {SOURCE_OPTIONS.map((option) => (
-              <button
-                type="button"
-                className={source === option.value ? 'active' : ''}
-                key={option.value}
-                onClick={() => setSource(option.value)}
               >
                 {option.label}
               </button>
@@ -457,6 +413,7 @@ export function ArchiveBrowser() {
             <button
               type="button"
               className={sort === 'name' ? 'active' : ''}
+              aria-pressed={sort === 'name'}
               onClick={() => setSort('name')}
             >
               Name
@@ -464,10 +421,20 @@ export function ArchiveBrowser() {
             <button
               type="button"
               className={sort === 'active' ? 'active' : ''}
+              aria-pressed={sort === 'active'}
               onClick={() => setSort('active')}
             >
               Active
             </button>
+          </div>
+
+          <div className="archive-filter-status">
+            <span className="archive-active-legend" title="Green dots mark cards active in the current cube">
+              <span className="archive-active-dot" aria-hidden="true" />
+              Active
+            </span>
+            <span><strong>{visible.length}</strong> of {records.length} shown</span>
+            {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
           </div>
         </div>
       </div>

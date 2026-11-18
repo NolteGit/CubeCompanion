@@ -1,22 +1,9 @@
 
-/* Global sidebar navigation */
-.sidebar-nav-stack {
-  display: grid;
-  gap: 18px;
-}
-
+/* Compact navigation shared by all pages */
 .sidebar-nav-section {
   display: grid;
-  gap: 4px;
-}
-
-.sidebar-section-label {
-  padding: 0 11px 5px;
-  color: var(--text-faint);
-  font-size: 0.61rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  align-content: start;
+  gap: 3px;
 }
 
 .sidebar-nav-button {
@@ -27,8 +14,9 @@
   align-items: center;
   gap: 10px;
   padding: 0 11px;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 4px;
   color: var(--text-muted);
   background: transparent;
   font-size: 0.82rem;
@@ -62,55 +50,24 @@
   text-align: right;
 }
 
-.sidebar-nav-button > small.pending {
-  color: #8adeaa;
-}
-
-.sidebar-nav-button:hover {
-  color: var(--text);
-  background: rgb(255 255 255 / 4%);
-}
-
+.sidebar-nav-button > small.pending { color: #8adeaa; }
+.sidebar-nav-button:hover { color: var(--text); background: rgb(255 255 255 / 4%); }
 .sidebar-nav-button.active {
   color: #e5f8ec;
-  border-color: rgb(74 222 128 / 12%);
+  border-left-color: var(--accent);
   background: rgb(35 121 76 / 17%);
-  box-shadow: inset 2px 0 rgb(74 222 128 / 68%);
 }
-
-.sidebar-nav-button.active > small {
-  color: #a6d9b8;
-}
-
-.sidebar-tools {
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-}
+.sidebar-nav-button.active > small { color: #a6d9b8; }
 
 @media (max-width: 900px) {
-  .sidebar-nav-stack {
-    gap: 8px;
-  }
-
-  .sidebar-section-label {
-    display: none;
-  }
-
   .sidebar-nav-button {
     grid-template-columns: 1fr;
-    min-height: 36px;
+    min-height: 42px;
     place-items: center;
     padding: 0;
   }
-
   .sidebar-nav-button > span,
-  .sidebar-nav-button > small {
-    display: none;
-  }
-
-  .sidebar-tools {
-    padding-top: 8px;
-  }
+  .sidebar-nav-button > small { display: none; }
 }
 
 
@@ -799,39 +756,41 @@
   text-transform: uppercase;
 }
 
+/* Flat tabs: no chips, backgrounds, or rounded button borders. */
 .filter-chips {
   display: flex;
   min-width: 0;
   flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  column-gap: 13px;
+  row-gap: 3px;
 }
 
 .filter-chip {
-  --column-rgb: 124 132 139;
+  --column-rgb: 74 222 128;
   display: inline-flex;
-  min-height: 30px;
+  min-height: 32px;
   align-items: center;
-  gap: 5px;
-  padding: 0 9px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
+  gap: 6px;
+  padding: 4px 2px 5px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   color: var(--text-muted);
-  background: rgb(8 13 17 / 28%);
-  font-size: 0.71rem;
+  background: transparent;
+  font-size: 0.72rem;
   font-weight: 650;
   cursor: pointer;
 }
 
 .filter-chip:hover {
   color: var(--text);
-  background: var(--surface-hover);
+  border-bottom-color: rgb(var(--column-rgb) / 40%);
 }
 
 .filter-chip.active {
   color: var(--text);
-  border-color: rgb(var(--column-rgb) / 42%);
-  background: rgb(var(--column-rgb) / 14%);
-  box-shadow: inset 0 -1px rgb(var(--column-rgb) / 22%);
+  border-bottom-color: rgb(var(--column-rgb));
 }
 
 .filter-chip-dot {
@@ -841,6 +800,28 @@
   border-radius: 50%;
   background: rgb(var(--column-rgb));
 }
+
+/* Familiar MTG mana symbols on Color tabs. The color dot remains a
+   fallback if the Scryfall SVG CDN is unavailable. */
+.section-chips .cube-theme--white .filter-chip-dot,
+.section-chips .cube-theme--blue .filter-chip-dot,
+.section-chips .cube-theme--black .filter-chip-dot,
+.section-chips .cube-theme--red .filter-chip-dot,
+.section-chips .cube-theme--green .filter-chip-dot,
+.section-chips .cube-theme--colorless .filter-chip-dot {
+  width: 17px;
+  height: 17px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.section-chips .cube-theme--white .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/W.svg'); }
+.section-chips .cube-theme--blue .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/U.svg'); }
+.section-chips .cube-theme--black .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/B.svg'); }
+.section-chips .cube-theme--red .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/R.svg'); }
+.section-chips .cube-theme--green .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/G.svg'); }
+.section-chips .cube-theme--colorless .filter-chip-dot { background-image: url('https://svgs.scryfall.io/card-symbols/C.svg'); }
 
 .filter-status {
   display: flex;
@@ -1526,3 +1507,45 @@ html[data-hover-previews="off"] .card-hover-preview {
 .color-mana-cell { min-width: 0; min-height: 33px; padding: 3px; border: 1px solid rgb(var(--column-rgb) / 17%); border-radius: 6px; background: rgb(8 15 21 / 42%); }
 .color-mana-cell .card-list { display: grid; gap: 3px; }
 .color-mana-cell .card-list-row { min-height: 26px; font-size: .69rem; border: 1px solid rgb(var(--column-rgb) / 13%); border-radius: 5px; }
+
+/* Filter-specific views: show the useful structure without redundant MV/type boxes. */
+.guild-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(255px, 100%), 1fr));
+  align-items: start;
+  gap: 9px;
+}
+.guild-results-group {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgb(var(--column-rgb, 124 132 139) / 23%);
+  border-radius: 7px;
+  background: rgb(var(--column-rgb, 124 132 139) / 4%);
+}
+.guild-results-group > header {
+  display: flex;
+  min-height: 31px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 9px;
+  border-bottom: 1px solid rgb(var(--column-rgb, 124 132 139) / 18%);
+  background: rgb(var(--column-rgb, 124 132 139) / 8%);
+}
+.guild-results-group > header strong { font-size: .75rem; }
+.guild-results-group > header span { color: var(--text-muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
+.guild-results-group .card-list { display: grid; gap: 3px; padding: 5px; }
+.guild-results-group .card-list-row { min-height: 26px; border: 1px solid rgb(var(--column-rgb, 124 132 139) / 14%); border-radius: 4px; }
+
+/* Lands have mana value zero; a single responsive list is more useful than an MV 0 panel. */
+.land-results { --column-rgb: 155 104 74; }
+.land-results > .card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(205px, 100%), 1fr));
+  gap: 5px;
+}
+.land-results .card-list-row { border: 1px solid var(--border); border-radius: 5px; }
+
+/* Keep mana columns aligned, but do not draw tall empty panels under sparse values. */
+.color-mana-cell { align-self: start; }
+.color-mana-cell--empty { min-height: 0; padding: 0; border: 0; background: transparent; }

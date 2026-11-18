@@ -127,13 +127,13 @@
 }
 
 .archive-column-section > header strong {
-  font-size: 0.62rem;
+  font-size: 0.69rem;
   font-weight: 750;
 }
 
 .archive-column-section > header span {
   color: var(--text-muted);
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -173,7 +173,7 @@
 .archive-column-card > strong {
   overflow: hidden;
   color: var(--text);
-  font-size: 0.69rem;
+  font-size: 0.73rem;
   font-weight: 650;
   line-height: 1.2;
   text-overflow: ellipsis;
@@ -230,16 +230,13 @@
 }
 
 .archive-filter-row {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 10px 18px;
 }
 
-.archive-filter-row-secondary {
-  padding-top: 7px;
-  border-top: 1px solid rgb(255 255 255 / 5%);
-}
+.archive-filter-row-label { flex: 0 0 44px; }
 
 .archive-filter-row-label,
 .archive-sort-control > span {
@@ -254,29 +251,32 @@
   display: flex;
   min-width: 0;
   flex-wrap: wrap;
-  gap: 4px;
+  align-items: center;
+  gap: 11px;
 }
 
 .archive-filter-chips button {
   min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
+  padding: 0 3px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   color: var(--text-muted);
-  background: rgb(8 13 17 / 28%);
-  font-size: 0.71rem;
+  background: transparent;
+  font-size: 0.72rem;
   font-weight: 650;
 }
 
 .archive-filter-chips button:hover {
   color: var(--text);
-  background: var(--surface-hover);
+  background: transparent;
+  border-bottom-color: rgb(74 222 128 / 30%);
 }
 
 .archive-filter-chips button.active {
-  color: #d9f8e4;
-  border-color: rgb(74 222 128 / 26%);
-  background: rgb(22 101 52 / 28%);
+  color: #e5f8ec;
+  border-bottom-color: var(--accent);
+  background: transparent;
 }
 
 .archive-filter-status {
@@ -284,14 +284,15 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
+  margin-left: auto;
 }
 
 .archive-active-legend {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--text-faint);
-  font-size: 0.63rem;
+  color: var(--text-muted);
+  font-size: 0.67rem;
 }
 
 .archive-active-legend .archive-active-dot {
@@ -301,22 +302,24 @@
 .archive-sort-control {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: rgb(8 13 17 / 42%);
+  gap: 11px;
+  padding: 0 0 0 17px;
+  border: 0;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
 }
 
 .archive-sort-control > span {
-  margin: 0 4px 0 3px;
+  margin: 0 2px 0 0;
 }
 
 .archive-sort-control button {
-  min-height: 28px;
-  padding: 0 9px;
+  min-height: 30px;
+  padding: 0 3px;
   border: 0;
-  border-radius: 5px;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   color: var(--text-muted);
   background: transparent;
   font-size: 0.69rem;
@@ -327,38 +330,37 @@
 .archive-sort-control button:hover,
 .archive-sort-control button.active {
   color: var(--text);
-  background: var(--surface-hover);
+  background: transparent;
+}
+
+.archive-sort-control button:hover {
+  border-bottom-color: rgb(74 222 128 / 30%);
 }
 
 .archive-sort-control button.active {
-  color: #d9f8e4;
-  background: rgb(22 101 52 / 28%);
+  color: #e5f8ec;
+  border-bottom-color: var(--accent);
 }
 
 @media (max-width: 900px) {
-  .archive-filter-row {
-    grid-template-columns: 58px minmax(0, 1fr);
-  }
-
-  .archive-filter-status,
-  .archive-sort-control {
-    grid-column: 2;
-    justify-self: start;
+  .archive-filter-status {
+    margin-left: 0;
   }
 }
 
 @media (max-width: 620px) {
-  .archive-filter-row {
-    grid-template-columns: 1fr;
-  }
-
   .archive-filter-row-label {
-    margin-top: 2px;
+    flex-basis: 100%;
   }
 
-  .archive-filter-status,
   .archive-sort-control {
-    grid-column: 1;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .archive-filter-status {
+    flex-basis: 100%;
+    justify-content: flex-start;
     flex-wrap: wrap;
   }
 }

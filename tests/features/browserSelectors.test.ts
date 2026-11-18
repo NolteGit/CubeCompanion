@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { BrowserCard } from '../../src/features/browser/types'
-import { filterAndSortCards, groupCards } from '../../src/features/browser/selectors'
+import { CARD_TYPE_OPTIONS, DRAFT_SECTION_OPTIONS, filterAndSortCards, groupCards } from '../../src/features/browser/selectors'
 
 function card(overrides: Partial<BrowserCard> & Pick<BrowserCard, 'name' | 'oracleId'>): BrowserCard {
   return {
@@ -19,6 +19,27 @@ function card(overrides: Partial<BrowserCard> & Pick<BrowserCard, 'name' | 'orac
 }
 
 describe('cube browser selectors', () => {
+  it('lists Land only under Type and includes land cards from all allocations', () => {
+    expect(DRAFT_SECTION_OPTIONS.some((option) => option.value === 'land')).toBe(false)
+    expect(CARD_TYPE_OPTIONS.some((option) => option.value === 'land')).toBe(true)
+
+    const allocatedLand = card({
+      oracleId: 'allocated-land', name: 'Land Section Card',
+      typeLine: 'Land', draftAllocation: { section: 'land' },
+    })
+    const otherLand = card({
+      oracleId: 'colored-land', name: 'Land In White Section',
+      typeLine: 'Land', draftAllocation: { section: 'white' },
+    })
+    const nonland = card({
+      oracleId: 'spell', name: 'Spell', typeLine: 'Instant',
+      draftAllocation: { section: 'blue' },
+    })
+    expect(filterAndSortCards([allocatedLand, otherLand, nonland], 'draft', {
+      query: '', section: 'all', type: 'land', sort: 'cube',
+    })).toEqual([allocatedLand, otherLand])
+  })
+
   it('filters draft cards by workbook allocation rather than color identity', () => {
     const shackles = card({
       oracleId: 'shackles',

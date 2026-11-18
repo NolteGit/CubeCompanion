@@ -17,7 +17,6 @@ export const DRAFT_SECTION_OPTIONS: readonly SectionOption[] = [
   { value: 'green', label: 'Green' },
   { value: 'multicolor', label: 'Multicolor' },
   { value: 'colorless', label: 'Colorless' },
-  { value: 'land', label: 'Lands' },
 ]
 
 export const COMMANDER_SECTION_OPTIONS: readonly SectionOption[] = [

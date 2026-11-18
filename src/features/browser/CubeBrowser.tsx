@@ -22,6 +22,7 @@ import type {
   CardTypeFilter,
 } from './types'
 import './browser.css'
+import './mtgFilterIcons.css'
 
 export type BrowserList = BrowserPool | 'changes'
 
@@ -330,10 +331,20 @@ function CubeBrowserContent({
     [pool, visibleCards],
   )
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all')
-  // A type-only filter retains the familiar columns for each cube section.
-  const denseColumns = view === 'list' && section === 'all' && !query.trim() && groups.length > 0
-  // A single color gets the same creature/noncreature mana layout as deckbuilding.
-  // Guild and land sections retain their positional grouping.
+  // Preserve the full color columns for nonland type-only filters.
+  const denseColumns = view === 'list' && section === 'all' && type !== 'land' && !query.trim() && groups.length > 0
+  // Color pairs are easier to scan by guild; lands have no useful mana-value split.
+  const multicolorGuildView = view === 'list' && pool === 'draft' && section === 'multicolor' && type !== 'land' && groups.length === 1
+  const landListView = view === 'list' && pool === 'draft' && type === 'land'
+  const guildOrder = Object.keys(GUILD_LABELS)
+  const guildGroups = multicolorGuildView
+    ? splitColumn(groups[0], type).sort((left, right) => {
+        const leftPosition = guildOrder.indexOf(left.key)
+        const rightPosition = guildOrder.indexOf(right.key)
+        return (leftPosition < 0 ? guildOrder.length : leftPosition) - (rightPosition < 0 ? guildOrder.length : rightPosition)
+      })
+    : []
+  // Single colors retain their creature/noncreature mana-value board.
   const colorManaBoard = view === 'list' && pool === 'draft' &&
     section !== 'all' && section !== 'multicolor' && section !== 'land' && groups.length === 1
   const colorManaColumns = colorManaBoard ? groupColorManaCards(groups[0].cards, type) : []
@@ -484,21 +495,22 @@ function CubeBrowserContent({
 
       <div className={`filter-dock${hasFilters ? ' active' : ''}`}>
         <div className="filter-row">
-          <span className="filter-row-label">{pool === 'draft' ? 'Section' : 'Color'}</span>
+          <span className="filter-row-label">Color</span>
           <div
             className="filter-chips section-chips"
             role="group"
-            aria-label={pool === 'draft' ? 'Draft section' : 'Commander color'}
+            aria-label={pool === 'draft' ? 'Cube color and group' : 'Commander color'}
           >
             {sectionOptions.map((option) => (
               <button
                 type="button"
                 className={`filter-chip${section === option.value ? ' active' : ''}${option.value === 'all' ? '' : ` cube-theme cube-theme--${option.value}`}`}
                 key={option.value}
+                aria-pressed={section === option.value}
                 onClick={() => setSection(option.value)}
               >
                 {option.value !== 'all' && <span className="filter-chip-dot" aria-hidden="true" />}
-                {option.label}
+                {option.value === 'all' ? 'All' : option.label}
               </button>
             ))}
           </div>
@@ -524,6 +536,8 @@ function CubeBrowserContent({
                 type="button"
                 className={`filter-chip${type === option.value ? ' active' : ''}`}
                 key={option.value}
+                aria-pressed={type === option.value}
+                data-card-type={option.value}
                 onClick={() => setType(option.value)}
               >
                 {option.label.replace('All card types', 'All')}
@@ -578,6 +592,32 @@ function CubeBrowserContent({
             </section>
           ))}
         </div>
+      ) : multicolorGuildView ? (
+        <div className="guild-results" aria-label="Multicolor cards by guild">
+          {guildGroups.map((guild) => (
+            <section className={`guild-results-group cube-theme cube-theme--2-${guild.key}`} key={guild.key}>
+              <header>
+                <strong>{guild.label}</strong>
+                <span>{guild.cards.length}</span>
+              </header>
+              <CardCollection
+                cards={guild.cards}
+                view="list"
+                rowAction={removeAction}
+                workingAddedIds={workingAddedIds}
+              />
+            </section>
+          ))}
+        </div>
+      ) : landListView ? (
+        <div className="land-results" aria-label="Land cards">
+          <CardCollection
+            cards={visibleCards}
+            view="list"
+            rowAction={removeAction}
+            workingAddedIds={workingAddedIds}
+          />
+        </div>
       ) : colorManaBoard ? (
         <section className={`color-mana-board cube-theme cube-theme--${groups[0].key}`} aria-label={`${groups[0].label} cards by mana value`}>
           <header className="color-mana-board-heading">
@@ -601,7 +641,7 @@ function CubeBrowserContent({
                     </header>
                     <div className="color-mana-row-columns">
                       {colorManaColumns.map((column) => (
-                        <div className="color-mana-cell" key={column.label}>
+                        <div className={`color-mana-cell${column[kind].length === 0 ? ' color-mana-cell--empty' : ''}`} key={column.label}>
                           <CardCollection
                             cards={column[kind]}
                             view="list"
