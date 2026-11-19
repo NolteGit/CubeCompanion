@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>OCR Lab · Cube Companion</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="./ocr-lab.js" defer></script>
+</head>
+<body>
+  <main class="screen">
+    <header>
+      <a href="/" class="back">← Cube Companion</a>
+      <span class="tag">Experimental · Local only</span>
+      <h1>Deck Photo OCR Lab</h1>
+      <p>Test one photo of a physical deck, arranged in columns or stacks with card names visible. No photos are uploaded or saved.</p>
+    </header>
+    <section class="panel">
+      <h2>1 · Select one photo</h2>
+      <p class="hint">Photograph from directly above in even light. Keep all card names visible.</p>
+      <div class="capture-controls">
+        <label class="btn primary" for="camera">📷 Take photo</label>
+        <input id="camera" type="file" accept="image/*" capture="environment" />
+        <label class="btn" for="gallery">Choose from gallery</label>
+        <input id="gallery" type="file" accept="image/*" />
+      </div>
+      <p class="desktop-note">Photo capture is mobile-only. Open this page on your phone to test.</p>
+      <img id="preview" alt="Selected deck photograph" hidden />
+      <p id="photo-info" class="hint" role="status">No photograph selected.</p>
+      <label for="size">OCR image resolution</label>
+      <select id="size">
+        <option value="1800">1800 px · faster</option>
+        <option value="2600" selected>2600 px · balanced</option>
+        <option value="3400">3400 px · more detail</option>
+      </select>
+      <button id="analyze" class="btn primary" disabled>2 · Analyze photo</button>
+      <p id="status" aria-live="polite">Ready to select a photo.</p>
+    </section>
+    <section id="results" class="panel" hidden>
+      <h2>3 · Recognition results</h2>
+      <p id="metrics" class="hint"></p>
+      <p id="count"></p>
+      <div id="matches"></div>
+      <button id="export" class="btn">Download test JSON</button>
+      <details>
+        <summary>Show raw OCR text to investigate missed cards</summary>
+        <pre id="raw-text"></pre>
+      </details>
+      <p class="hint">All matches are unverified guesses. This is not saved play history. Basic lands are not included in the active cube catalog.</p>
+    </section>
+  </main>
+</body>
+</html>
