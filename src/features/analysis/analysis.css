@@ -426,9 +426,35 @@
     align-items: flex-start;
   }
 
-  .analysis-stats,
   .donut-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Keep the four summary metrics compact and readable on phones. */
+  .analysis-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .analysis-metric {
+    min-height: 68px;
+    gap: 2px;
+    padding: 8px 10px;
+  }
+
+  .analysis-metric span {
+    font-size: 0.63rem;
+    line-height: 1.2;
+  }
+
+  .analysis-metric strong {
+    margin-top: 0;
+    font-size: 1.04rem;
+  }
+
+  .analysis-metric small {
+    font-size: 0.58rem;
+    line-height: 1.2;
   }
 
   .curve-heading {
