@@ -6,6 +6,9 @@ import { commanderCards, draftCards, releaseInfo } from './data'
 import { cardTint } from './cardTint'
 import { CardCollection } from './CardCollection'
 import { HoverCard } from './HoverCard'
+import { MobileCardGroups } from './MobileCardGroups'
+import { buildMobileGroups } from './mobileGroups'
+import { useMobileViewport } from './useMobileViewport'
 import { groupColorManaCards, groupManaValueCards, MANA_VALUE_LABELS } from './manaColumns'
 import { selectBrowserLayout, sortLandCards } from './resultLayouts'
 import {
@@ -23,6 +26,7 @@ import type {
   CardTypeFilter,
 } from './types'
 import './browser.css'
+import './mobileFilters.css'
 import './mtgFilterIcons.css'
 
 export type BrowserList = BrowserPool | 'changes'
@@ -265,6 +269,7 @@ function CubeBrowserContent({
   onOpenChanges,
   onRemoveToChanges,
 }: CubeBrowserContentProps) {
+  const mobile = useMobileViewport()
   const pool: BrowserPool = list === 'commanders' ? 'commanders' : 'draft'
   const [sandboxState, setSandboxState] = useState(() =>
     loadSandboxState(
@@ -277,6 +282,7 @@ function CubeBrowserContent({
   const [query, setQuery] = useState('')
   const [section, setSection] = useState('all')
   const [type, setType] = useState<CardTypeFilter>('all')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [queuedRemovalIds, setQueuedRemovalIds] = useState<ReadonlySet<string>>(() => {
     const initialDiff = sandboxDiff(sandboxState, draftCards, commanderCards)
     const removedCards = pool === 'draft'
@@ -331,6 +337,7 @@ function CubeBrowserContent({
     [pool, visibleCards],
   )
   const hasFilters = Boolean(query || section !== 'all' || type !== 'all')
+  const activeFilterCount = Number(section !== 'all') + Number(type !== 'all')
   const resultLayout = selectBrowserLayout({
     pool, view, section, type, query,
     visibleCount: visibleCards.length,
@@ -356,6 +363,12 @@ function CubeBrowserContent({
     ? groupManaValueCards(groups[0].cards).filter((column) => column.cards.length > 0)
     : []
   const landCards = landListView ? sortLandCards(visibleCards) : []
+  const mobileGroups = useMemo(
+    () => mobile && view === 'list'
+      ? buildMobileGroups(groups, pool, section, type, query)
+      : [],
+    [groups, mobile, pool, section, type, query, view],
+  )
 
   function clearFilters() {
     setQuery('')
@@ -497,7 +510,28 @@ function CubeBrowserContent({
         </label>
       </div>
 
-      <div className={`filter-dock${hasFilters ? ' active' : ''}`}>
+      <button
+        type="button"
+        className={`mobile-filter-toggle${activeFilterCount > 0 ? ' active' : ''}`}
+        aria-controls="browser-filters"
+        aria-expanded={filtersOpen}
+        onClick={() => setFiltersOpen((open) => !open)}
+      >
+        <span className="mobile-filter-toggle-label">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M7 12h10M10 17h4" />
+          </svg>
+          Filters
+          {activeFilterCount > 0 && (
+            <strong className="mobile-filter-count">{activeFilterCount}</strong>
+          )}
+        </span>
+        <svg className="mobile-filter-chevron" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      <div id="browser-filters" className={`filter-dock${hasFilters ? ' active' : ''}${filtersOpen ? ' mobile-open' : ''}`}>
         <div className="filter-row">
           <span className="filter-row-label">Color</span>
           <div
@@ -556,6 +590,13 @@ function CubeBrowserContent({
           <span>Try changing the search or filters.</span>
           <button type="button" onClick={clearFilters}>Reset filters</button>
         </div>
+      ) : mobile && view === 'list' ? (
+        <MobileCardGroups
+          key={`${pool}:${section}:${type}:${query}`}
+          groups={mobileGroups}
+          rowAction={removeAction}
+          workingAddedIds={workingAddedIds}
+        />
       ) : denseColumns ? (
         <div className="cube-columns">
           {groups.map((group) => (

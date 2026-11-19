@@ -96,7 +96,7 @@
   background: var(--surface-hover);
 }
 
-.mobile-hover-card-trigger {
+.mobile-hover-card > button.mobile-hover-card-trigger {
   display: none;
 }
 
@@ -140,7 +140,7 @@
     position: relative;
   }
 
-  .mobile-hover-card > .mobile-hover-card-trigger {
+  .mobile-hover-card > button.mobile-hover-card-trigger {
     position: absolute;
     inset: 0;
     z-index: 1;

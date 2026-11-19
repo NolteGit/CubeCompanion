@@ -1,0 +1,62 @@
+/* The desktop filter dock remains permanently visible. */
+.mobile-filter-toggle { display: none; }
+
+@media (max-width: 760px) {
+  .mobile-filter-toggle {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    background: var(--surface-raised);
+    font-size: 0.8rem;
+    font-weight: 750;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .mobile-filter-toggle:hover,
+  .mobile-filter-toggle.active {
+    border-color: rgb(74 222 128 / 45%);
+  }
+
+  .mobile-filter-toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .mobile-filter-toggle svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .mobile-filter-toggle-label svg { color: var(--accent); }
+  .mobile-filter-chevron { color: var(--text-muted); transition: transform 150ms ease; }
+  .mobile-filter-toggle[aria-expanded='true'] .mobile-filter-chevron { transform: rotate(180deg); }
+
+  .mobile-filter-count {
+    display: grid;
+    min-width: 21px;
+    height: 21px;
+    place-items: center;
+    padding-inline: 5px;
+    border-radius: 999px;
+    color: #bbf7d0;
+    background: rgb(22 101 52 / 55%);
+    font-size: 0.69rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cube-browser .filter-dock:not(.mobile-open) { display: none; }
+}
