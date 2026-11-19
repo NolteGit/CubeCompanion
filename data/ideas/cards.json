@@ -4,104 +4,192 @@
     {
       "name": "Secure the Wastes",
       "pool": "draft",
-      "cell": "A3",
+      "cell": "A2",
       "oracleId": "b2347910-d6c6-4681-8316-7ef27056485c"
     },
     {
       "name": "Enduring Innocence",
       "pool": "draft",
-      "cell": "A4",
+      "cell": "A3",
       "oracleId": "98a389f4-2905-47f3-b60e-3d4afb3e5cb0"
+    },
+    {
+      "name": "Requisition Raid",
+      "pool": "draft",
+      "cell": "A4",
+      "oracleId": "09669283-eb14-46a2-b37a-51d7a52da891"
+    },
+    {
+      "name": "Erode",
+      "pool": "draft",
+      "cell": "A5",
+      "oracleId": "2e467fab-e808-44d3-99bf-e3621baeb7cb"
     },
     {
       "name": "Pensive Professor",
       "pool": "draft",
-      "cell": "A5",
+      "cell": "A6",
       "oracleId": "4b8736e2-fc41-4a25-bb6c-7351afc40981"
     },
     {
       "name": "Great Gilded Boat",
       "pool": "draft",
-      "cell": "A6",
+      "cell": "A7",
       "oracleId": "d4607026-80b2-4fa6-99d5-694cd3b43868"
     },
     {
       "name": "Pollywog Prodigy",
       "pool": "draft",
-      "cell": "A7",
+      "cell": "A8",
       "oracleId": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb"
     },
     {
       "name": "Stock Up",
       "pool": "draft",
-      "cell": "A8",
+      "cell": "A9",
       "oracleId": "2251e34e-4ce8-4452-9dc6-d8cce8583996"
     },
     {
       "name": "Occult Epiphany",
       "pool": "draft",
-      "cell": "A9",
+      "cell": "A10",
       "oracleId": "6df1c314-b97b-4bbc-8b7e-a07785347a49"
     },
     {
       "name": "Thieving Skydiver",
       "pool": "draft",
-      "cell": "A10",
+      "cell": "A11",
       "oracleId": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d"
+    },
+    {
+      "name": "Wan Shi Tong, Librarian",
+      "pool": "draft",
+      "cell": "A12",
+      "oracleId": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59"
+    },
+    {
+      "name": "Spellskite",
+      "pool": "draft",
+      "cell": "A13",
+      "oracleId": "e0aa6ce0-ca31-433b-ac6c-32b8675cdb71"
+    },
+    {
+      "name": "Tishanas tidebinder",
+      "pool": "draft",
+      "cell": "A14"
+    },
+    {
+      "name": "Bitterblossom bearer",
+      "pool": "draft",
+      "cell": "A15"
     },
     {
       "name": "Nethergoyf",
       "pool": "draft",
-      "cell": "A11",
+      "cell": "A16",
       "oracleId": "040cbd8a-a9e5-454b-a5ae-9b66bb66b8e9"
     },
     {
       "name": "Bitter Triumph",
       "pool": "draft",
-      "cell": "A12",
+      "cell": "A17",
       "oracleId": "776341cb-d2ec-423f-9250-92dc8bd8d503"
     },
     {
       "name": "Come Back Wrong",
       "pool": "draft",
-      "cell": "A13",
+      "cell": "A18",
       "oracleId": "2a9783c5-084b-4cd3-b7fa-ae9d7fed51d1"
     },
     {
       "name": "Broadside Bombardiers",
       "pool": "draft",
-      "cell": "A14",
+      "cell": "A19",
       "oracleId": "e0c00a74-bdf8-4fee-8042-42c5878e9e3c"
     },
     {
       "name": "Demand Answers",
       "pool": "draft",
-      "cell": "A15",
+      "cell": "A20",
       "oracleId": "c11e84a1-dbda-429b-8cd6-fd0deaefc689"
     },
     {
       "name": "Fiery Confluence",
       "pool": "draft",
-      "cell": "A16",
+      "cell": "A21",
       "oracleId": "3c22e031-4804-4c31-bd3c-c3f29d456b34"
     },
     {
       "name": "Anger",
       "pool": "draft",
-      "cell": "A17",
+      "cell": "A22",
       "oracleId": "eaabd151-2160-4bff-82c0-3fa88659be98"
+    },
+    {
+      "name": "Slickshot Show-Off",
+      "pool": "draft",
+      "cell": "A23",
+      "oracleId": "74c7a029-59aa-4511-8e4c-f8f167cda4e2"
+    },
+    {
+      "name": "Clockwork percussionist",
+      "pool": "draft",
+      "cell": "A24",
+      "oracleId": "3b74c8ac-9c19-45b0-935f-8630b8da4543"
     },
     {
       "name": "Garruk's Uprising",
       "pool": "draft",
-      "cell": "A18",
+      "cell": "A25",
       "oracleId": "3127ae9b-a7a7-43ec-89d7-688f8445b33d"
     },
     {
       "name": "Foundation Breaker",
       "pool": "draft",
-      "cell": "A19",
+      "cell": "A26",
       "oracleId": "8b7a3613-f1bd-4262-9b11-b631167c2c2d"
+    },
+    {
+      "name": "Collective resistance",
+      "pool": "draft",
+      "cell": "A27",
+      "oracleId": "bffdfe7b-f17a-41b6-a460-80280fe497d4"
+    },
+    {
+      "name": "Satyr wayfinder",
+      "pool": "draft",
+      "cell": "A28",
+      "oracleId": "ead4c01a-e2ae-49c9-95d9-651d81005907"
+    },
+    {
+      "name": "Elvish Reclaimer",
+      "pool": "draft",
+      "cell": "A29",
+      "oracleId": "94f01534-7bb3-4b1e-8f77-e84156408686"
+    },
+    {
+      "name": "Pest Infestation",
+      "pool": "draft",
+      "cell": "A30",
+      "oracleId": "1b704798-0c69-4c18-ac7e-42933ce90028"
+    },
+    {
+      "name": "Esika's Chariot",
+      "pool": "draft",
+      "cell": "A31",
+      "oracleId": "8e7b079d-9ede-421c-bd2b-f9a5126a8e6f"
+    },
+    {
+      "name": "Gingerbrute",
+      "pool": "draft",
+      "cell": "A32",
+      "oracleId": "10b8d4c7-7553-4d76-b643-d98b80701e13"
+    },
+    {
+      "name": "Lavaspur boots",
+      "pool": "draft",
+      "cell": "A33",
+      "oracleId": "63bfb9ca-d9d5-4c17-be39-82eb115bc20c"
     },
     {
       "name": "Sidar Kondo of Jamuraa",
