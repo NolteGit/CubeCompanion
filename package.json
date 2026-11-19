@@ -17,6 +17,7 @@
     "cube:validate": "tsx scripts/cube/validate.ts",
     "cube:archive": "tsx scripts/cube/archive.ts",
     "cube:release": "tsx scripts/cube/release.ts",
+    "cube:history-metadata": "tsx scripts/cube/backfillHistoryMetadata.ts",
     "cube:apply-diff": "tsx scripts/cube/applyDiff.ts"
   },
   "dependencies": {

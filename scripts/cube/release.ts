@@ -5,6 +5,7 @@ import {
   publishArchive,
 } from '../../src/infrastructure/archive/index.ts'
 import { publishCube } from '../../src/infrastructure/snapshots/index.ts'
+import { completeHistoricalMetadata, readPublishedMetadata } from '../../src/infrastructure/snapshots/historyMetadata.ts'
 import { prepareCubeSource } from './pipeline.ts'
 import {
   printIdeaValidationIssues,
@@ -59,10 +60,15 @@ if (result.unresolved.length > 0) {
 } else if (!result.cube) {
   throw new Error('Cube release did not produce a normalized cube')
 } else {
+  const historicalMetadata = await completeHistoricalMetadata(
+    result.metadata,
+    await readPublishedMetadata(),
+    { refresh: process.argv.includes('--refresh') },
+  )
   const publication = await publishCube({
     cube: result.cube,
     validation: result.validation,
-    metadata: result.metadata,
+    metadata: historicalMetadata.cards,
     rulesRevision: DEFAULT_CUBE_RULES.revision,
     note,
   })
@@ -73,6 +79,7 @@ if (result.unresolved.length > 0) {
   console.log(`History:    ${publication.createdHistory ? 'created' : 'reused'} ${publication.historyPath}`)
   console.log('Current:    data/current/cube.json')
   console.log('Metadata:   data/metadata/cards.json')
+  console.log(`History metadata: ${historicalMetadata.added} preserved or resolved historic cards`)
 
   await publishIdeas()
   console.log(`Ideas:      ${result.ideas.length} source entries ${IDEAS_PATH}`)

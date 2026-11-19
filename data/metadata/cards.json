@@ -214,6 +214,20 @@
       "scryfallUri": "https://scryfall.com/card/fin/248/vivi-ornitier?utm_source=api"
     },
     {
+      "oracleId": "051ff7e0-dd00-4467-8796-a5d1c21934ed",
+      "name": "Bejeweled Warg",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{G}",
+      "typeLine": "Creature — Wolf",
+      "oracleText": "Trample\nWhenever this creature deals combat damage to a player, choose one —\n• Put a +1/+1 counter on target Wolf you control.\n• Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/9/e95eba5c-e0d6-46b4-a0be-8e373b2185ea.jpg?1785496330",
+      "scryfallUri": "https://scryfall.com/card/hob/117/bejeweled-warg?utm_source=api"
+    },
+    {
       "oracleId": "0540eaca-0e03-4831-955a-192ae2b87d35",
       "name": "Lich's Relic",
       "colorIdentity": [
@@ -1147,6 +1161,20 @@
       "scryfallUri": "https://scryfall.com/card/otc/83/mirror-entity?utm_source=api"
     },
     {
+      "oracleId": "17fa98cd-ed8f-483f-9525-7e989a82ebb2",
+      "name": "Balance",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{W}",
+      "typeLine": "Sorcery",
+      "oracleText": "Each player chooses a number of lands they control equal to the number of lands controlled by the player who controls the fewest, then sacrifices the rest. Players discard cards and sacrifice creatures the same way.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/c/e/ce648aa3-098b-4af0-a433-fd290bc85904.jpg?1783937636",
+      "scryfallUri": "https://scryfall.com/card/ema/2/balance?utm_source=api"
+    },
+    {
       "oracleId": "1861e642-21d5-4232-89f3-b5557f2946c1",
       "name": "Phyrexian Tower",
       "colorIdentity": [
@@ -1494,6 +1522,20 @@
       "scryfallUri": "https://scryfall.com/card/fdn/232/scavenging-ooze?utm_source=api"
     },
     {
+      "oracleId": "20053847-6623-493c-8cdb-a69cda3b1577",
+      "name": "Skrelv, Defector Mite",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 1,
+      "manaCost": "{W}",
+      "typeLine": "Legendary Artifact Creature — Phyrexian Mite",
+      "oracleText": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nSkrelv can't block.\n{W/P}, {T}: Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It can't be blocked by creatures of that color this turn. ({W/P} can be paid with either {W} or 2 life.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/6/0/60b565da-a49b-479c-b0c4-8ff3dd20cc0b.jpg?1783918072",
+      "scryfallUri": "https://scryfall.com/card/one/33/skrelv-defector-mite?utm_source=api"
+    },
+    {
       "oracleId": "20283c4a-f1f0-42f0-bc08-6da87474426b",
       "name": "Breeding Pool",
       "colorIdentity": [
@@ -1600,6 +1642,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/5/d/5d59c8f2-f6af-40a6-8dfe-8cc45bf231ce.jpg?1783916974",
       "scryfallUri": "https://scryfall.com/card/mom/190/invasion-of-ikoria-zilortha-apex-of-ikoria?utm_source=api"
+    },
+    {
+      "oracleId": "21f45043-5419-4019-8b6c-e5294bd5f549",
+      "name": "Acidic Slime",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 5,
+      "manaCost": "{3}{G}{G}",
+      "typeLine": "Creature — Ooze",
+      "oracleText": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhen this creature enters, destroy target artifact, enchantment, or land.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/9/3/932d48fb-42b5-4aaa-a91c-d35cdb5e41a3.jpg?1783915638",
+      "scryfallUri": "https://scryfall.com/card/cmm/270/acidic-slime?utm_source=api"
     },
     {
       "oracleId": "2251e34e-4ce8-4452-9dc6-d8cce8583996",
@@ -1754,6 +1810,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/2/e/2ed6abbe-3ec0-48a9-94ad-e62660a63de0.jpg?1793281401",
       "scryfallUri": "https://scryfall.com/card/trc/465/heroic-intervention?utm_source=api"
+    },
+    {
+      "oracleId": "24d0f5e7-0d9e-4b76-900e-a7274e80312d",
+      "name": "Mulldrifter",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 5,
+      "manaCost": "{4}{U}",
+      "typeLine": "Creature — Elemental",
+      "oracleText": "Flying\nWhen this creature enters, draw two cards.\nEvoke {2}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/d/3de308cc-14ac-407e-99e7-568572ecd0e7.jpg?1783904564",
+      "scryfallUri": "https://scryfall.com/card/ecc/67/mulldrifter?utm_source=api"
     },
     {
       "oracleId": "250cb58b-2924-4dff-92fe-ac0ebbbeb218",
@@ -2442,6 +2512,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/7/5/755cf134-e91e-4aa4-be44-b7a53a7f9e20.jpg?1783907020",
       "scryfallUri": "https://scryfall.com/card/tdc/303/sidar-kondo-of-jamuraa?utm_source=api"
+    },
+    {
+      "oracleId": "33666a98-812f-4892-9f8d-33e0cbecc340",
+      "name": "Niv-Mizzet, Parun",
+      "colorIdentity": [
+        "R",
+        "U"
+      ],
+      "manaValue": 6,
+      "manaCost": "{U}{U}{U}{R}{R}{R}",
+      "typeLine": "Legendary Creature — Dragon Wizard",
+      "oracleText": "This spell can't be countered.\nFlying\nWhenever you draw a card, Niv-Mizzet deals 1 damage to any target.\nWhenever a player casts an instant or sorcery spell, you draw a card.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/8/6/86c5c337-d25f-4c3e-9762-09ed0c2d36d7.jpg?1783911897",
+      "scryfallUri": "https://scryfall.com/card/otc/235/niv-mizzet-parun?utm_source=api"
     },
     {
       "oracleId": "33c722cf-b4bf-431f-aefd-ee96241a7fbf",
@@ -3154,6 +3239,20 @@
       "scryfallUri": "https://scryfall.com/card/cm2/13/reyhan-last-of-the-abzan?utm_source=api"
     },
     {
+      "oracleId": "3ec767f2-40ba-46c9-b7cd-5821986dda0c",
+      "name": "Deeproot Wayfinder",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{G}",
+      "typeLine": "Creature — Merfolk Scout",
+      "oracleText": "Whenever this creature deals combat damage to a player or battle, surveil 1, then you may return a land card from your graveyard to the battlefield tapped. (To surveil 1, look at the top card of your library. You may put that card into your graveyard.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/b/4/b4066d41-0eb5-4dfd-93ec-2f242c3a27a4.jpg?1783916970",
+      "scryfallUri": "https://scryfall.com/card/mom/184/deeproot-wayfinder?utm_source=api"
+    },
+    {
       "oracleId": "3f3b2c10-21f8-4e13-be83-4ef3fa36e123",
       "name": "Elvish Mystic",
       "colorIdentity": [
@@ -3299,6 +3398,20 @@
       "scryfallUri": "https://scryfall.com/card/inr/11/archangel-avacyn-avacyn-the-purifier?utm_source=api"
     },
     {
+      "oracleId": "437b2dab-15e0-4b9a-a204-58622d37a3b3",
+      "name": "Fact or Fiction",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 4,
+      "manaCost": "{3}{U}",
+      "typeLine": "Instant",
+      "oracleText": "Reveal the top five cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/b/eb1a25c5-1918-40f3-b54f-5d31cf6b4eb2.jpg?1789599811",
+      "scryfallUri": "https://scryfall.com/card/frc/41/fact-or-fiction?utm_source=api"
+    },
+    {
       "oracleId": "43985bbc-a0f6-4812-984e-392bc8562633",
       "name": "Blood Crypt",
       "colorIdentity": [
@@ -3326,6 +3439,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/8/4/845e5663-2959-44ae-b4c6-d6ea41f01d6e.jpg?1783921367",
       "scryfallUri": "https://scryfall.com/card/dmu/15/danitha-benalias-hope?utm_source=api"
+    },
+    {
+      "oracleId": "44036bb5-f300-40bd-9180-6b246315d886",
+      "name": "Haughty Djinn",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{1}{U}{U}",
+      "typeLine": "Creature — Djinn",
+      "oracleText": "Flying\nHaughty Djinn's power is equal to the number of instant and sorcery cards in your graveyard.\nInstant and sorcery spells you cast cost {1} less to cast.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/8/c/8cabaf8a-5e19-4f26-be2b-7627b9c8e324.jpg?1783907104",
+      "scryfallUri": "https://scryfall.com/card/tdc/154/haughty-djinn?utm_source=api"
     },
     {
       "oracleId": "4457ed35-7c10-48c8-9776-456485fdf070",
@@ -4116,6 +4243,20 @@
       "scryfallUri": "https://scryfall.com/card/bfz/29/gideon-ally-of-zendikar?utm_source=api"
     },
     {
+      "oracleId": "52241b9c-7a69-4176-9234-8bdab09d8e64",
+      "name": "Sai, Master Thopterist",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{2}{U}",
+      "typeLine": "Legendary Creature — Human Artificer",
+      "oracleText": "Whenever you cast an artifact spell, create a 1/1 colorless Thopter artifact creature token with flying.\n{1}{U}, Sacrifice two artifacts: Draw a card.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/1/a1091e0e-a179-4241-8be0-ea92d86f4c08.jpg?1783908851",
+      "scryfallUri": "https://scryfall.com/card/j25/63/sai-master-thopterist?utm_source=api"
+    },
+    {
       "oracleId": "5320f5a6-8066-47d4-aa0a-4c879f39d413",
       "name": "Henzie \"Toolbox\" Torre",
       "colorIdentity": [
@@ -4185,6 +4326,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/1/1/11e12a84-e7be-4afc-a230-c2e644743fa8.jpg?1783903013",
       "scryfallUri": "https://scryfall.com/card/msc/793/dark-ritual?utm_source=api"
+    },
+    {
+      "oracleId": "5401439c-4068-4490-8d53-8ffd0026dd7d",
+      "name": "Valgavoth, Harrower of Souls",
+      "colorIdentity": [
+        "B",
+        "R"
+      ],
+      "manaValue": 4,
+      "manaCost": "{2}{B}{R}",
+      "typeLine": "Legendary Creature — Elder Demon",
+      "oracleText": "Flying\nWard—Pay 2 life.\nWhenever an opponent loses life for the first time during each of their turns, put a +1/+1 counter on Valgavoth and draw a card.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/8/d/8d7c1f6c-af45-4449-8cf8-e13830b3df8a.jpg?1783909662",
+      "scryfallUri": "https://scryfall.com/card/dsc/6/valgavoth-harrower-of-souls?utm_source=api"
     },
     {
       "oracleId": "5470dcfa-4eff-43da-abf7-19922841f719",
@@ -4565,6 +4721,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/b/f/bf2af874-1052-4cad-90ed-d80e49d4c68c.jpg?1783916936",
       "scryfallUri": "https://scryfall.com/card/mom/257/zimone-and-dina?utm_source=api"
+    },
+    {
+      "oracleId": "5c780dda-ee76-482a-a610-53c321c4fdec",
+      "name": "Sorin, Lord of Innistrad",
+      "colorIdentity": [
+        "B",
+        "W"
+      ],
+      "manaValue": 4,
+      "manaCost": "{2}{W}{B}",
+      "typeLine": "Legendary Planeswalker — Sorin",
+      "oracleText": "+1: Create a 1/1 black Vampire creature token with lifelink.\n−2: You get an emblem with \"Creatures you control get +1/+0.\"\n−6: Destroy up to three target creatures and/or other planeswalkers. Return each card put into a graveyard this way to the battlefield under your control.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/b/ab98caf7-cc24-4027-ad8a-026150b61858.jpg?1783913845",
+      "scryfallUri": "https://scryfall.com/card/lcc/289/sorin-lord-of-innistrad?utm_source=api"
     },
     {
       "oracleId": "5cbbb3f3-63a4-4983-81ea-8c405b10e63f",
@@ -5439,6 +5610,18 @@
       "scryfallUri": "https://scryfall.com/card/msc/206/mirage-mirror?utm_source=api"
     },
     {
+      "oracleId": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "name": "Sol Ring",
+      "colorIdentity": [],
+      "manaValue": 1,
+      "manaCost": "{1}",
+      "typeLine": "Artifact",
+      "oracleText": "{T}: Add {C}{C}.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/f/c/fc817e07-c1f3-469f-9cf7-0945dea7400f.jpg?1793021181",
+      "scryfallUri": "https://scryfall.com/card/trc/499/sol-ring?utm_source=api"
+    },
+    {
       "oracleId": "6aea681e-88d2-48df-a717-3ce0bc95205b",
       "name": "Silent Hallcreeper",
       "colorIdentity": [
@@ -5451,6 +5634,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/a/a/aac4f0cc-63be-4f08-956e-39839c9735ba.jpg?1783909489",
       "scryfallUri": "https://scryfall.com/card/dsk/72/silent-hallcreeper?utm_source=api"
+    },
+    {
+      "oracleId": "6b071146-2f83-4fda-a55a-46fcb74e6f28",
+      "name": "Deekah, Fractal Theorist",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 5,
+      "manaCost": "{4}{U}",
+      "typeLine": "Legendary Creature — Human Wizard",
+      "oracleText": "Magecraft — Whenever you cast or copy an instant or sorcery spell, create a 0/0 green and blue Fractal creature token. Put X +1/+1 counters on it, where X is that spell's mana value.\n{3}{U}: Target creature token can't be blocked this turn.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/8/186e15a7-d97e-40df-adaa-96d9bd64f3ca.jpg?1783903791",
+      "scryfallUri": "https://scryfall.com/card/soc/193/deekah-fractal-theorist?utm_source=api"
     },
     {
       "oracleId": "6ba0656f-e0d2-4735-9c66-3a00afa9fc23",
@@ -6639,6 +6836,20 @@
       "scryfallUri": "https://scryfall.com/card/rvr/233/teysa-orzhov-scion?utm_source=api"
     },
     {
+      "oracleId": "82004860-e589-4e38-8d61-8c0210e4ea39",
+      "name": "Demonic Tutor",
+      "colorIdentity": [
+        "B"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{B}",
+      "typeLine": "Sorcery",
+      "oracleText": "Search your library for a card, put that card into your hand, then shuffle.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/2/a24b4cb6-cebb-428b-8654-74347a6a8d63.jpg?1783915679",
+      "scryfallUri": "https://scryfall.com/card/cmm/150/demonic-tutor?utm_source=api"
+    },
+    {
       "oracleId": "829d2e11-192f-4093-99f8-e13767b321a2",
       "name": "Guardian Idol",
       "colorIdentity": [],
@@ -6936,6 +7147,20 @@
       "scryfallUri": "https://scryfall.com/card/uma/238/celestial-colonnade?utm_source=api"
     },
     {
+      "oracleId": "88154d64-221f-4742-bccb-b1b61a2e8bf0",
+      "name": "Dread Wanderer",
+      "colorIdentity": [
+        "B"
+      ],
+      "manaValue": 1,
+      "manaCost": "{B}",
+      "typeLine": "Creature — Zombie Jackal",
+      "oracleText": "This creature enters tapped.\n{2}{B}: Return this card from your graveyard to the battlefield. Activate only as a sorcery and only if you have one or fewer cards in hand.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/4/343fc82d-7d10-4489-8f7e-9995322114e2.jpg?1783936506",
+      "scryfallUri": "https://scryfall.com/card/akh/88/dread-wanderer?utm_source=api"
+    },
+    {
       "oracleId": "88ac2d09-7993-4bce-8aae-b2683c5c25a5",
       "name": "Defiler of Faith",
       "colorIdentity": [
@@ -7089,6 +7314,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/9/3/939c6e19-4b27-4023-bb9c-ae440f91e21c.jpg?1783931515",
       "scryfallUri": "https://scryfall.com/card/thb/236/shadowspear?utm_source=api"
+    },
+    {
+      "oracleId": "8b755881-a72d-4e21-a369-d2924eb4585a",
+      "name": "Cultivate",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 3,
+      "manaCost": "{2}{G}",
+      "typeLine": "Sorcery",
+      "oracleText": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/7/a78f5d3f-74d6-4ec1-89c4-e24639d3f4ba.jpg?1793281380",
+      "scryfallUri": "https://scryfall.com/card/trc/460/cultivate?utm_source=api"
     },
     {
       "oracleId": "8b7a3613-f1bd-4262-9b11-b631167c2c2d",
@@ -7536,6 +7775,22 @@
       "scryfallUri": "https://scryfall.com/card/j25/24/scythecat-cub?utm_source=api"
     },
     {
+      "oracleId": "9307f7e9-bcd9-41f9-88f8-0fb9700a6b12",
+      "name": "Raffine, Scheming Seer",
+      "colorIdentity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "manaValue": 3,
+      "manaCost": "{W}{U}{B}",
+      "typeLine": "Legendary Creature — Sphinx Demon",
+      "oracleText": "Flying, ward {1}\nWhenever you attack, target attacking creature connives X, where X is the number of attacking creatures. (Draw X cards, then discard X cards. Put a +1/+1 counter on that creature for each nonland card discarded this way.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/1/716a44b4-f6b0-4f14-a270-6442aed3251f.jpg?1783923074",
+      "scryfallUri": "https://scryfall.com/card/snc/213/raffine-scheming-seer?utm_source=api"
+    },
+    {
       "oracleId": "932a86e5-9640-4ef5-8264-2ce97bde33e2",
       "name": "Haktos the Unscarred",
       "colorIdentity": [
@@ -7608,6 +7863,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/f/1/f1015bf5-de98-41f3-b6b1-ed95f7465944.jpg?1783904949",
       "scryfallUri": "https://scryfall.com/card/tla/162/zhao-the-moon-slayer?utm_source=api"
+    },
+    {
+      "oracleId": "94f0a572-e91c-4b56-a5d1-6cbbeabd210d",
+      "name": "Infernal Grasp",
+      "colorIdentity": [
+        "B"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{B}",
+      "typeLine": "Instant",
+      "oracleText": "Destroy target creature. You lose 2 life.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/f/6/f67b323d-0dda-45f8-84b7-d883ce5045a8.jpg?1783903785",
+      "scryfallUri": "https://scryfall.com/card/soc/216/infernal-grasp?utm_source=api"
     },
     {
       "oracleId": "953a2bd3-5bca-41fc-8785-66b2d7fa381a",
@@ -8505,6 +8774,20 @@
       "scryfallUri": "https://scryfall.com/card/otc/128/changeling-outcast?utm_source=api"
     },
     {
+      "oracleId": "a6395447-677d-4c39-8eda-2d57e527c94e",
+      "name": "Torrential Gearhulk",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 6,
+      "manaCost": "{4}{U}{U}",
+      "typeLine": "Artifact Creature — Construct",
+      "oracleText": "Flash\nWhen this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/9/2/92872fea-2fb4-4154-815e-cad9d966e60f.jpg?1783915685",
+      "scryfallUri": "https://scryfall.com/card/cmm/128/torrential-gearhulk?utm_source=api"
+    },
+    {
       "oracleId": "a68f41a2-37ee-46e1-bf3c-164c78b003ca",
       "name": "The Golden Throne",
       "colorIdentity": [],
@@ -8879,6 +9162,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/a/d/ad0fc934-f49d-4607-a52b-aea5c1d5d342.jpg?1783914989",
       "scryfallUri": "https://scryfall.com/card/woc/10/malleable-impostor?utm_source=api"
+    },
+    {
+      "oracleId": "acf4d685-a718-42f7-9a7a-dee069ae8db2",
+      "name": "Council's Judgment",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 3,
+      "manaCost": "{1}{W}{W}",
+      "typeLine": "Sorcery",
+      "oracleText": "Will of the council — Starting with you, each player votes for a nonland permanent you don't control. Exile each permanent with the most votes or tied for most votes.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/4/0/4005e82f-0b30-4165-87e2-51250c00adb0.jpg?1783911948",
+      "scryfallUri": "https://scryfall.com/card/otc/79/councils-judgment?utm_source=api"
     },
     {
       "oracleId": "acfa77fd-3610-4f12-9c3c-bd860ce91700",
@@ -9728,6 +10025,22 @@
       "scryfallUri": "https://scryfall.com/card/soc/252/rionya-fire-dancer?utm_source=api"
     },
     {
+      "oracleId": "be97c400-c690-426d-a39e-4082080a3823",
+      "name": "Aragorn, King of Gondor",
+      "colorIdentity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "manaValue": 4,
+      "manaCost": "{1}{U}{R}{W}",
+      "typeLine": "Legendary Creature — Human Noble",
+      "oracleText": "Vigilance, lifelink\nWhen Aragorn enters, you become the monarch.\nWhenever Aragorn attacks, up to one target creature can't block this turn. If you're the monarch, creatures can't block this turn.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/c/1c7ac04c-8510-468b-aa6f-f249bde9ff87.jpg?1783916037",
+      "scryfallUri": "https://scryfall.com/card/ltc/5/aragorn-king-of-gondor?utm_source=api"
+    },
+    {
       "oracleId": "bf0b252d-1295-44e4-bac3-113b5732a2a9",
       "name": "Opposition",
       "colorIdentity": [
@@ -10520,6 +10833,20 @@
       "scryfallUri": "https://scryfall.com/card/2x2/213/figure-of-destiny?utm_source=api"
     },
     {
+      "oracleId": "cd8ccb10-a2c8-4a84-aa41-6ce6018f9bb7",
+      "name": "Crystal Shard",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{3}",
+      "typeLine": "Artifact",
+      "oracleText": "{3}, {T} or {U}, {T}: Return target creature to its owner's hand unless its controller pays {1}.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/b/1/b1c1d05b-92be-40d7-859f-75293a531a84.jpg?1783944524",
+      "scryfallUri": "https://scryfall.com/card/mrd/159/crystal-shard?utm_source=api"
+    },
+    {
       "oracleId": "cdfa9de4-7d7d-4638-8ac4-793ece6372dd",
       "name": "Changing Loyalty",
       "colorIdentity": [
@@ -10706,6 +11033,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/3/d/3de11222-c2fa-4544-a501-a02b31797259.jpg?1783922472",
       "scryfallUri": "https://scryfall.com/card/clb/723/grazilaxx-illithid-scholar?utm_source=api"
+    },
+    {
+      "oracleId": "d2a372d8-3eb2-4ba4-a75f-7951654de383",
+      "name": "Informed Inkwright",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{W}",
+      "typeLine": "Creature — Human Wizard",
+      "oracleText": "Vigilance\nRepartee — Whenever you cast an instant or sorcery spell that targets a creature, create a 1/1 white and black Inkling creature token with flying.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/5/d/5defb2d1-d0fb-4e7f-a5c7-3df99fe675d6.jpg?1783903704",
+      "scryfallUri": "https://scryfall.com/card/sos/20/informed-inkwright?utm_source=api"
     },
     {
       "oracleId": "d326de4d-6157-4586-91b8-5668e1381ac3",
@@ -11498,6 +11839,21 @@
       "scryfallUri": "https://scryfall.com/card/cmm/388/hammer-of-nazahn?utm_source=api"
     },
     {
+      "oracleId": "e39a1f6b-6b13-4a8b-ac0c-63ede4636812",
+      "name": "Bruse Tarl, Boorish Herder",
+      "colorIdentity": [
+        "R",
+        "W"
+      ],
+      "manaValue": 4,
+      "manaCost": "{2}{R}{W}",
+      "typeLine": "Legendary Creature — Human Ally",
+      "oracleText": "Whenever Bruse Tarl enters or attacks, target creature you control gains double strike and lifelink until end of turn.\nPartner (You can have two commanders if both have partner.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/2/125b552b-45ea-4e0b-94a9-8131c97a04c0.jpg?1783937085",
+      "scryfallUri": "https://scryfall.com/card/c16/30/bruse-tarl-boorish-herder?utm_source=api"
+    },
+    {
       "oracleId": "e3ad5cbc-4245-4e1e-8204-509381fa0c1c",
       "name": "Reef Worm",
       "colorIdentity": [
@@ -11962,6 +12318,22 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/2/4/24d7d77a-35b6-451a-af44-ecaf38facccb.jpg?1783923136",
       "scryfallUri": "https://scryfall.com/card/snc/68/body-launderer?utm_source=api"
+    },
+    {
+      "oracleId": "ead75ea4-025f-443a-824f-26fef9e424db",
+      "name": "The Swarmlord",
+      "colorIdentity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "manaValue": 6,
+      "manaCost": "{3}{G}{U}{R}",
+      "typeLine": "Legendary Creature — Tyranid",
+      "oracleText": "Rapid Regeneration — The Swarmlord enters with two +1/+1 counters on it for each time you've cast your commander from the command zone this game.\nXenos Cunning — Whenever a creature you control with a counter on it dies, draw a card.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/d/5/d5c4077c-604e-4e8a-b448-0807849040ca.jpg?1783920951",
+      "scryfallUri": "https://scryfall.com/card/40k/4/the-swarmlord?utm_source=api"
     },
     {
       "oracleId": "ebf7ce9b-9e5e-4557-9e28-76556997f0ee",
@@ -12638,6 +13010,20 @@
       "scryfallUri": "https://scryfall.com/card/mkc/173/jolrael-mwonvuli-recluse?utm_source=api"
     },
     {
+      "oracleId": "f8b17b89-26ce-4208-874a-9e1d66514640",
+      "name": "Dig Through Time",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 8,
+      "manaCost": "{6}{U}{U}",
+      "typeLine": "Instant",
+      "oracleText": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nLook at the top seven cards of your library. Put two of them into your hand and the rest on the bottom of your library in any order.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/0/2/020939d6-72f0-4aa0-9ac2-d16cc896cd7f.jpg?1783903792",
+      "scryfallUri": "https://scryfall.com/card/soc/195/dig-through-time?utm_source=api"
+    },
+    {
       "oracleId": "f8b9dd54-0837-47f4-ad14-7a0322d46d5f",
       "name": "Birthing Pod",
       "colorIdentity": [
@@ -12797,6 +13183,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/5/0/5032d71d-d9f8-498c-97d1-271c2e9c1c47.jpg?1783903790",
       "scryfallUri": "https://scryfall.com/card/soc/202/rite-of-replication?utm_source=api"
+    },
+    {
+      "oracleId": "fb81f95c-70f8-4eb7-8d15-15d0ae23ec03",
+      "name": "Mystical Tutor",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 1,
+      "manaCost": "{U}",
+      "typeLine": "Instant",
+      "oracleText": "Search your library for an instant or sorcery card, reveal it, then shuffle and put that card on top.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/6/36fa9a0b-b0c9-43ea-ba11-99d7982f974e.jpg?1783918491",
+      "scryfallUri": "https://scryfall.com/card/dmr/60/mystical-tutor?utm_source=api"
     },
     {
       "oracleId": "fb868840-09fa-49b1-85cb-b08ad065e972",
