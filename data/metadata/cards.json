@@ -378,6 +378,20 @@
       "scryfallUri": "https://scryfall.com/card/ltr/248/phial-of-galadriel?utm_source=api"
     },
     {
+      "oracleId": "09669283-eb14-46a2-b37a-51d7a52da891",
+      "name": "Requisition Raid",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 1,
+      "manaCost": "{W}",
+      "typeLine": "Sorcery",
+      "oracleText": "Spree (Choose one or more additional costs.)\n+ {1} — Destroy target artifact.\n+ {1} — Destroy target enchantment.\n+ {1} — Put a +1/+1 counter on each creature target player controls.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/5/154e9ba9-0d0e-4b0e-acf2-f66a993cf3a2.jpg?1783911852",
+      "scryfallUri": "https://scryfall.com/card/otj/26/requisition-raid?utm_source=api"
+    },
+    {
       "oracleId": "09be0f69-9c7f-491f-964d-bfbbc2d4251f",
       "name": "Abbot of Keral Keep",
       "colorIdentity": [
@@ -726,6 +740,18 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/d/9/d9482aab-6ddf-48e1-84fa-b13d5ff81e69.jpg?1783905935",
       "scryfallUri": "https://scryfall.com/card/eoe/192/icetill-explorer?utm_source=api"
+    },
+    {
+      "oracleId": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "name": "Gingerbrute",
+      "colorIdentity": [],
+      "manaValue": 1,
+      "manaCost": "{1}",
+      "typeLine": "Artifact Creature — Food Golem",
+      "oracleText": "Haste (This creature can attack and {T} as soon as it comes under your control.)\n{1}: This creature can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this creature: You gain 3 life.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/8/1/81ff4bca-f552-4e89-affe-31d6c91c82fc.jpg?1783908607",
+      "scryfallUri": "https://scryfall.com/card/j25/751/gingerbrute?utm_source=api"
     },
     {
       "oracleId": "10c48d19-d91f-4674-b186-477acaf08e5a",
@@ -1257,6 +1283,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/4/3/43787574-7700-47ab-b57c-98ef968cce71.jpg?1783915451",
       "scryfallUri": "https://scryfall.com/card/cmm/823/grasp-of-fate?utm_source=api"
+    },
+    {
+      "oracleId": "1b704798-0c69-4c18-ac7e-42933ce90028",
+      "name": "Pest Infestation",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 1,
+      "manaCost": "{X}{X}{G}",
+      "typeLine": "Sorcery",
+      "oracleText": "Destroy up to X target artifacts and/or enchantments. Create twice X 1/1 black and green Pest creature tokens with \"When this token dies, you gain 1 life.\"",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/c/9/c9b8626d-d3d8-4460-9adf-112f48f173f6.jpg?1783903762",
+      "scryfallUri": "https://scryfall.com/card/soc/282/pest-infestation?utm_source=api"
     },
     {
       "oracleId": "1b9f9f5b-8712-4f00-90cb-1b7b9970eccc",
@@ -2033,6 +2073,20 @@
       "scryfallUri": "https://scryfall.com/card/soc/270/goldvein-hydra?utm_source=api"
     },
     {
+      "oracleId": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+      "name": "Wan Shi Tong, Librarian",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 2,
+      "manaCost": "{X}{U}{U}",
+      "typeLine": "Legendary Creature — Bird Spirit",
+      "oracleText": "Flash\nFlying, vigilance\nWhen Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.\nWhenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/2/e20da6b5-1057-4a28-9e85-07de714e262f.jpg?1783904979",
+      "scryfallUri": "https://scryfall.com/card/tla/78/wan-shi-tong-librarian?utm_source=api"
+    },
+    {
       "oracleId": "2bb2eda7-3b38-4c56-870f-c3218a1056f5",
       "name": "Snapcaster Mage",
       "colorIdentity": [
@@ -2169,6 +2223,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/9/7/97505837-e0e2-4f7b-8581-01942e886bb8.jpg?1783913321",
       "scryfallUri": "https://scryfall.com/card/rvr/89/plaguecrafter?utm_source=api"
+    },
+    {
+      "oracleId": "2e467fab-e808-44d3-99bf-e3621baeb7cb",
+      "name": "Erode",
+      "colorIdentity": [
+        "W"
+      ],
+      "manaValue": 1,
+      "manaCost": "{W}",
+      "typeLine": "Instant",
+      "oracleText": "Destroy target creature or planeswalker. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/2/32e670da-7563-4f6a-a7db-4c126a440eb8.jpg?1783903705",
+      "scryfallUri": "https://scryfall.com/card/sos/15/erode?utm_source=api"
     },
     {
       "oracleId": "2ea2bf6c-a427-4d0c-b447-159959327697",
@@ -2875,6 +2943,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/2/9/29425426-7bf2-4872-aa35-c12c22801edd.jpg?1783932992",
       "scryfallUri": "https://scryfall.com/card/m20/105/knight-of-the-ebon-legion?utm_source=api"
+    },
+    {
+      "oracleId": "3b74c8ac-9c19-45b0-935f-8630b8da4543",
+      "name": "Clockwork Percussionist",
+      "colorIdentity": [
+        "R"
+      ],
+      "manaValue": 1,
+      "manaCost": "{R}",
+      "typeLine": "Artifact Creature — Monkey Toy",
+      "oracleText": "Haste\nWhen this creature dies, exile the top card of your library. You may play it until the end of your next turn.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/0/10986e5a-9fc6-41e2-8352-289328245171.jpg?1783909471",
+      "scryfallUri": "https://scryfall.com/card/dsk/130/clockwork-percussionist?utm_source=api"
     },
     {
       "oracleId": "3ba809ce-3556-415c-9fcc-291cb10a43cd",
@@ -4990,6 +5072,18 @@
       "scryfallUri": "https://scryfall.com/card/inr/226/wrenn-and-seven?utm_source=api"
     },
     {
+      "oracleId": "63bfb9ca-d9d5-4c17-be39-82eb115bc20c",
+      "name": "Lavaspur Boots",
+      "colorIdentity": [],
+      "manaValue": 1,
+      "manaCost": "{1}",
+      "typeLine": "Artifact — Equipment",
+      "oracleText": "Equipped creature gets +1/+0 and has haste and ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\nEquip {1}",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/5/e50709de-e6ef-4dbc-af1e-290fed279f34.jpg?1783911781",
+      "scryfallUri": "https://scryfall.com/card/otj/243/lavaspur-boots?utm_source=api"
+    },
+    {
       "oracleId": "63c1ac21-e3d8-40c2-8c09-3f31c52992ef",
       "name": "Vindicate",
       "colorIdentity": [
@@ -5961,6 +6055,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/f/c/fcf0c46b-a37c-4475-99a1-bff6bc0cf2db.jpg?1787681617",
       "scryfallUri": "https://scryfall.com/card/plst/M3C-102/barrowgoyf?utm_source=api"
+    },
+    {
+      "oracleId": "74c7a029-59aa-4511-8e4c-f8f167cda4e2",
+      "name": "Slickshot Show-Off",
+      "colorIdentity": [
+        "R"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{R}",
+      "typeLine": "Creature — Bird Wizard",
+      "oracleText": "Flying, haste\nWhenever you cast a noncreature spell, this creature gets +2/+0 until end of turn.\nPlot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/0/7054012b-4f9d-44a0-aaf9-7fd3bddc7b2d.jpg?1783911814",
+      "scryfallUri": "https://scryfall.com/card/otj/146/slickshot-show-off?utm_source=api"
     },
     {
       "oracleId": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
@@ -7337,6 +7445,20 @@
       "scryfallUri": "https://scryfall.com/card/pip/1/caesar-legions-emperor?utm_source=api"
     },
     {
+      "oracleId": "8e7b079d-9ede-421c-bd2b-f9a5126a8e6f",
+      "name": "Esika's Chariot",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 4,
+      "manaCost": "{3}{G}",
+      "typeLine": "Legendary Artifact — Vehicle",
+      "oracleText": "When Esika's Chariot enters, create two 2/2 green Cat creature tokens.\nWhenever Esika's Chariot attacks, create a token that's a copy of target token you control.\nCrew 4",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/8/a87606cc-fbf0-4e2c-9798-f1c935d0573d.jpg?1783928215",
+      "scryfallUri": "https://scryfall.com/card/khm/169/esikas-chariot?utm_source=api"
+    },
+    {
       "oracleId": "8ecdaf4b-4442-42da-9714-4257a83faf50",
       "name": "Sakashima of a Thousand Faces",
       "colorIdentity": [
@@ -7608,6 +7730,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/f/1/f1015bf5-de98-41f3-b6b1-ed95f7465944.jpg?1783904949",
       "scryfallUri": "https://scryfall.com/card/tla/162/zhao-the-moon-slayer?utm_source=api"
+    },
+    {
+      "oracleId": "94f01534-7bb3-4b1e-8f77-e84156408686",
+      "name": "Elvish Reclaimer",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 1,
+      "manaCost": "{G}",
+      "typeLine": "Creature — Elf Warrior",
+      "oracleText": "This creature gets +2/+2 as long as there are three or more land cards in your graveyard.\n{2}, {T}, Sacrifice a land: Search your library for a land card, put it onto the battlefield tapped, then shuffle.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/9/39c431d7-d94b-46c4-bb89-f3db56214ab4.jpg?1783932966",
+      "scryfallUri": "https://scryfall.com/card/m20/169/elvish-reclaimer?utm_source=api"
     },
     {
       "oracleId": "953a2bd3-5bca-41fc-8785-66b2d7fa381a",
@@ -9771,6 +9907,20 @@
       "scryfallUri": "https://scryfall.com/card/eoe/217/genemorph-imago?utm_source=api"
     },
     {
+      "oracleId": "bffdfe7b-f17a-41b6-a460-80280fe497d4",
+      "name": "Collective Resistance",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{G}",
+      "typeLine": "Instant",
+      "oracleText": "Escalate {G} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Destroy target artifact.\n• Destroy target enchantment.\n• Target creature gains hexproof and indestructible until end of turn.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/f/2/f260bd08-68b6-44f4-ace9-e298cb13d82e.jpg?1783911263",
+      "scryfallUri": "https://scryfall.com/card/mh3/147/collective-resistance?utm_source=api"
+    },
+    {
       "oracleId": "c0891157-f3dd-4866-866f-fd13e9be9633",
       "name": "Arwen, Weaver of Hope",
       "colorIdentity": [
@@ -11413,6 +11563,20 @@
       "scryfallUri": "https://scryfall.com/card/woe/208/likeness-looter?utm_source=api"
     },
     {
+      "oracleId": "e0aa6ce0-ca31-433b-ac6c-32b8675cdb71",
+      "name": "Spellskite",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 2,
+      "manaCost": "{2}",
+      "typeLine": "Artifact Creature — Phyrexian Horror",
+      "oracleText": "{U/P}: Change a target of target spell or ability to this creature. ({U/P} can be paid with either {U} or 2 life.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/2/72204934-f5aa-4559-8f7e-7b0b223580d0.jpg?1783922383",
+      "scryfallUri": "https://scryfall.com/card/clb/873/spellskite?utm_source=api"
+    },
+    {
       "oracleId": "e0c00a74-bdf8-4fee-8042-42c5878e9e3c",
       "name": "Broadside Bombardiers",
       "colorIdentity": [
@@ -11962,6 +12126,20 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/2/4/24d7d77a-35b6-451a-af44-ecaf38facccb.jpg?1783923136",
       "scryfallUri": "https://scryfall.com/card/snc/68/body-launderer?utm_source=api"
+    },
+    {
+      "oracleId": "ead4c01a-e2ae-49c9-95d9-651d81005907",
+      "name": "Satyr Wayfinder",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 2,
+      "manaCost": "{1}{G}",
+      "typeLine": "Creature — Satyr",
+      "oracleText": "When this creature enters, reveal the top four cards of your library. You may put a land card from among them into your hand. Put the rest into your graveyard.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/6/e64c5e9b-e73d-4721-8816-eca02eb6b828.jpg?1793281424",
+      "scryfallUri": "https://scryfall.com/card/trc/469/satyr-wayfinder?utm_source=api"
     },
     {
       "oracleId": "ebf7ce9b-9e5e-4557-9e28-76556997f0ee",
