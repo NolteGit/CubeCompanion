@@ -3,12 +3,18 @@ import { createPortal } from 'react-dom'
 import type { BrowserCard } from './types'
 import './mobileCardPreview.css'
 
+export interface MobileCardPreviewAction {
+  label: string
+  onClick: () => void
+}
+
 interface MobileCardPreviewProps {
   card: BrowserCard
   onClose: () => void
+  primaryAction?: MobileCardPreviewAction
 }
 
-export function MobileCardPreview({ card, onClose }: MobileCardPreviewProps) {
+export function MobileCardPreview({ card, onClose, primaryAction }: MobileCardPreviewProps) {
   const dialogRef = useRef<HTMLElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
 
@@ -78,6 +84,18 @@ export function MobileCardPreview({ card, onClose }: MobileCardPreviewProps) {
             ×
           </button>
         </div>
+        {primaryAction && (
+          <button
+            type="button"
+            className="mobile-card-preview-primary"
+            onClick={() => {
+              primaryAction.onClick()
+              onClose()
+            }}
+          >
+            {primaryAction.label}
+          </button>
+        )}
         {card.imageUri ? (
           <img className="mobile-card-preview-art" src={card.imageUri} alt={card.name} />
         ) : (

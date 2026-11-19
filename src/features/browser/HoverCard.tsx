@@ -1,11 +1,12 @@
 import { useCallback, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
-import { MobileCardPreview } from './MobileCardPreview'
+import { MobileCardPreview, type MobileCardPreviewAction } from './MobileCardPreview'
 import type { BrowserCard } from './types'
 
 interface HoverCardProps {
   card: BrowserCard
   className?: string
   children: ReactNode
+  mobilePreviewAction?: MobileCardPreviewAction
 }
 
 interface PreviewState {
@@ -37,7 +38,7 @@ function previewPosition(event: MouseEvent<HTMLElement>): PreviewState {
   return { left, top }
 }
 
-export function HoverCard({ card, className, children }: HoverCardProps) {
+export function HoverCard({ card, className, children, mobilePreviewAction }: HoverCardProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
   const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false)
   const closeMobilePreview = useCallback(() => setMobilePreviewOpen(false), [])
@@ -78,7 +79,13 @@ export function HoverCard({ card, className, children }: HoverCardProps) {
           </div>
         </aside>
       )}
-      {mobilePreviewOpen && <MobileCardPreview card={card} onClose={closeMobilePreview} />}
+      {mobilePreviewOpen && (
+        <MobileCardPreview
+          card={card}
+          onClose={closeMobilePreview}
+          primaryAction={mobilePreviewAction}
+        />
+      )}
     </>
   )
 }

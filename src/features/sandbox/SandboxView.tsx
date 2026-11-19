@@ -3,7 +3,9 @@ import { validateCube } from '../../domain'
 import { commanderCards, draftCards, releaseInfo } from '../browser/data'
 import { cardTint } from '../browser/cardTint'
 import { HoverCard } from '../browser/HoverCard'
+import { useMobileViewport } from '../browser/useMobileViewport'
 import type { BrowserCard } from '../browser/types'
+import './mobileChanges.css'
 import { sandboxDiffText, sandboxFullListText } from './export'
 import { lookupSandboxCard } from './scryfall'
 import {
@@ -139,6 +141,10 @@ function DiffSection({
                           card={entry.card}
                           className={`change-card change-card--${cardTint(entry.card)}`}
                           key={`${entry.pool}-${entry.card.oracleId}`}
+                          mobilePreviewAction={{
+                            label: tone === 'removed' ? 'Undo cut · Restore card' : 'Undo addition',
+                            onClick: () => onRevert(entry, tone),
+                          }}
                         >
                           <span className="diff-sign" aria-hidden="true">
                             {tone === 'added' ? '+' : '−'}
@@ -175,6 +181,7 @@ interface SandboxViewProps {
 }
 
 export function SandboxView({ onChangeCount, undoEntry, onUndoEntryChange: setUndoEntry }: SandboxViewProps) {
+  const mobile = useMobileViewport()
   const [state, setState] = useState<SandboxState>(initialState)
   const [addName, setAddName] = useState('')
   const [addPool, setAddPool] = useState<SandboxPool>('draft')
@@ -509,12 +516,8 @@ export function SandboxView({ onChangeCount, undoEntry, onUndoEntryChange: setUn
               <p className="sandbox-empty">No cards match that search.</p>
             ) : (
               <div className="sandbox-card-results">
-                {searchResults.map(({ card, pool }) => (
-                  <HoverCard
-                    card={card}
-                    className={`sandbox-card-row sandbox-card-row--${cardTint(card)}`}
-                    key={`${pool}-${card.oracleId}`}
-                  >
+                {searchResults.map(({ card, pool }) => {
+                  const details = (
                     <div>
                       <strong>{card.name}</strong>
                       <span>
@@ -523,14 +526,34 @@ export function SandboxView({ onChangeCount, undoEntry, onUndoEntryChange: setUn
                           : 'Commanders'}
                       </span>
                     </div>
+                  )
+                  return mobile ? (
                     <button
                       type="button"
+                      className={`sandbox-card-row sandbox-card-row--${cardTint(card)} sandbox-mobile-remove-row`}
+                      key={`${pool}-${card.oracleId}`}
+                      aria-label={`Remove ${card.name} from ${poolLabel(pool)}`}
                       onClick={() => removeCard(card, pool)}
                     >
-                      Remove
+                      {details}
+                      <span className="sandbox-mobile-remove-label" aria-hidden="true">Remove</span>
                     </button>
-                  </HoverCard>
-                ))}
+                  ) : (
+                    <HoverCard
+                      card={card}
+                      className={`sandbox-card-row sandbox-card-row--${cardTint(card)}`}
+                      key={`${pool}-${card.oracleId}`}
+                    >
+                      {details}
+                      <button
+                        type="button"
+                        onClick={() => removeCard(card, pool)}
+                      >
+                        Remove
+                      </button>
+                    </HoverCard>
+                  )
+                })}
               </div>
             )}
           </section>

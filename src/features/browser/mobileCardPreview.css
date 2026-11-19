@@ -51,6 +51,23 @@
   cursor: pointer;
 }
 
+.mobile-card-preview-primary {
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  color: #06110a;
+  background: var(--accent);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mobile-card-preview-primary:hover {
+  background: #86efac;
+}
+
 .mobile-card-preview-art {
   display: block;
   width: auto;

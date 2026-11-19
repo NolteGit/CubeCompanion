@@ -1,0 +1,39 @@
+/* Mobile Changes: make the entire quick-remove result an action. */
+@media (max-width: 760px) {
+  .sandbox-mobile-remove-row {
+    display: flex;
+    width: 100%;
+    min-height: 52px;
+    padding: 8px 6px;
+    border: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 8%);
+    border-radius: 0;
+    color: var(--text);
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .sandbox-mobile-remove-row:active,
+  .sandbox-mobile-remove-row:hover {
+    background: rgb(202 86 88 / 10%);
+  }
+
+  .sandbox-mobile-remove-label {
+    flex: 0 0 auto;
+    padding: 6px 4px;
+    color: #f2aaa6 !important;
+    font-size: 0.72rem !important;
+    font-weight: 750;
+  }
+
+  /* The large preview now provides the revert action on mobile. */
+  .diff-section .change-revert {
+    display: none;
+  }
+
+  .diff-section .change-card {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+}
