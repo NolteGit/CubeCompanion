@@ -2,6 +2,7 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { cardTint } from '../browser/cardTint'
 import { browserCardFromName, commanderCards, draftCards } from '../browser/data'
 import { HoverCard } from '../browser/HoverCard'
+import { useMobileViewport } from '../browser/useMobileViewport'
 import { groupCards } from '../browser/selectors'
 import type { BrowserCard, CardGroup } from '../browser/types'
 import { historySnapshots } from '../history/data'
@@ -14,6 +15,7 @@ import {
 import { workbookArchiveEntries } from './data'
 import './archive.css'
 import './archiveColumns.css'
+import './mobileArchive.css'
 
 type ArchiveColorKey =
   | 'white'
@@ -43,6 +45,7 @@ interface ArchiveCommanderGroup {
 }
 
 type ArchiveSort = 'name' | 'active'
+type ArchiveColorFilter = ArchiveColorKey | 'all'
 
 const ARCHIVE_COLOR_COLUMNS: readonly { key: ArchiveColorKey; label: string }[] = [
   { key: 'white', label: 'White' },
@@ -197,12 +200,14 @@ function CubeColumnSections({
 function ArchiveCubeBoard({
   items,
   sort,
+  mobile,
 }: {
   items: readonly ArchiveItem[]
   sort: ArchiveSort
+  mobile: boolean
 }) {
   if (items.length === 0) return null
-  const columns = archiveColumns(items, sort)
+  const columns = archiveColumns(items, sort).filter((column) => !mobile || column.items.length > 0)
 
   return (
     <section className="archive-pool-board">
@@ -211,22 +216,35 @@ function ArchiveCubeBoard({
         <span>{items.length}</span>
       </header>
 
-      <div className="archive-color-columns">
-        {columns.map((column) => (
+      <div className={mobile ? 'archive-color-columns archive-mobile-groups' : 'archive-color-columns'}>
+        {columns.map((column, index) => (
           <section
             className={`archive-color-column archive-color-column--${column.key}`}
             key={column.key}
           >
-            <header>
-              <span className="archive-color-dot" aria-hidden="true" />
-              <strong>{column.label}</strong>
-              <span>{column.items.length}</span>
-            </header>
-
-            {column.items.length > 0 ? (
-              <CubeColumnSections column={column} />
+            {mobile ? (
+              <details className="archive-mobile-details" open={index === 0}>
+                <summary className="archive-mobile-summary">
+                  <span className="archive-color-dot" aria-hidden="true" />
+                  <strong>{column.label}</strong>
+                  <span className="archive-mobile-count">{column.items.length}</span>
+                  <span className="archive-mobile-chevron" aria-hidden="true">⌄</span>
+                </summary>
+                <CubeColumnSections column={column} />
+              </details>
             ) : (
-              <div className="archive-column-empty">—</div>
+              <>
+                <header>
+                  <span className="archive-color-dot" aria-hidden="true" />
+                  <strong>{column.label}</strong>
+                  <span>{column.items.length}</span>
+                </header>
+                {column.items.length > 0 ? (
+                  <CubeColumnSections column={column} />
+                ) : (
+                  <div className="archive-column-empty">—</div>
+                )}
+              </>
             )}
           </section>
         ))}
@@ -295,9 +313,11 @@ function commanderGroups(
 function ArchiveCommanderBoard({
   items,
   sort,
+  mobile,
 }: {
   items: readonly ArchiveItem[]
   sort: ArchiveSort
+  mobile: boolean
 }) {
   if (items.length === 0) return null
   const groups = commanderGroups(items, sort)
@@ -309,22 +329,40 @@ function ArchiveCommanderBoard({
         <span>{items.length}</span>
       </header>
 
-      <div className="archive-commander-groups">
-        {groups.map((group) => (
+      <div className={mobile ? 'archive-commander-groups archive-mobile-groups' : 'archive-commander-groups'}>
+        {groups.map((group, index) => (
           <section
             className={`archive-commander-group cube-theme cube-theme--${group.key}`}
             key={group.key}
           >
-            <header>
-              <span className="archive-color-dot" aria-hidden="true" />
-              <strong>{group.label}</strong>
-              <span>{group.items.length}</span>
-            </header>
-            <div className="archive-column-cards">
-              {group.items.map((item) => (
-                <ArchiveCardRow item={item} key={item.record.key} />
-              ))}
-            </div>
+            {mobile ? (
+              <details className="archive-mobile-details" open={index === 0}>
+                <summary className="archive-mobile-summary">
+                  <span className="archive-color-dot" aria-hidden="true" />
+                  <strong>{group.label}</strong>
+                  <span className="archive-mobile-count">{group.items.length}</span>
+                  <span className="archive-mobile-chevron" aria-hidden="true">⌄</span>
+                </summary>
+                <div className="archive-column-cards">
+                  {group.items.map((item) => (
+                    <ArchiveCardRow item={item} key={item.record.key} />
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <>
+                <header>
+                  <span className="archive-color-dot" aria-hidden="true" />
+                  <strong>{group.label}</strong>
+                  <span>{group.items.length}</span>
+                </header>
+                <div className="archive-column-cards">
+                  {group.items.map((item) => (
+                    <ArchiveCardRow item={item} key={item.record.key} />
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         ))}
       </div>
@@ -336,6 +374,9 @@ export function ArchiveBrowser() {
   const [query, setQuery] = useState('')
   const [pool, setPool] = useState<ArchivePoolFilter>('all')
   const [sort, setSort] = useState<ArchiveSort>('name')
+  const [color, setColor] = useState<ArchiveColorFilter>('all')
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const mobile = useMobileViewport()
   const records = useMemo(
     () => buildArchiveRecords(
       workbookArchiveEntries,
@@ -358,14 +399,18 @@ export function ArchiveBrowser() {
     [visible],
   )
   const activeCount = records.filter((record) => record.active).length
-  const hasFilters = Boolean(query || pool !== 'all' || sort !== 'name')
-  const visibleDraft = visibleItems.filter((item) => item.record.pool === 'draft')
-  const visibleCommanders = visibleItems.filter((item) => item.record.pool === 'commander')
+  const colorItems = color === 'all'
+    ? visibleItems
+    : visibleItems.filter((item) => archiveColorKey(item) === color)
+  const hasFilters = Boolean(query || pool !== 'all' || sort !== 'name' || color !== 'all')
+  const visibleDraft = colorItems.filter((item) => item.record.pool === 'draft')
+  const visibleCommanders = colorItems.filter((item) => item.record.pool === 'commander')
 
   function clearFilters() {
     setQuery('')
     setPool('all')
     setSort('name')
+    setColor('all')
   }
 
   return (
@@ -391,7 +436,20 @@ export function ArchiveBrowser() {
         />
       </label>
 
-      <div className={`archive-filter-dock${hasFilters ? ' active' : ''}`}>
+      <button
+        type="button"
+        className="archive-mobile-filter-toggle"
+        aria-expanded={mobileFiltersOpen}
+        aria-controls="archive-filters"
+        onClick={() => setMobileFiltersOpen((current) => !current)}
+      >
+        <span>Filters{hasFilters ? ' · Active' : ''}</span>
+        <span aria-hidden="true">{mobileFiltersOpen ? '⌃' : '⌄'}</span>
+      </button>
+      <div
+        id="archive-filters"
+        className={`archive-filter-dock${hasFilters ? ' active' : ''}${mobileFiltersOpen ? ' archive-filters-open' : ''}`}
+      >
         <div className="archive-filter-row">
           <span className="archive-filter-row-label">Pool</span>
           <div className="archive-filter-chips" role="group" aria-label="Archive pool">
@@ -407,6 +465,16 @@ export function ArchiveBrowser() {
               </button>
             ))}
           </div>
+
+          <label className="archive-color-filter">
+            <span>Color</span>
+            <select value={color} onChange={(event) => setColor(event.target.value as ArchiveColorFilter)}>
+              <option value="all">All colors</option>
+              {ARCHIVE_COLOR_COLUMNS.map((option) => (
+                <option value={option.key} key={option.key}>{option.label}</option>
+              ))}
+            </select>
+          </label>
 
           <div className="archive-sort-control" role="group" aria-label="Sort archive cards">
             <span>Sort</span>
@@ -433,16 +501,16 @@ export function ArchiveBrowser() {
               <span className="archive-active-dot" aria-hidden="true" />
               Active
             </span>
-            <span><strong>{visible.length}</strong> of {records.length} shown</span>
+            <span><strong>{colorItems.length}</strong> of {records.length} shown</span>
             {hasFilters && <button type="button" onClick={clearFilters}>Reset</button>}
           </div>
         </div>
       </div>
 
-      {visible.length > 0 ? (
+      {colorItems.length > 0 ? (
         <div className="archive-pools">
-          <ArchiveCubeBoard items={visibleDraft} sort={sort} />
-          <ArchiveCommanderBoard items={visibleCommanders} sort={sort} />
+          <ArchiveCubeBoard items={visibleDraft} sort={sort} mobile={mobile} />
+          <ArchiveCommanderBoard items={visibleCommanders} sort={sort} mobile={mobile} />
         </div>
       ) : (
         <div className="archive-empty">
