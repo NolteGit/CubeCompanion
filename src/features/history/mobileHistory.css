@@ -1,0 +1,38 @@
+/* Compact the historical snapshot summary without altering desktop. */
+@media (max-width: 760px) {
+  .snapshot-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .snapshot-summary > .snapshot-identity {
+    grid-column: 1 / -1;
+    min-height: 50px;
+    gap: 1px;
+    padding: 9px 11px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .snapshot-summary > .snapshot-stat {
+    min-height: 54px;
+    justify-items: center;
+    gap: 2px;
+    padding: 8px 3px;
+    border-bottom: 0;
+    text-align: center;
+  }
+
+  .snapshot-summary > .snapshot-stat:last-child {
+    border-right: 0;
+  }
+
+  .snapshot-stat > span {
+    font-size: 0.6rem;
+    line-height: 1.2;
+  }
+
+  .snapshot-stat > strong {
+    min-width: 0;
+    font-size: 0.96rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;

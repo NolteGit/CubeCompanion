@@ -6,6 +6,7 @@ import { HoverCard } from '../browser/HoverCard'
 import { historySnapshots } from './data'
 import { diffSnapshots, totalChanges, type SnapshotDiff } from './diff'
 import './history.css'
+import './mobileHistory.css'
 
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, {
