@@ -1,4 +1,6 @@
-import { useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import { useCallback, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import { MobileCardPreview } from './MobileCardPreview'
+import { useMobileViewport } from './useMobileViewport'
 import type { BrowserCard, BrowserView } from './types'
 
 interface CardRowAction {
@@ -34,6 +36,8 @@ function CardLink({
   className,
   children,
   linked,
+  mobile,
+  onPreview,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -41,9 +45,19 @@ function CardLink({
   className: string
   children: ReactNode
   linked: boolean
+  mobile: boolean
+  onPreview: () => void
   onMouseEnter?: (event: MouseEvent<HTMLElement>) => void
   onMouseLeave?: () => void
 }) {
+  if (mobile) {
+    return (
+      <button type="button" className={`${className} mobile-card-trigger`} onClick={onPreview}>
+        {children}
+      </button>
+    )
+  }
+
   if (!linked || !card.scryfallUri) {
     return (
       <div className={className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -143,9 +157,13 @@ export function CardCollection({
   workingAddedIds,
 }: CardCollectionProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
+  const [mobilePreview, setMobilePreview] = useState<BrowserCard | null>(null)
+  const mobile = useMobileViewport()
+  const closeMobilePreview = useCallback(() => setMobilePreview(null), [])
 
   if (view === 'images') {
     return (
+      <>
       <div className="card-grid">
         {cards.map((card) => {
           const active = rowAction?.isActive(card) ?? false
@@ -155,6 +173,8 @@ export function CardCollection({
               card={card}
               className="image-card"
               linked={linkCards}
+              mobile={mobile}
+              onPreview={() => setMobilePreview(card)}
             >
               {card.imageUri ? (
                 <img src={card.imageUri} alt={card.name} loading="lazy" />
@@ -179,6 +199,8 @@ export function CardCollection({
           )
         })}
       </div>
+      {mobilePreview && <MobileCardPreview card={mobilePreview} onClose={closeMobilePreview} />}
+      </>
     )
   }
 
@@ -199,6 +221,8 @@ export function CardCollection({
                 className="card-list-row"
                 key={card.oracleId}
                 linked={linkCards}
+                mobile={mobile}
+                onPreview={() => setMobilePreview(card)}
                 onMouseEnter={showPreview}
                 onMouseLeave={() => setPreview(null)}
               >
@@ -216,7 +240,15 @@ export function CardCollection({
               onMouseEnter={showPreview}
               onMouseLeave={() => setPreview(null)}
             >
-              {linkCards && card.scryfallUri ? (
+              {mobile ? (
+                <button
+                  type="button"
+                  className="card-row-name mobile-card-name-trigger"
+                  onClick={() => setMobilePreview(card)}
+                >
+                  {card.name}
+                </button>
+              ) : linkCards && card.scryfallUri ? (
                 <a
                   className="card-row-name"
                   href={card.scryfallUri}
@@ -235,7 +267,8 @@ export function CardCollection({
           )
         })}
       </div>
-      {preview && <CardPreview preview={preview} />}
+      {preview && !mobile && <CardPreview preview={preview} />}
+      {mobilePreview && <MobileCardPreview card={mobilePreview} onClose={closeMobilePreview} />}
     </>
   )
 }

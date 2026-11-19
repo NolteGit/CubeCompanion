@@ -169,10 +169,12 @@ function App() {
   const [cardList, setCardList] = useState<LibraryList>('draft')
   const [pendingChangeCount, setPendingChangeCount] = useState(initialPendingChangeCount)
   const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     function syncPageFromUrl() {
       setPage(pageFromHash(window.location.hash))
+      setMobileMenuOpen(false)
     }
 
     window.addEventListener('popstate', syncPageFromUrl)
@@ -187,13 +189,26 @@ function App() {
     document.title = pageTitle(page)
   }, [page])
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setMobileMenuOpen(false)
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [mobileMenuOpen])
+
   function navigate(nextPage: AppPage) {
+    setMobileMenuOpen(false)
     if (nextPage === page) return
     window.history.pushState(null, '', hashForPage(nextPage))
     setPage(nextPage)
   }
 
   function openCardList(nextList: LibraryList) {
+    setMobileMenuOpen(false)
     setCardList(nextList)
     if (page !== 'browse') {
       window.history.pushState(null, '', hashForPage('browse'))
@@ -262,11 +277,48 @@ function App() {
 
   return (
     <div className="app-shell">
+      <header className="mobile-app-header">
+        <span className="mobile-app-brand">
+          <span className="brand-mark"><CubeMark /></span>
+          <strong>Cube Companion</strong>
+        </span>
+        <button
+          type="button"
+          className="mobile-nav-toggle"
+          aria-controls="primary-navigation"
+          aria-expanded={mobileMenuOpen}
+          aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'}
+          onClick={() => setMobileMenuOpen((open) => !open)}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </header>
       <div className="app-body">
-        <aside className="app-sidebar">
+        {mobileMenuOpen && (
+          <button
+            type="button"
+            className="mobile-nav-backdrop"
+            aria-label="Close navigation"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+        <aside
+          id="primary-navigation"
+          className={`app-sidebar${mobileMenuOpen ? ' app-sidebar--open' : ''}`}
+        >
           <div className="sidebar-brand">
             <span className="brand-mark"><CubeMark /></span>
             <strong>Cube Companion</strong>
+            <button
+              type="button"
+              className="mobile-nav-close"
+              aria-label="Close navigation"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              ×
+            </button>
           </div>
           <nav className="sidebar-nav-section" aria-label="Main navigation">
             <SidebarNavButton

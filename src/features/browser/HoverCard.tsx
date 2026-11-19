@@ -1,4 +1,5 @@
-import { useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import { useCallback, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import { MobileCardPreview } from './MobileCardPreview'
 import type { BrowserCard } from './types'
 
 interface HoverCardProps {
@@ -38,6 +39,8 @@ function previewPosition(event: MouseEvent<HTMLElement>): PreviewState {
 
 export function HoverCard({ card, className, children }: HoverCardProps) {
   const [preview, setPreview] = useState<PreviewState | null>(null)
+  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false)
+  const closeMobilePreview = useCallback(() => setMobilePreviewOpen(false), [])
 
   const style = preview
     ? ({ left: preview.left, top: preview.top } satisfies CSSProperties)
@@ -46,11 +49,17 @@ export function HoverCard({ card, className, children }: HoverCardProps) {
   return (
     <>
       <div
-        className={className}
+        className={`${className ?? ''} mobile-hover-card`.trim()}
         onMouseEnter={(event) => setPreview(previewPosition(event))}
         onMouseLeave={() => setPreview(null)}
       >
         {children}
+        <button
+          type="button"
+          className="mobile-hover-card-trigger"
+          aria-label={`Preview ${card.name}`}
+          onClick={() => setMobilePreviewOpen(true)}
+        />
       </div>
 
       {preview && (
@@ -69,6 +78,7 @@ export function HoverCard({ card, className, children }: HoverCardProps) {
           </div>
         </aside>
       )}
+      {mobilePreviewOpen && <MobileCardPreview card={card} onClose={closeMobilePreview} />}
     </>
   )
 }
