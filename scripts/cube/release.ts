@@ -7,6 +7,7 @@ import {
 import { publishCube } from '../../src/infrastructure/snapshots/index.ts'
 import { completeHistoricalMetadata, readPublishedMetadata } from '../../src/infrastructure/snapshots/historyMetadata.ts'
 import { prepareCubeSource } from './pipeline.ts'
+import { printNextSteps } from './nextSteps.ts'
 import {
   printIdeaValidationIssues,
   printPreparedCube,
@@ -100,4 +101,7 @@ if (result.unresolved.length > 0) {
   }
 
   console.log('\x1b[32m✓ RELEASE READY — review and commit generated changes\x1b[0m')
+  printNextSteps('verify the release', [
+    'npm run verify',
+  ], 'After verification passes, follow its review/commit instructions. Do not push a failed release.')
 }
