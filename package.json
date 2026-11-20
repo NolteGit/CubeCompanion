@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm test && npm run build && npm run lint && node -e \"console.log('\\x1b[32m✓ GREEN — verification passed\\x1b[0m')\"",
+    "verify": "npm test && npm run build && npm run lint && tsx scripts/cube/verifySuccess.ts",
     "cube:extract": "tsx scripts/cube/extract.ts",
     "cube:resolve": "tsx scripts/cube/resolve.ts",
     "cube:validate": "tsx scripts/cube/validate.ts",
