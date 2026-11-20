@@ -1,14 +1,14 @@
 {
   "release": {
-    "snapshotId": "25c1903a83a866f6c9bfd2109c4151c12faad9deae8a93c49c338ca6daa8f632",
-    "publishedAt": "2026-11-20T17:10:45.398Z",
+    "snapshotId": "2659c258c8099ce6de0f7c127b1c39b0410e6f907275359952aa9c596ac1ad98",
+    "publishedAt": "2026-11-20T22:24:54.602Z",
     "rulesRevision": "2",
-    "note": "Cube update"
+    "note": "Add 10 Triomes"
   },
   "snapshot": {
-    "id": "25c1903a83a866f6c9bfd2109c4151c12faad9deae8a93c49c338ca6daa8f632",
-    "createdAt": "2026-11-20T17:10:45.398Z",
-    "note": "Cube update",
+    "id": "2659c258c8099ce6de0f7c127b1c39b0410e6f907275359952aa9c596ac1ad98",
+    "createdAt": "2026-11-20T22:24:54.602Z",
+    "note": "Add 10 Triomes",
     "rulesRevision": "2",
     "draftCards": [
       {
@@ -4490,6 +4490,136 @@
         "draftAllocation": {
           "section": "land"
         }
+      },
+      {
+        "oracleId": "ec2b3779-55f7-4169-aa66-6312fb52721f",
+        "name": "Indatha Triome",
+        "colorIdentity": [
+          "B",
+          "G",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "6bae00e8-06cf-4ac4-a1cc-757e454109fe",
+        "name": "Ketria Triome",
+        "colorIdentity": [
+          "G",
+          "R",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "c7fa1dda-9312-4ec8-82cd-a1ba7bc33497",
+        "name": "Raugrin Triome",
+        "colorIdentity": [
+          "R",
+          "U",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "00625242-9348-4ef4-b975-f2ac82fee21d",
+        "name": "Savai Triome",
+        "colorIdentity": [
+          "B",
+          "R",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "fdd46004-eaba-4024-8687-39b23dc6a58c",
+        "name": "Zagoth Triome",
+        "colorIdentity": [
+          "B",
+          "G",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "f5896356-5744-4f7e-a4e5-1cc36dde5958",
+        "name": "Jetmir's Garden",
+        "colorIdentity": [
+          "G",
+          "R",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "6e9ef5ef-6aed-4d3e-a59b-9e3dc8740b1b",
+        "name": "Raffine's Tower",
+        "colorIdentity": [
+          "B",
+          "U",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "3123ec89-8e95-4761-ba17-747ec667509f",
+        "name": "Spara's Headquarters",
+        "colorIdentity": [
+          "G",
+          "U",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "8291543f-d086-48aa-b2b7-5481ca8c9198",
+        "name": "Xander's Lounge",
+        "colorIdentity": [
+          "B",
+          "R",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
+      },
+      {
+        "oracleId": "f7e7b78c-c769-4720-8585-1874773eb342",
+        "name": "Ziatora's Proving Ground",
+        "colorIdentity": [
+          "B",
+          "G",
+          "R"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land"
+        }
       }
     ],
     "commanders": [
@@ -5000,7 +5130,7 @@
     "issues": [],
     "summary": {
       "draft": {
-        "total": 410,
+        "total": 420,
         "mono": {
           "W": 50,
           "U": 50,
@@ -5022,7 +5152,7 @@
           "UG": 4
         },
         "colorless": 60,
-        "lands": 60,
+        "lands": 70,
         "guildLands": {
           "WU": 4,
           "UB": 4,
@@ -5035,7 +5165,7 @@
           "WR": 4,
           "UG": 4
         },
-        "generalLands": 20
+        "generalLands": 30
       },
       "commanders": 55
     }

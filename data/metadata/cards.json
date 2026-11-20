@@ -2487,6 +2487,22 @@
       "scryfallUri": "https://scryfall.com/card/2x2/43/consecrated-sphinx?utm_source=api"
     },
     {
+      "oracleId": "3123ec89-8e95-4761-ba17-747ec667509f",
+      "name": "Spara's Headquarters",
+      "colorIdentity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land — Forest Plains Island",
+      "oracleText": "({T}: Add {G}, {W}, or {U}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/3/7363f1fb-9af3-4212-921f-d59533faf0e5.jpg?1783923052",
+      "scryfallUri": "https://scryfall.com/card/snc/257/sparas-headquarters?utm_source=api"
+    },
+    {
       "oracleId": "3127ae9b-a7a7-43ec-89d7-688f8445b33d",
       "name": "Garruk's Uprising",
       "colorIdentity": [
@@ -5915,6 +5931,22 @@
       "scryfallUri": "https://scryfall.com/card/tpr/50/forbid?utm_source=api"
     },
     {
+      "oracleId": "6e9ef5ef-6aed-4d3e-a59b-9e3dc8740b1b",
+      "name": "Raffine's Tower",
+      "colorIdentity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land — Plains Island Swamp",
+      "oracleText": "({T}: Add {W}, {U}, or {B}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/2/a2c56479-4bee-4edb-80d7-4af010b7c793.jpg?1783923055",
+      "scryfallUri": "https://scryfall.com/card/snc/254/raffines-tower?utm_source=api"
+    },
+    {
       "oracleId": "6ebdc9f3-6b23-4716-8011-48f00d7e30c8",
       "name": "Mimic Vat",
       "colorIdentity": [],
@@ -7013,6 +7045,22 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/a/2/a24b4cb6-cebb-428b-8654-74347a6a8d63.jpg?1783915679",
       "scryfallUri": "https://scryfall.com/card/cmm/150/demonic-tutor?utm_source=api"
+    },
+    {
+      "oracleId": "8291543f-d086-48aa-b2b7-5481ca8c9198",
+      "name": "Xander's Lounge",
+      "colorIdentity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land — Island Swamp Mountain",
+      "oracleText": "({T}: Add {U}, {B}, or {R}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/5/4/54f449ff-4025-465e-9ec5-a5cf42c4c9d3.jpg?1783923052",
+      "scryfallUri": "https://scryfall.com/card/snc/260/xanders-lounge?utm_source=api"
     },
     {
       "oracleId": "829d2e11-192f-4093-99f8-e13767b321a2",
@@ -13144,6 +13192,22 @@
       "scryfallUri": "https://scryfall.com/card/ltc/23/raise-the-palisade?utm_source=api"
     },
     {
+      "oracleId": "f5896356-5744-4f7e-a4e5-1cc36dde5958",
+      "name": "Jetmir's Garden",
+      "colorIdentity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land — Mountain Forest Plains",
+      "oracleText": "({T}: Add {R}, {G}, or {W}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/2/6/26d40e03-6de4-4373-9fbf-04c1dd79e995.jpg?1783923058",
+      "scryfallUri": "https://scryfall.com/card/snc/250/jetmirs-garden?utm_source=api"
+    },
+    {
       "oracleId": "f5f4dd28-f4ae-4d39-b9b8-6ebfd63c93fe",
       "name": "Basilisk Collar",
       "colorIdentity": [],
@@ -13282,6 +13346,22 @@
       "isLand": true,
       "imageUri": "https://cards.scryfall.io/normal/front/0/5/05e2a5e6-3aaa-4096-bdd0-fcc1afe5a36c.jpg?1783935808",
       "scryfallUri": "https://scryfall.com/card/xln/22/legions-landing-adanto-the-first-fort?utm_source=api"
+    },
+    {
+      "oracleId": "f7e7b78c-c769-4720-8585-1874773eb342",
+      "name": "Ziatora's Proving Ground",
+      "colorIdentity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land — Swamp Mountain Forest",
+      "oracleText": "({T}: Add {B}, {R}, or {G}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/5/75fdce80-e338-4a50-bdc6-786511feaeef.jpg?1783923052",
+      "scryfallUri": "https://scryfall.com/card/snc/261/ziatoras-proving-ground?utm_source=api"
     },
     {
       "oracleId": "f84d1291-1f82-4b67-a26e-b79624b4ce1d",
