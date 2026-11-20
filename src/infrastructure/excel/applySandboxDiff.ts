@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs'
 import { colorIdentityKey } from '../../domain/cube/colorIdentity'
+import { isTriomeLand } from '../../domain/cube/triomes'
 import type { DraftSection, GuildKey } from '../../domain/cube/types'
 import type { CardMetadata } from '../scryfall/types'
 import {
@@ -165,7 +166,11 @@ function draftBucket(layout: ActiveSectionLayout, row: number): string {
 
 function additionBucket(card: CardMetadata): string {
   if (card.isLand) {
-    // A land with a colorless Scryfall identity is placed among general lands.
+    // Triomes occupy general land slots, not a three-color spell section.
+    // Other 3+-color lands remain restricted by cube rules.
+    if (card.colorIdentity.length >= 3 && !isTriomeLand(card)) {
+      throw new Error(`${card.name} has a prohibited three-or-more-color identity; only Triome lands are exempt.`)
+    }
     // Existing guild allocations are positional and remain unchanged.
     return `land:${card.colorIdentity.length === 2 ? guildForIdentity(card) : 'general'}`
   }

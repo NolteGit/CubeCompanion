@@ -75,6 +75,18 @@ describe('sandbox diff workbook import', () => {
     expect(() => planWorkbookDiff(workbook, { ...changes, draftAdded: ['Old White'], draftRemoved: [] }, cards)).toThrow('Duplicate')
   })
 
+  it('places a three-color Triome in a general land slot', () => {
+    const { workbook, cube, cards } = fixture()
+    cards.set('savai triome', metadata('Savai Triome', ['W', 'B', 'R'], true))
+    const plan = planWorkbookDiff(workbook, {
+      draftAdded: ['Savai Triome'], draftRemoved: [],
+      commandersAdded: [], commandersRemoved: [],
+    }, cards)
+    expect(plan.additions).toContainEqual({ pool: 'draft', name: 'Savai Triome', cell: 'W44' })
+    applyWorkbookDiff(workbook, plan)
+    expect(cube.getCell('W44').text).toBe('Savai Triome')
+  })
+
   it('cannot place a card in an already full guild block', () => {
     const { workbook, cube, cards } = fixture()
     for (let row = 4; row <= 7; row += 1) {

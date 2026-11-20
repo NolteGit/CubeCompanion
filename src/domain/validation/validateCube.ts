@@ -14,6 +14,7 @@ import {
   colorIdentitySize,
 } from '../cube/colorIdentity'
 import { DEFAULT_CUBE_RULES, type CubeRules, type TargetRange } from '../cube/rules'
+import { isTriomeLand } from '../cube/triomes'
 import type {
   DraftValidationSummary,
   ValidationIssue,
@@ -217,13 +218,13 @@ function validateDraftColorIdentity(
   issues: ValidationIssue[],
 ): void {
   const illegalCards = cards
-    .filter((card) => colorIdentitySize(card.colorIdentity) >= 3)
+    .filter((card) => colorIdentitySize(card.colorIdentity) >= 3 && !isTriomeLand(card))
     .map((card) => card.name)
 
   if (illegalCards.length > 0) {
     issues.push({
       code: 'draft.disallowed-color-identity',
-      message: 'Draft cards may not have three-, four-, or five-color identity.',
+      message: 'Draft cards may not have three-, four-, or five-color identity, except Triome lands.',
       cards: illegalCards,
       actual: illegalCards.length,
       expected: 0,

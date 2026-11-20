@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildAgentDeck, chooseAgentPick, createDraftAgents, fixingLandColors, AGENT_RULES } from '../../src/domain/draft/agents'
-import { checkDraftDeck } from '../../src/domain/draft/deck'
+import { checkDraftDeck, isCommanderLegal } from '../../src/domain/draft/deck'
 import { pickDraftCard, startDraft } from '../../src/domain/draft/engine'
 import type { CubeCard } from '../../src/domain/cube/types'
 
@@ -109,6 +109,19 @@ describe('lightweight playable-pick heuristics', () => {
   const spell = {
     ...card('castable', ['U']), manaValue: 3, manaCost: '{2}{U}', typeLine: 'Creature — Wizard',
   }
+
+  it('values legal Triomes as fixing without erasing color restrictions', () => {
+    const triome = {
+      ...card('Savai Triome', ['W', 'B', 'R'], true),
+      typeLine: 'Land — Mountain Plains Swamp',
+      oracleText: '({T}: Add {R}, {W}, or {B}.)',
+    }
+    const mardu = [card('mardu-commander', ['W', 'B', 'R'])]
+    const whiteSpell = { ...card('white-spell', ['W']), manaValue: 2, manaCost: '{1}{W}', typeLine: 'Creature — Human' }
+    expect(fixingLandColors(triome, mardu)).toEqual(['W', 'B', 'R'])
+    expect(chooseAgentPick([whiteSpell, triome], [], mardu, 0)).toBe(1)
+    expect(isCommanderLegal(triome, [card('white-commander', ['W'])])).toBe(false)
+  })
 
   it('recognizes duals, fetchlands, triomes and any-color lands without external tags', () => {
     expect(fixingLandColors(fixingDual, [commander3])).toEqual(['W', 'U'])

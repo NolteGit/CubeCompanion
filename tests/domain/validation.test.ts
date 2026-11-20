@@ -106,6 +106,28 @@ describe('cube validation', () => {
     )
   })
 
+  it('allows Triomes as general lands while keeping their Commander color identity', () => {
+    const cube = buildValidCube()
+    const index = cube.draftCards.findIndex((entry) => entry.name === 'Land-General-1')
+    cube.draftCards[index] = card('Savai Triome', ['W', 'B', 'R'], true, undefined, { section: 'land' })
+
+    const result = validateCube(cube)
+    expect(result.valid).toBe(true)
+    expect(result.summary.draft.lands).toBe(60)
+    expect(result.summary.draft.generalLands).toBe(20)
+    expect(cube.draftCards[index].colorIdentity).toEqual(['W', 'B', 'R'])
+  })
+
+  it('does not exempt arbitrary three-color lands or spells', () => {
+    const cube = buildValidCube()
+    const index = cube.draftCards.findIndex((entry) => entry.name === 'Land-General-1')
+    cube.draftCards[index] = card('Unrelated Three-Color Land', ['W', 'U', 'G'], true, undefined, { section: 'land' })
+    const result = validateCube(cube)
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'draft.disallowed-color-identity', cards: ['Unrelated Three-Color Land'] }),
+    ]))
+  })
+
   it('rejects three-or-more-color cards in the draft pool', () => {
     const cube = buildValidCube()
     cube.draftCards[0] = card('Illegal Bant Card', ['W', 'U', 'G'])
