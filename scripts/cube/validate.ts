@@ -1,4 +1,5 @@
 import { prepareCubeSource } from './pipeline.ts'
+import { printNextSteps, RELEASE_NOTE_COMMAND } from './nextSteps.ts'
 import {
   printIdeaValidationIssues,
   printPreparedCube,
@@ -31,4 +32,8 @@ if (result.unresolved.length > 0) {
   console.log(`Draft:      ${result.cube.draftCards.length}`)
   console.log(`Commanders: ${result.cube.commanders.length}`)
   console.log('\x1b[32m✓ VALID — cube source passed release checks\x1b[0m')
+  printNextSteps('create the cube release, then verify', [
+    RELEASE_NOTE_COMMAND,
+    'npm run verify',
+  ], 'Run in order. Publishing the snapshot does not commit or push Git changes.')
 }
