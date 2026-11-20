@@ -6,6 +6,7 @@ import { parseSandboxDiff, planWorkbookDiff, applyWorkbookDiff } from '../../src
 import { extractWorkbook, WORKBOOK_PATH } from '../../src/infrastructure/excel/index.ts'
 import { cardLookupKey, resolveCardNames, type CardMetadata } from '../../src/infrastructure/scryfall/index.ts'
 import { prepareCubeSource } from './pipeline.ts'
+import { printNextSteps, RELEASE_NOTE_COMMAND } from './nextSteps.ts'
 
 function valueFor(name: string): string | undefined {
   const index = process.argv.indexOf(name)
@@ -82,7 +83,10 @@ async function main(): Promise<void> {
 
   if (!applying) {
     console.log('\nPREVIEW ONLY — no workbook changes were written.')
-    console.log('After reviewing, rerun with --apply to validate and update the Excel file.')
+    const workbookArg = valueFor('--workbook') ? ` --workbook "${workbookPath}"` : ''
+    printNextSteps('apply the reviewed changes', [
+      `npm run cube:apply-diff -- --file "${resolve(diffPath)}"${workbookArg} --apply`,
+    ])
     return
   }
 
@@ -112,7 +116,12 @@ async function main(): Promise<void> {
     await rename(temporary, workbookPath)
     console.log(`\nBACKUP: ${backup}`)
     console.log(`UPDATED: ${workbookPath}`)
-    console.log('✓ Workbook validated and updated. Review the Excel and Git diff, then run cube:release separately.')
+    console.log('✓ Workbook validated and updated.')
+    printNextSteps('validate, release, and verify', [
+      'npm run cube:validate',
+      RELEASE_NOTE_COMMAND,
+      'npm run verify',
+    ], 'Check the workbook first. Run in order, stopping if any command fails.')
   } finally {
     await rm(temporary, { force: true })
   }
