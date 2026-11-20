@@ -1,13 +1,14 @@
 {
   "release": {
-    "snapshotId": "e7f1eb468b44ab0c86324fdaa671f02eec0d968015c7f3a26dfc0dabc599b0fe",
-    "publishedAt": "2026-11-19T07:54:05.622Z",
-    "rulesRevision": "2"
+    "snapshotId": "25c1903a83a866f6c9bfd2109c4151c12faad9deae8a93c49c338ca6daa8f632",
+    "publishedAt": "2026-11-20T17:10:45.398Z",
+    "rulesRevision": "2",
+    "note": "Cube update"
   },
   "snapshot": {
-    "id": "e7f1eb468b44ab0c86324fdaa671f02eec0d968015c7f3a26dfc0dabc599b0fe",
-    "createdAt": "2026-11-15T20:56:00.055Z",
-    "note": "Remove Politicals and add fixes",
+    "id": "25c1903a83a866f6c9bfd2109c4151c12faad9deae8a93c49c338ca6daa8f632",
+    "createdAt": "2026-11-20T17:10:45.398Z",
+    "note": "Cube update",
     "rulesRevision": "2",
     "draftCards": [
       {
@@ -275,17 +276,6 @@
         }
       },
       {
-        "oracleId": "605c1ee0-5e8a-4e0a-a99b-42a38873f822",
-        "name": "Welcoming Vampire",
-        "colorIdentity": [
-          "W"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "white"
-        }
-      },
-      {
         "oracleId": "454a8902-8120-4373-96ee-bbf352b04e8d",
         "name": "Hero of Bladehold",
         "colorIdentity": [
@@ -396,6 +386,17 @@
         }
       },
       {
+        "oracleId": "2e467fab-e808-44d3-99bf-e3621baeb7cb",
+        "name": "Erode",
+        "colorIdentity": [
+          "W"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "white"
+        }
+      },
+      {
         "oracleId": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
         "name": "Final Showdown",
         "colorIdentity": [
@@ -409,6 +410,17 @@
       {
         "oracleId": "d683d985-9888-4d21-8b5f-69e69ce4a03b",
         "name": "Path to Exile",
+        "colorIdentity": [
+          "W"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "white"
+        }
+      },
+      {
+        "oracleId": "09669283-eb14-46a2-b37a-51d7a52da891",
+        "name": "Requisition Raid",
         "colorIdentity": [
           "W"
         ],
@@ -464,17 +476,6 @@
       {
         "oracleId": "eab0d8b9-c66f-402f-b259-f46f15cefd78",
         "name": "Elspeth, Knight-Errant",
-        "colorIdentity": [
-          "W"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "white"
-        }
-      },
-      {
-        "oracleId": "51eae7ff-fed9-4afe-8053-7690379449dd",
-        "name": "Gideon, Ally of Zendikar",
         "colorIdentity": [
           "W"
         ],
@@ -660,17 +661,6 @@
         }
       },
       {
-        "oracleId": "5b90f8ed-84b2-4306-9dfa-b5654ea0e4cd",
-        "name": "Mercurial Spelldancer",
-        "colorIdentity": [
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "blue"
-        }
-      },
-      {
         "oracleId": "bde94af8-faea-41ff-8eed-ba642eac9968",
         "name": "Phantasmal Image",
         "colorIdentity": [
@@ -693,6 +683,28 @@
         }
       },
       {
+        "oracleId": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+        "name": "Thieving Skydiver",
+        "colorIdentity": [
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "blue"
+        }
+      },
+      {
+        "oracleId": "2bace3ea-7d28-4a1c-857a-d3c3a1c11b59",
+        "name": "Wan Shi Tong, Librarian",
+        "colorIdentity": [
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "blue"
+        }
+      },
+      {
         "oracleId": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
         "name": "Brazen Borrower // Petty Theft",
         "colorIdentity": [
@@ -706,17 +718,6 @@
       {
         "oracleId": "69facbc7-3859-4716-b627-5199571fb3cf",
         "name": "Chasm Skulker",
-        "colorIdentity": [
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "blue"
-        }
-      },
-      {
-        "oracleId": "97febf6b-302c-4c41-8838-eef7c7353bdc",
-        "name": "Glen Elendra Guardian",
         "colorIdentity": [
           "U"
         ],
@@ -770,17 +771,6 @@
         }
       },
       {
-        "oracleId": "a4f8012e-9880-45b0-9eba-d74c207d3242",
-        "name": "Naga Fleshcrafter",
-        "colorIdentity": [
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "blue"
-        }
-      },
-      {
         "oracleId": "340bbe8b-e987-4c3e-ab4e-9dee63e57d4f",
         "name": "Phyrexian Metamorph",
         "colorIdentity": [
@@ -816,17 +806,6 @@
       {
         "oracleId": "e87906d2-db1a-4e19-b910-adb4eb339945",
         "name": "Urza, Lord High Artificer",
-        "colorIdentity": [
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "blue"
-        }
-      },
-      {
-        "oracleId": "0f41cefc-d6ff-4db7-ba35-502b7e081de1",
-        "name": "Venser, Shaper Savant",
         "colorIdentity": [
           "U"
         ],
@@ -913,6 +892,17 @@
         }
       },
       {
+        "oracleId": "6df1c314-b97b-4bbc-8b7e-a07785347a49",
+        "name": "Occult Epiphany",
+        "colorIdentity": [
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "blue"
+        }
+      },
+      {
         "oracleId": "713332c1-5bd8-400f-bfff-c1ca0697a043",
         "name": "Opt",
         "colorIdentity": [
@@ -959,6 +949,17 @@
       {
         "oracleId": "06692cd9-ac2f-4a32-8fd1-043ba3c0fe71",
         "name": "Rapid Hybridization",
+        "colorIdentity": [
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "blue"
+        }
+      },
+      {
+        "oracleId": "56956afd-db53-4542-816b-490c8b0bbcf7",
+        "name": "Serum Visions",
         "colorIdentity": [
           "U"
         ],
@@ -1353,6 +1354,17 @@
         }
       },
       {
+        "oracleId": "b8619990-9dc2-4fcc-bc7e-457b77cd2a8e",
+        "name": "Rankle, Master of Pranks",
+        "colorIdentity": [
+          "B"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "black"
+        }
+      },
+      {
         "oracleId": "7b459306-149b-4f43-abc1-2dd70c748c0e",
         "name": "Ravenous Chupacabra",
         "colorIdentity": [
@@ -1366,28 +1378,6 @@
       {
         "oracleId": "34f34409-326d-4994-a0ea-1a69aa278f03",
         "name": "Sheoldred, the Apocalypse",
-        "colorIdentity": [
-          "B"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "black"
-        }
-      },
-      {
-        "oracleId": "b8619990-9dc2-4fcc-bc7e-457b77cd2a8e",
-        "name": "Rankle, Master of Pranks",
-        "colorIdentity": [
-          "B"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "black"
-        }
-      },
-      {
-        "oracleId": "45866598-4ee4-46b6-ade2-ffcdbe98e58f",
-        "name": "Necron Deathmark",
         "colorIdentity": [
           "B"
         ],
@@ -1595,6 +1585,17 @@
         }
       },
       {
+        "oracleId": "2a9783c5-084b-4cd3-b7fa-ae9d7fed51d1",
+        "name": "Come Back Wrong",
+        "colorIdentity": [
+          "B"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "black"
+        }
+      },
+      {
         "oracleId": "fd74f8eb-0253-42dd-8277-186d4934da38",
         "name": "Dismember",
         "colorIdentity": [
@@ -1658,6 +1659,17 @@
         "isLand": false,
         "draftAllocation": {
           "section": "black"
+        }
+      },
+      {
+        "oracleId": "3b74c8ac-9c19-45b0-935f-8630b8da4543",
+        "name": "Clockwork Percussionist",
+        "colorIdentity": [
+          "R"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "red"
         }
       },
       {
@@ -1850,17 +1862,6 @@
       {
         "oracleId": "5fac139a-07d3-4e6c-98e3-d98b199f7a6f",
         "name": "Young Pyromancer",
-        "colorIdentity": [
-          "R"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "red"
-        }
-      },
-      {
-        "oracleId": "15361770-c6dc-4db7-b745-aa03e4b866ea",
-        "name": "Breeches, Eager Pillager",
         "colorIdentity": [
           "R"
         ],
@@ -2277,28 +2278,6 @@
         }
       },
       {
-        "oracleId": "7c06a368-3306-48e0-825e-a8fdc81fa343",
-        "name": "Biophagus",
-        "colorIdentity": [
-          "G"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "green"
-        }
-      },
-      {
-        "oracleId": "592689f2-f17c-40d6-b880-431f4b6a6b0c",
-        "name": "Bristlebane Battler",
-        "colorIdentity": [
-          "G"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "green"
-        }
-      },
-      {
         "oracleId": "f8640899-2458-40f2-98a3-35c402ee9a7a",
         "name": "Jolrael, Mwonvuli Recluse",
         "colorIdentity": [
@@ -2519,6 +2498,17 @@
         }
       },
       {
+        "oracleId": "8b7a3613-f1bd-4262-9b11-b631167c2c2d",
+        "name": "Foundation Breaker",
+        "colorIdentity": [
+          "G"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "green"
+        }
+      },
+      {
         "oracleId": "109cdefd-e8cc-4ac7-b6ba-2cfdef8d780f",
         "name": "Icetill Explorer",
         "colorIdentity": [
@@ -2629,17 +2619,6 @@
         }
       },
       {
-        "oracleId": "86ef2ceb-b7e6-4451-92ec-8528ea191d3a",
-        "name": "Old One Eye",
-        "colorIdentity": [
-          "G"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "green"
-        }
-      },
-      {
         "oracleId": "5a3fdf5a-bff8-4896-b288-3f43f9a72d9b",
         "name": "Vorinclex, Monstrous Raider",
         "colorIdentity": [
@@ -2673,8 +2652,30 @@
         }
       },
       {
+        "oracleId": "9af4a832-d634-47aa-91ed-79d44fe08864",
+        "name": "Pick Your Poison",
+        "colorIdentity": [
+          "G"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "green"
+        }
+      },
+      {
         "oracleId": "9d2d6479-531c-4ce1-b52b-00e36fa63b64",
         "name": "Rancor",
+        "colorIdentity": [
+          "G"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "green"
+        }
+      },
+      {
+        "oracleId": "bffdfe7b-f17a-41b6-a460-80280fe497d4",
+        "name": "Collective Resistance",
         "colorIdentity": [
           "G"
         ],
@@ -2779,6 +2780,15 @@
         }
       },
       {
+        "oracleId": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+        "name": "Gingerbrute",
+        "colorIdentity": [],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "colorless"
+        }
+      },
+      {
         "oracleId": "3a940dfa-a026-4969-8981-ef90cdfbe9ef",
         "name": "Ornithopter of Paradise",
         "colorIdentity": [],
@@ -2860,6 +2870,15 @@
         }
       },
       {
+        "oracleId": "d895863e-a3c5-4e1f-bd28-e47a8717bbd0",
+        "name": "Scavenged Brawler",
+        "colorIdentity": [],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "colorless"
+        }
+      },
+      {
         "oracleId": "d1a60f44-7696-49ee-91fb-cab5b3102962",
         "name": "Wurmcoil Engine",
         "colorIdentity": [],
@@ -2916,6 +2935,15 @@
       {
         "oracleId": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
         "name": "Commander's Plate",
+        "colorIdentity": [],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "colorless"
+        }
+      },
+      {
+        "oracleId": "63bfb9ca-d9d5-4c17-be39-82eb115bc20c",
+        "name": "Lavaspur Boots",
         "colorIdentity": [],
         "isLand": false,
         "draftAllocation": {
@@ -3040,8 +3068,8 @@
         }
       },
       {
-        "oracleId": "b410f294-cbb6-4016-981f-808fd9b7bbae",
-        "name": "Resurrection Orb",
+        "oracleId": "b40138c3-48bc-4825-ae48-5fea95304088",
+        "name": "Silver Shroud Costume",
         "colorIdentity": [],
         "isLand": false,
         "draftAllocation": {
@@ -3265,15 +3293,6 @@
         }
       },
       {
-        "oracleId": "d64a4ad2-c80e-4a7f-93f2-b702916dba07",
-        "name": "Thunderhawk Gunship",
-        "colorIdentity": [],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "colorless"
-        }
-      },
-      {
         "oracleId": "7359e82b-db79-488d-a1d4-75a00f12a4cf",
         "name": "Kaldra Compleat",
         "colorIdentity": [],
@@ -3322,8 +3341,8 @@
         }
       },
       {
-        "oracleId": "f84d1291-1f82-4b67-a26e-b79624b4ce1d",
-        "name": "Cloudblazer",
+        "oracleId": "f3838ff1-5403-4f3f-8531-36029c13fcfc",
+        "name": "Riptide Gearhulk",
         "colorIdentity": [
           "U",
           "W"
@@ -3332,19 +3351,6 @@
         "draftAllocation": {
           "section": "multicolor",
           "guild": "WU"
-        }
-      },
-      {
-        "oracleId": "afb278f1-0e21-4f6d-96bb-c34aa3ef96b0",
-        "name": "Tyrant's Scorn",
-        "colorIdentity": [
-          "B",
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "multicolor",
-          "guild": "UB"
         }
       },
       {
@@ -3374,6 +3380,19 @@
         }
       },
       {
+        "oracleId": "afb278f1-0e21-4f6d-96bb-c34aa3ef96b0",
+        "name": "Tyrant's Scorn",
+        "colorIdentity": [
+          "B",
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "multicolor",
+          "guild": "UB"
+        }
+      },
+      {
         "oracleId": "8ab7358e-a0f5-4220-8769-25177237bcdf",
         "name": "Tezzeret, Agent of Bolas",
         "colorIdentity": [
@@ -3384,6 +3403,19 @@
         "draftAllocation": {
           "section": "multicolor",
           "guild": "UB"
+        }
+      },
+      {
+        "oracleId": "a498bc70-36e7-4454-bc44-906893df38b8",
+        "name": "Murderous Redcap",
+        "colorIdentity": [
+          "B",
+          "R"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "multicolor",
+          "guild": "BR"
         }
       },
       {
@@ -3426,34 +3458,8 @@
         }
       },
       {
-        "oracleId": "a498bc70-36e7-4454-bc44-906893df38b8",
-        "name": "Murderous Redcap",
-        "colorIdentity": [
-          "B",
-          "R"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "multicolor",
-          "guild": "BR"
-        }
-      },
-      {
-        "oracleId": "2da232d8-580f-4116-b977-2c59cd21b5a4",
-        "name": "Hull Breach",
-        "colorIdentity": [
-          "G",
-          "R"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "multicolor",
-          "guild": "RG"
-        }
-      },
-      {
-        "oracleId": "acfa77fd-3610-4f12-9c3c-bd860ce91700",
-        "name": "Rhythm of the Wild",
+        "oracleId": "b347be2d-9aa1-42a9-b652-8fb032832f09",
+        "name": "Halana and Alena, Partners",
         "colorIdentity": [
           "G",
           "R"
@@ -3478,8 +3484,21 @@
         }
       },
       {
-        "oracleId": "4d81db0d-2f56-42ac-92ce-249a34d262d4",
-        "name": "Shadow in the Warp",
+        "oracleId": "2da232d8-580f-4116-b977-2c59cd21b5a4",
+        "name": "Hull Breach",
+        "colorIdentity": [
+          "G",
+          "R"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "multicolor",
+          "guild": "RG"
+        }
+      },
+      {
+        "oracleId": "acfa77fd-3610-4f12-9c3c-bd860ce91700",
+        "name": "Rhythm of the Wild",
         "colorIdentity": [
           "G",
           "R"
@@ -3608,6 +3627,19 @@
         }
       },
       {
+        "oracleId": "e025a714-02da-4b0c-8021-cf3e8dc9b19e",
+        "name": "The Locust God",
+        "colorIdentity": [
+          "R",
+          "U"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "multicolor",
+          "guild": "UR"
+        }
+      },
+      {
         "oracleId": "9d4b1e44-3c66-4b1b-8a1d-308aa4f841f8",
         "name": "Dack Fayden",
         "colorIdentity": [
@@ -3623,19 +3655,6 @@
       {
         "oracleId": "3c970f43-17da-4187-a084-efd53b579067",
         "name": "Ral, Crackling Wit",
-        "colorIdentity": [
-          "R",
-          "U"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "multicolor",
-          "guild": "UR"
-        }
-      },
-      {
-        "oracleId": "e025a714-02da-4b0c-8021-cf3e8dc9b19e",
-        "name": "The Locust God",
         "colorIdentity": [
           "R",
           "U"
@@ -3712,19 +3731,6 @@
         }
       },
       {
-        "oracleId": "2679d0dd-ba30-4a1c-b6a0-b3ac6c790496",
-        "name": "Boros Charm",
-        "colorIdentity": [
-          "R",
-          "W"
-        ],
-        "isLand": false,
-        "draftAllocation": {
-          "section": "multicolor",
-          "guild": "WR"
-        }
-      },
-      {
         "oracleId": "4dce1f49-ddad-4748-893a-e10d831ee7d7",
         "name": "Merry, Esquire of Rohan",
         "colorIdentity": [
@@ -3751,6 +3757,19 @@
         }
       },
       {
+        "oracleId": "2679d0dd-ba30-4a1c-b6a0-b3ac6c790496",
+        "name": "Boros Charm",
+        "colorIdentity": [
+          "R",
+          "W"
+        ],
+        "isLand": false,
+        "draftAllocation": {
+          "section": "multicolor",
+          "guild": "WR"
+        }
+      },
+      {
         "oracleId": "69fd4ddf-9ed8-4c56-bef3-9944daf05e4f",
         "name": "Coiling Oracle",
         "colorIdentity": [
@@ -3764,8 +3783,8 @@
         }
       },
       {
-        "oracleId": "34bcc217-dd91-45a0-90d7-a94d02f1f317",
-        "name": "Growth Spiral",
+        "oracleId": "6d42e81a-84d3-4c90-9c69-c0d562c66cac",
+        "name": "Kimahri, Valiant Guardian",
         "colorIdentity": [
           "G",
           "U"
@@ -3777,8 +3796,8 @@
         }
       },
       {
-        "oracleId": "12a43da3-57aa-4394-8cce-e53ec7e3538e",
-        "name": "Tyranid Prime",
+        "oracleId": "34bcc217-dd91-45a0-90d7-a94d02f1f317",
+        "name": "Growth Spiral",
         "colorIdentity": [
           "G",
           "U"
@@ -4571,6 +4590,14 @@
         "isLand": false
       },
       {
+        "oracleId": "d3b2d8a2-d3bc-448c-9cf6-6bead6010c28",
+        "name": "Bristly Bill, Spine Sower",
+        "colorIdentity": [
+          "G"
+        ],
+        "isLand": false
+      },
+      {
         "oracleId": "d69b1e68-8d8e-460b-9eb4-6a68be886197",
         "name": "Kodama of the West Tree",
         "colorIdentity": [
@@ -4581,14 +4608,6 @@
       {
         "oracleId": "84d648c7-655e-4590-a3e0-366a8a4a4cb3",
         "name": "Radagast of Rhosgobel",
-        "colorIdentity": [
-          "G"
-        ],
-        "isLand": false
-      },
-      {
-        "oracleId": "d3b2d8a2-d3bc-448c-9cf6-6bead6010c28",
-        "name": "Bristly Bill, Spine Sower",
         "colorIdentity": [
           "G"
         ],
@@ -4703,15 +4722,6 @@
         "isLand": false
       },
       {
-        "oracleId": "d627996b-cbcd-4162-bd13-9ab286de64d1",
-        "name": "Bria, Riptide Rogue",
-        "colorIdentity": [
-          "R",
-          "U"
-        ],
-        "isLand": false
-      },
-      {
         "oracleId": "0452be2a-e97a-4269-a9e3-b616265ecb2e",
         "name": "Vivi Ornitier",
         "colorIdentity": [
@@ -4721,11 +4731,11 @@
         "isLand": false
       },
       {
-        "oracleId": "62511d43-8eaf-405a-9c81-7bd593d3a01e",
-        "name": "Ygra, Eater of All",
+        "oracleId": "d627996b-cbcd-4162-bd13-9ab286de64d1",
+        "name": "Bria, Riptide Rogue",
         "colorIdentity": [
-          "B",
-          "G"
+          "R",
+          "U"
         ],
         "isLand": false
       },
@@ -4739,11 +4749,11 @@
         "isLand": false
       },
       {
-        "oracleId": "82ea519f-0e14-43d3-bf46-a1c5352e9600",
-        "name": "The Jolly Balloon Man",
+        "oracleId": "62511d43-8eaf-405a-9c81-7bd593d3a01e",
+        "name": "Ygra, Eater of All",
         "colorIdentity": [
-          "R",
-          "W"
+          "B",
+          "G"
         ],
         "isLand": false
       },
@@ -4757,8 +4767,17 @@
         "isLand": false
       },
       {
-        "oracleId": "6d42e81a-84d3-4c90-9c69-c0d562c66cac",
-        "name": "Kimahri, Valiant Guardian",
+        "oracleId": "82ea519f-0e14-43d3-bf46-a1c5352e9600",
+        "name": "The Jolly Balloon Man",
+        "colorIdentity": [
+          "R",
+          "W"
+        ],
+        "isLand": false
+      },
+      {
+        "oracleId": "45284633-8aab-4078-ae5c-7b0d75efe2f5",
+        "name": "Rikala, Homarid King",
         "colorIdentity": [
           "G",
           "U"
@@ -4775,8 +4794,8 @@
         "isLand": false
       },
       {
-        "oracleId": "76c43ac8-a878-4239-b0e3-f0254ef63e50",
-        "name": "Jin Sakai, Ghost of Tsushima",
+        "oracleId": "936ae5dc-9838-47f3-ba1f-66523a7f5b76",
+        "name": "Alela, Artful Provocateur",
         "colorIdentity": [
           "B",
           "U",
@@ -4785,8 +4804,8 @@
         "isLand": false
       },
       {
-        "oracleId": "936ae5dc-9838-47f3-ba1f-66523a7f5b76",
-        "name": "Alela, Artful Provocateur",
+        "oracleId": "76c43ac8-a878-4239-b0e3-f0254ef63e50",
+        "name": "Jin Sakai, Ghost of Tsushima",
         "colorIdentity": [
           "B",
           "U",
@@ -4835,8 +4854,8 @@
         "isLand": false
       },
       {
-        "oracleId": "b1eee275-5106-4c8d-a497-d7945ad81d74",
-        "name": "Samut, Voice of Dissent",
+        "oracleId": "da72a4bc-ce6f-4b72-bc66-2ee33cfa87df",
+        "name": "Jetmir, Nexus of Revels",
         "colorIdentity": [
           "G",
           "R",
@@ -4845,8 +4864,8 @@
         "isLand": false
       },
       {
-        "oracleId": "da72a4bc-ce6f-4b72-bc66-2ee33cfa87df",
-        "name": "Jetmir, Nexus of Revels",
+        "oracleId": "b1eee275-5106-4c8d-a497-d7945ad81d74",
+        "name": "Samut, Voice of Dissent",
         "colorIdentity": [
           "G",
           "R",
@@ -4875,16 +4894,6 @@
         "isLand": false
       },
       {
-        "oracleId": "304c194f-fa0b-42e5-93ca-8c587181d33c",
-        "name": "Karador, Ghost Chieftain",
-        "colorIdentity": [
-          "B",
-          "G",
-          "W"
-        ],
-        "isLand": false
-      },
-      {
         "oracleId": "422a76e1-97a2-4a90-b07d-f487a2d8c236",
         "name": "Thalia and The Gitrog Monster",
         "colorIdentity": [
@@ -4895,11 +4904,11 @@
         "isLand": false
       },
       {
-        "oracleId": "d92725de-ead0-4a6c-83db-55ec3acc7184",
-        "name": "Narset, Enlightened Exile",
+        "oracleId": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+        "name": "Karador, Ghost Chieftain",
         "colorIdentity": [
-          "R",
-          "U",
+          "B",
+          "G",
           "W"
         ],
         "isLand": false
@@ -4915,8 +4924,18 @@
         "isLand": false
       },
       {
-        "oracleId": "95b53836-18aa-451a-992d-2a111deeeab2",
-        "name": "Yarok, the Desecrated",
+        "oracleId": "d92725de-ead0-4a6c-83db-55ec3acc7184",
+        "name": "Narset, Enlightened Exile",
+        "colorIdentity": [
+          "R",
+          "U",
+          "W"
+        ],
+        "isLand": false
+      },
+      {
+        "oracleId": "5bc66b18-22ac-4138-b527-fa711116e298",
+        "name": "Zimone and Dina",
         "colorIdentity": [
           "B",
           "G",
@@ -4925,8 +4944,8 @@
         "isLand": false
       },
       {
-        "oracleId": "5bc66b18-22ac-4138-b527-fa711116e298",
-        "name": "Zimone and Dina",
+        "oracleId": "95b53836-18aa-451a-992d-2a111deeeab2",
+        "name": "Yarok, the Desecrated",
         "colorIdentity": [
           "B",
           "G",
@@ -4981,7 +5000,7 @@
     "issues": [],
     "summary": {
       "draft": {
-        "total": 408,
+        "total": 410,
         "mono": {
           "W": 50,
           "U": 50,
@@ -5002,7 +5021,7 @@
           "WR": 4,
           "UG": 4
         },
-        "colorless": 58,
+        "colorless": 60,
         "lands": 60,
         "guildLands": {
           "WU": 4,

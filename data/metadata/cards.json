@@ -2087,6 +2087,20 @@
       "scryfallUri": "https://scryfall.com/card/mh3/235/windswept-heath?utm_source=api"
     },
     {
+      "oracleId": "2993dc7d-723d-4a9b-94bd-4bb02a9f7243",
+      "name": "Tishana's Tidebinder",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{2}{U}",
+      "typeLine": "Creature — Merfolk Wizard",
+      "oracleText": "Flash\nWhen this creature enters, counter up to one target activated or triggered ability. If an ability of an artifact, creature, or planeswalker is countered this way, that permanent loses all abilities for as long as this creature remains on the battlefield. (Mana abilities can't be targeted.)",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/9/0/907b3d1d-8c85-4707-80b5-c4d832df9846.jpg?1783913786",
+      "scryfallUri": "https://scryfall.com/card/lci/81/tishanas-tidebinder?utm_source=api"
+    },
+    {
       "oracleId": "299fc083-0834-4064-8344-f895aff68867",
       "name": "Entomb",
       "colorIdentity": [
@@ -3580,6 +3594,21 @@
       "scryfallUri": "https://scryfall.com/card/trk/295/sacred-foundry?utm_source=api"
     },
     {
+      "oracleId": "45284633-8aab-4078-ae5c-7b0d75efe2f5",
+      "name": "Rikala, Homarid King",
+      "colorIdentity": [
+        "G",
+        "U"
+      ],
+      "manaValue": 3,
+      "manaCost": "{1}{G}{U}",
+      "typeLine": "Legendary Creature — Lobster Noble",
+      "oracleText": "At the beginning of your upkeep, put a tide counter on Rikala. Then if there are four or more tide counters on Rikala, remove them.\nCreatures you control get +1/+0 for each tide counter on Rikala.\nWhenever you tap an Island for mana, if there are three or more tide counters on Rikala, add an additional {U}.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/0/1/01f1ab6c-446d-4a38-b40d-39ea04f5977d.jpg?1792741756",
+      "scryfallUri": "https://scryfall.com/card/mbc/49/rikala-homarid-king?utm_source=api"
+    },
+    {
       "oracleId": "452e3f5f-ce17-4682-966b-5cc100210aee",
       "name": "Bonesplitter",
       "colorIdentity": [],
@@ -4527,6 +4556,20 @@
       "scryfallUri": "https://scryfall.com/card/clb/274/elminster?utm_source=api"
     },
     {
+      "oracleId": "56956afd-db53-4542-816b-490c8b0bbcf7",
+      "name": "Serum Visions",
+      "colorIdentity": [
+        "U"
+      ],
+      "manaValue": 1,
+      "manaCost": "{U}",
+      "typeLine": "Sorcery",
+      "oracleText": "Draw a card. Scry 2.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/5/b/5b75eb6b-d76c-4b92-b042-13493f9ef164.jpg?1783911938",
+      "scryfallUri": "https://scryfall.com/card/otc/112/serum-visions?utm_source=api"
+    },
+    {
       "oracleId": "56e05b17-aa1d-483d-857c-4cab4f12aa8a",
       "name": "Triplicate Titan",
       "colorIdentity": [],
@@ -4960,6 +5003,20 @@
       "isLand": true,
       "imageUri": "https://cards.scryfall.io/normal/front/9/f/9fbe68ba-ffe5-4fe0-ac0a-0b3221e4f395.jpg?1783903197",
       "scryfallUri": "https://scryfall.com/card/msc/263/scavenger-grounds?utm_source=api"
+    },
+    {
+      "oracleId": "5effb651-f9e0-4c14-8192-bd0e132b8d5d",
+      "name": "Bitterbloom Bearer",
+      "colorIdentity": [
+        "B"
+      ],
+      "manaValue": 2,
+      "manaCost": "{B}{B}",
+      "typeLine": "Creature — Faerie Rogue",
+      "oracleText": "Flash\nFlying\nAt the beginning of your upkeep, you lose 1 life and create a 1/1 blue and black Faerie creature token with flying.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/1/7127164d-f2a3-4d79-b6db-93507ff5ab47.jpg?1783904470",
+      "scryfallUri": "https://scryfall.com/card/ecl/88/bitterbloom-bearer?utm_source=api"
     },
     {
       "oracleId": "5f0fa785-37ab-46a8-9ec0-6f8b29576d93",
@@ -8358,6 +8415,20 @@
       "scryfallUri": "https://scryfall.com/card/eoc/120/korvold-fae-cursed-king?utm_source=api"
     },
     {
+      "oracleId": "9af4a832-d634-47aa-91ed-79d44fe08864",
+      "name": "Pick Your Poison",
+      "colorIdentity": [
+        "G"
+      ],
+      "manaValue": 1,
+      "manaCost": "{G}",
+      "typeLine": "Sorcery",
+      "oracleText": "Choose one —\n• Each opponent sacrifices an artifact of their choice.\n• Each opponent sacrifices an enchantment of their choice.\n• Each opponent sacrifices a creature with flying of their choice.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/f/5/f58cfb23-4d99-4133-bf4b-d7e7c7d17cea.jpg?1783912863",
+      "scryfallUri": "https://scryfall.com/card/mkm/170/pick-your-poison?utm_source=api"
+    },
+    {
       "oracleId": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
       "name": "Thalia, Guardian of Thraben",
       "colorIdentity": [
@@ -9672,6 +9743,21 @@
       "scryfallUri": "https://scryfall.com/card/trc/428/sun-titan?utm_source=api"
     },
     {
+      "oracleId": "b347be2d-9aa1-42a9-b652-8fb032832f09",
+      "name": "Halana and Alena, Partners",
+      "colorIdentity": [
+        "G",
+        "R"
+      ],
+      "manaValue": 4,
+      "manaCost": "{2}{R}{G}",
+      "typeLine": "Legendary Creature — Human Ranger",
+      "oracleText": "Reach (This creature can block creatures with flying.)\nFirst strike (This creature deals combat damage before creatures without first strike.)\nAt the beginning of combat on your turn, put X +1/+1 counters on another target creature you control, where X is Halana and Alena's power. That creature gains haste until end of turn.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/b/6/b649f459-c9dc-495d-8703-b685996bb80c.jpg?1783908911",
+      "scryfallUri": "https://scryfall.com/card/fdn/659/halana-and-alena-partners?utm_source=api"
+    },
+    {
       "oracleId": "b3d81980-76f2-44e2-b1c9-01e30c726312",
       "name": "Loran of the Third Path",
       "colorIdentity": [
@@ -9698,6 +9784,18 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/e/9/e9c124d7-b4b1-43cf-9830-1244053cc056.jpg?1783917137",
       "scryfallUri": "https://scryfall.com/card/moc/307/managorger-hydra?utm_source=api"
+    },
+    {
+      "oracleId": "b40138c3-48bc-4825-ae48-5fea95304088",
+      "name": "Silver Shroud Costume",
+      "colorIdentity": [],
+      "manaValue": 2,
+      "manaCost": "{2}",
+      "typeLine": "Artifact — Equipment",
+      "oracleText": "Flash\nWhen this Equipment enters, attach it to target creature you control. That creature gains shroud until end of turn. (It can't be the target of spells or abilities.)\nEquipped creature can't be blocked.\nEquip {3}",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/4/9/49c85e36-de89-4fc0-8058-1eb5bf319c2d.jpg?1783904273",
+      "scryfallUri": "https://scryfall.com/card/sld/915/silver-shroud-costume?utm_source=api"
     },
     {
       "oracleId": "b410f294-cbb6-4016-981f-808fd9b7bbae",
@@ -11580,6 +11678,18 @@
       "scryfallUri": "https://scryfall.com/card/sos/140/ambitious-augmenter?utm_source=api"
     },
     {
+      "oracleId": "d895863e-a3c5-4e1f-bd28-e47a8717bbd0",
+      "name": "Scavenged Brawler",
+      "colorIdentity": [],
+      "manaValue": 6,
+      "manaCost": "{6}",
+      "typeLine": "Artifact Creature — Construct",
+      "oracleText": "Flying, vigilance, trample, lifelink\n{5}, Exile this card from your graveyard: Choose target creature. Put four +1/+1 counters, a flying counter, a vigilance counter, a trample counter, and a lifelink counter on that creature. Activate only as a sorcery.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/a/f/afd0ba67-cbb7-49fe-83a0-02e85a37d9d6.jpg?1783919718",
+      "scryfallUri": "https://scryfall.com/card/brc/17/scavenged-brawler?utm_source=api"
+    },
+    {
       "oracleId": "d8c16a3a-dd9d-410c-a5d5-06339a89970f",
       "name": "Zinnia, Valley's Voice",
       "colorIdentity": [
@@ -12863,6 +12973,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/b/e/be8a8e26-39cb-440a-a428-58b49ff8d017.jpg?1783920876",
       "scryfallUri": "https://scryfall.com/card/40k/92/hierophant-bio-titan?utm_source=api"
+    },
+    {
+      "oracleId": "f3838ff1-5403-4f3f-8531-36029c13fcfc",
+      "name": "Riptide Gearhulk",
+      "colorIdentity": [
+        "U",
+        "W"
+      ],
+      "manaValue": 5,
+      "manaCost": "{1}{W}{W}{U}{U}",
+      "typeLine": "Artifact Creature — Construct",
+      "oracleText": "Double strike\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhen this creature enters, for each opponent, put up to one target nonland permanent that player controls into its owner's library third from the top.",
+      "isLand": false,
+      "imageUri": "https://cards.scryfall.io/normal/front/4/4/44bfb0f7-18ca-4f6e-ba64-92120010456e.jpg?1783907853",
+      "scryfallUri": "https://scryfall.com/card/dft/219/riptide-gearhulk?utm_source=api"
     },
     {
       "oracleId": "f3c5978a-70fa-431f-933b-b954bd0db0ea",
