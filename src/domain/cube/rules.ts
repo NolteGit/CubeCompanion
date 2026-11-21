@@ -19,14 +19,14 @@ export interface CubeRules {
 }
 
 export const DEFAULT_CUBE_RULES: CubeRules = {
-  revision: '2',
+  revision: '3',
   draft: {
     monoColorCount: 50,
     dualColorCount: 4,
-    guildLandCount: 4,
+    guildLandCount: 5,
     colorless: { target: 61, tolerance: 10 },
-    lands: { target: 60, tolerance: 10 },
-    total: { target: 411, tolerance: 20 },
+    lands: { target: 70, tolerance: 10 },
+    total: { target: 421, tolerance: 20 },
   },
   commanders: {
     symmetricIdentitySizes: [1, 2, 3, 4],

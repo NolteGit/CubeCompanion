@@ -22,19 +22,23 @@ describe('CubeUebersicht workbook adapter', () => {
     expect(extracted.commanders.every((card) => rowNumber(card.cell) <= 150)).toBe(true)
   })
 
-  it('maps the ten four-row guild blocks without consulting card identity', () => {
+  it('maps four-row spell blocks and five-row land blocks without consulting card identity', () => {
     GUILD_KEYS.forEach((guild, index) => {
       const firstRow = 4 + index * 4
-      const lastRow = firstRow + 3
+      const firstLandRow = 4 + index * 5
+      const lastLandRow = firstLandRow + 4
 
       expect(draftAllocationFor('multicolor', firstRow)).toEqual({
         section: 'multicolor',
         guild,
       })
-      expect(draftAllocationFor('land', lastRow)).toEqual({ section: 'land', guild })
+      expect(draftAllocationFor('multicolor', firstRow + 3)).toEqual({ section: 'multicolor', guild })
+      expect(draftAllocationFor('land', firstLandRow)).toEqual({ section: 'land', guild })
+      expect(draftAllocationFor('land', lastLandRow)).toEqual({ section: 'land', guild })
     })
 
-    expect(draftAllocationFor('land', 44)).toEqual({ section: 'land' })
+    expect(draftAllocationFor('multicolor', 44)).toEqual({ section: 'multicolor' })
+    expect(draftAllocationFor('land', 54)).toEqual({ section: 'land' })
     expect(draftAllocationFor('land', 76)).toEqual({ section: 'land' })
   })
 

@@ -114,6 +114,21 @@
       "scryfallUri": "https://scryfall.com/card/vma/322/tundra?utm_source=api"
     },
     {
+      "oracleId": "027dd013-baa7-4111-b3c9-f4d1414e9c45",
+      "name": "Glacial Fortress",
+      "colorIdentity": [
+        "U",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Plains or an Island.\n{T}: Add {W} or {U}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/d/3/d306154a-7adb-4b35-b0cf-9c8d2fc1f72f.jpg?1793021313",
+      "scryfallUri": "https://scryfall.com/card/trc/535/glacial-fortress?utm_source=api"
+    },
+    {
       "oracleId": "0310dfdb-0498-488d-9f1a-279f8239e024",
       "name": "Meren of Clan Nel Toth",
       "colorIdentity": [
@@ -3409,6 +3424,21 @@
       "scryfallUri": "https://scryfall.com/card/mom/174/ancient-imperiosaur?utm_source=api"
     },
     {
+      "oracleId": "402ec768-76fb-474e-ae74-babc90d833c4",
+      "name": "Sunpetal Grove",
+      "colorIdentity": [
+        "G",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Forest or a Plains.\n{T}: Add {G} or {W}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/1/0/10133c76-755c-413d-a515-f1c31c053eae.jpg?1793281499",
+      "scryfallUri": "https://scryfall.com/card/trc/565/sunpetal-grove?utm_source=api"
+    },
+    {
       "oracleId": "406b4b1d-756b-4062-897d-3693832086a0",
       "name": "Greater Gargadon",
       "colorIdentity": [
@@ -5290,6 +5320,21 @@
       "scryfallUri": "https://scryfall.com/card/ecl/57/loch-mare?utm_source=api"
     },
     {
+      "oracleId": "63398c02-6fb1-481d-9d9f-81063532fbc0",
+      "name": "Dragonskull Summit",
+      "colorIdentity": [
+        "B",
+        "R"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Swamp or a Mountain.\n{T}: Add {B} or {R}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/3/3/33e29673-5cf3-4b63-b526-0d9865873d64.jpg?1793197589",
+      "scryfallUri": "https://scryfall.com/card/trc/524/dragonskull-summit?utm_source=api"
+    },
+    {
       "oracleId": "63788566-e25a-44bb-bb55-197e1b93b3e8",
       "name": "Trading Post",
       "colorIdentity": [],
@@ -5763,6 +5808,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/5/5/559ff1b1-018c-4e08-9531-8af20af47d05.jpg?1783913292",
       "scryfallUri": "https://scryfall.com/card/rvr/172/coiling-oracle?utm_source=api"
+    },
+    {
+      "oracleId": "6a6c5e17-6465-4a1f-9d63-8a3ce2edc522",
+      "name": "Sulfur Falls",
+      "colorIdentity": [
+        "R",
+        "U"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control an Island or a Mountain.\n{T}: Add {U} or {R}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/9/e/9ea843a3-3bed-4d34-ab23-967d8ff5b584.jpg?1793112070",
+      "scryfallUri": "https://scryfall.com/card/trc/563/sulfur-falls?utm_source=api"
     },
     {
       "oracleId": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
@@ -6862,6 +6922,21 @@
       "scryfallUri": "https://scryfall.com/card/40k/50/primaris-eliminator?utm_source=api"
     },
     {
+      "oracleId": "7e5d9efe-48a9-434b-bb09-056e0e09cc9a",
+      "name": "Isolated Chapel",
+      "colorIdentity": [
+        "B",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Plains or a Swamp.\n{T}: Add {W} or {B}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/e/9/e992b8e8-1d0c-4c44-b413-10d6596c9b23.jpg?1793021328",
+      "scryfallUri": "https://scryfall.com/card/trc/539/isolated-chapel?utm_source=api"
+    },
+    {
       "oracleId": "7e7ec3d6-a84f-4cc3-93f4-4d181d41e126",
       "name": "Final Showdown",
       "colorIdentity": [
@@ -7031,6 +7106,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/b/8/b8ca900d-767d-4461-aba3-107dd17d8326.jpg?1783913271",
       "scryfallUri": "https://scryfall.com/card/rvr/233/teysa-orzhov-scion?utm_source=api"
+    },
+    {
+      "oracleId": "819fc966-434e-470f-91e9-a38df974ad17",
+      "name": "Drowned Catacomb",
+      "colorIdentity": [
+        "B",
+        "U"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control an Island or a Swamp.\n{T}: Add {U} or {B}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/7/f/7f6615d6-4307-43fe-a9a1-d2ef956246d0.jpg?1793021277",
+      "scryfallUri": "https://scryfall.com/card/trc/525/drowned-catacomb?utm_source=api"
     },
     {
       "oracleId": "82004860-e589-4e38-8d61-8c0210e4ea39",
@@ -8118,6 +8208,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/f/6/f67b323d-0dda-45f8-84b7-d883ce5045a8.jpg?1783903785",
       "scryfallUri": "https://scryfall.com/card/soc/216/infernal-grasp?utm_source=api"
+    },
+    {
+      "oracleId": "9516c4c1-d72d-434f-97e1-6a862434a169",
+      "name": "Rootbound Crag",
+      "colorIdentity": [
+        "G",
+        "R"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Mountain or a Forest.\n{T}: Add {R} or {G}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/4/2/42d174e5-b8c2-45eb-8e08-1b94fc27cbee.jpg?1783903194",
+      "scryfallUri": "https://scryfall.com/card/msc/261/rootbound-crag?utm_source=api"
     },
     {
       "oracleId": "953a2bd3-5bca-41fc-8785-66b2d7fa381a",
@@ -10950,6 +11055,21 @@
       "scryfallUri": "https://scryfall.com/card/a25/5/armageddon?utm_source=api"
     },
     {
+      "oracleId": "c9fe1383-1331-4a58-a45a-3320250221a9",
+      "name": "Woodland Cemetery",
+      "colorIdentity": [
+        "B",
+        "G"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Swamp or a Forest.\n{T}: Add {B} or {G}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/4/d/4d6f6c96-f813-4864-b4e1-b2a0aa8be1e8.jpg?1783903713",
+      "scryfallUri": "https://scryfall.com/card/soc/424/woodland-cemetery?utm_source=api"
+    },
+    {
       "oracleId": "ca204b66-8d0c-431a-8d34-282f7c2d17da",
       "name": "Lightning Greaves",
       "colorIdentity": [],
@@ -11681,6 +11801,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/6/4/64401acc-d080-4763-b67a-95164c11c69e.jpg?1783915589",
       "scryfallUri": "https://scryfall.com/card/cmm/413/sword-of-the-animist?utm_source=api"
+    },
+    {
+      "oracleId": "d7faa3c8-46cf-46b2-bfa4-89000307cf18",
+      "name": "Clifftop Retreat",
+      "colorIdentity": [
+        "R",
+        "W"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Mountain or a Plains.\n{T}: Add {R} or {W}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/f/7/f70e40ea-2cec-4896-bc22-3281aadcffe3.jpg?1793111978",
+      "scryfallUri": "https://scryfall.com/card/trc/518/clifftop-retreat?utm_source=api"
     },
     {
       "oracleId": "d82c77a1-2b81-415d-9f18-47e059c15e01",
@@ -13552,6 +13687,21 @@
       "isLand": false,
       "imageUri": "https://cards.scryfall.io/normal/front/a/5/a560b9a7-4c00-4c0c-b63d-774d3f6b9aa9.jpg?1789611521",
       "scryfallUri": "https://scryfall.com/card/frc/36/sunfall?utm_source=api"
+    },
+    {
+      "oracleId": "fb5a3403-7f0b-406c-8c4f-d693be010ca6",
+      "name": "Hinterland Harbor",
+      "colorIdentity": [
+        "G",
+        "U"
+      ],
+      "manaValue": 0,
+      "manaCost": "",
+      "typeLine": "Land",
+      "oracleText": "This land enters tapped unless you control a Forest or an Island.\n{T}: Add {G} or {U}.",
+      "isLand": true,
+      "imageUri": "https://cards.scryfall.io/normal/front/b/e/be99af65-ca51-48f4-a004-baf21e267cc8.jpg?1793281457",
+      "scryfallUri": "https://scryfall.com/card/trc/537/hinterland-harbor?utm_source=api"
     },
     {
       "oracleId": "fb60739e-1dc3-481d-a056-ad72e665c680",

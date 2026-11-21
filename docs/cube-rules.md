@@ -10,20 +10,20 @@ Hard limits:
 
 - 50 cards in each mono-color workbook section: White, Blue, Black, Red, Green
 - 4 multicolor cards in each guild allocation
-- 4 land cards in each guild land allocation
+- 5 land cards in each guild land allocation
 - no three-, four-, or five-color draft cards
 - singleton by logical card identity
 - no card may also occur in the active commander pool
 
-The guild order used by both the Multicolor and Land blocks is WU, UB, BR, RG, WG, WB, UR, BG, WR, UG. Each guild owns four consecutive rows. This intentionally lets cards such as fetchlands count toward the guild they support even when Scryfall assigns them a different or colorless identity.
+The guild order used by both the Multicolor and Land blocks is WU, UB, BR, RG, WG, WB, UR, BG, WR, UG. Each guild owns four consecutive multicolor rows and five consecutive land rows. This intentionally lets cards such as fetchlands count toward the guild they support even when Scryfall assigns them a different or colorless identity.
 
 Flexible hard ranges:
 
 - Colorless workbook section: target 61, allowed 51-71
-- entire Land workbook section: target 60, allowed 50-70
-- total draft pool: target 411, allowed 391-431
+- entire Land workbook section: target 70, allowed 60-80
+- total draft pool: target 421, allowed 401-441
 
-Land rows after the ten four-card guild groups are the general/colorless land allocation. With the current 60-card land section this is 40 guild lands plus 20 general/colorless lands.
+Land rows after the ten five-card guild groups are the general/colorless land allocation. At the 70-card land target this is 50 guild lands plus 20 general/colorless lands. The workbook's existing row limit (76) also constrains physical capacity.
 
 ## Commander pool
 

@@ -63,7 +63,7 @@ function buildValidCube() {
 
   draftCards.push(...cardsForIdentity('Colorless', [], 61, false, { section: 'colorless' }))
   for (const guild of GUILD_KEYS) {
-    draftCards.push(...cardsForIdentity(`Land-${guild}`, [], 4, true, { section: 'land', guild }))
+    draftCards.push(...cardsForIdentity(`Land-${guild}`, [], 5, true, { section: 'land', guild }))
   }
   draftCards.push(...cardsForIdentity('Land-General', [], 20, true, { section: 'land' }))
 
@@ -85,9 +85,9 @@ describe('cube validation', () => {
 
     expect(result.valid).toBe(true)
     expect(result.issues).toEqual([])
-    expect(result.summary.draft.total).toBe(411)
+    expect(result.summary.draft.total).toBe(421)
     expect(result.summary.draft.colorless).toBe(61)
-    expect(result.summary.draft.lands).toBe(60)
+    expect(result.summary.draft.lands).toBe(70)
   })
 
   it('requires exact mono-color and dual-color counts', () => {
@@ -106,19 +106,30 @@ describe('cube validation', () => {
     )
   })
 
-  it('allows Triomes as general lands while keeping their Commander color identity', () => {
+  it('requires exactly five lands in each guild allocation', () => {
+    const cube = buildValidCube()
+    cube.draftCards = cube.draftCards.filter((entry) => entry.name !== 'Land-WU-5')
+    cube.draftCards.push(card('Extra UB land', [], true, undefined, { section: 'land', guild: 'UB' }))
+    const result = validateCube(cube)
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'draft.guild-land-count', actual: 4, expected: 5 }),
+      expect.objectContaining({ code: 'draft.guild-land-count', actual: 6, expected: 5 }),
+    ]))
+  })
+
+  it('rejects Triomes even in general land slots', () => {
     const cube = buildValidCube()
     const index = cube.draftCards.findIndex((entry) => entry.name === 'Land-General-1')
     cube.draftCards[index] = card('Savai Triome', ['W', 'B', 'R'], true, undefined, { section: 'land' })
 
     const result = validateCube(cube)
-    expect(result.valid).toBe(true)
-    expect(result.summary.draft.lands).toBe(60)
-    expect(result.summary.draft.generalLands).toBe(20)
-    expect(cube.draftCards[index].colorIdentity).toEqual(['W', 'B', 'R'])
+    expect(result.valid).toBe(false)
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'draft.disallowed-color-identity', cards: ['Savai Triome'] }),
+    ]))
   })
 
-  it('does not exempt arbitrary three-color lands or spells', () => {
+  it('rejects other three-color lands', () => {
     const cube = buildValidCube()
     const index = cube.draftCards.findIndex((entry) => entry.name === 'Land-General-1')
     cube.draftCards[index] = card('Unrelated Three-Color Land', ['W', 'U', 'G'], true, undefined, { section: 'land' })
@@ -156,9 +167,9 @@ describe('cube validation', () => {
     expect(result.valid).toBe(true)
     expect(result.summary.draft.mono.U).toBe(50)
     expect(result.summary.draft.dual.WU).toBe(4)
-    expect(result.summary.draft.guildLands.WU).toBe(4)
+    expect(result.summary.draft.guildLands.WU).toBe(5)
     expect(result.summary.draft.generalLands).toBe(20)
-    expect(result.summary.draft.lands).toBe(60)
+    expect(result.summary.draft.lands).toBe(70)
   })
 
   it('enforces configured flexible ranges', () => {

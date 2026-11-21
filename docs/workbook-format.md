@@ -14,7 +14,7 @@ Only the Excel adapter owns worksheet coordinates.
 
 For every draft column, nonblank card cells from rows 4 through 76 are draft candidates. This intentionally includes temporary ideas below the normal filled block, so an unfinished change appears as an excess count or duplicate instead of silently disappearing from validation. Row 77 separates the draft area from the commander area.
 
-The Multicolor and Land sections use the same guild order: WU, UB, BR, RG, WG, WB, UR, BG, WR, UG. Rows 4-43 form ten four-card guild allocations. Land rows 44-76 are the general/colorless land allocation.
+The Multicolor and Land sections use the same guild order: WU, UB, BR, RG, WG, WB, UR, BG, WR, UG. Multicolor rows 4-43 form ten four-card guild allocations. Land rows 4-53 form ten five-card guild allocations; Land rows 54-76 are the general/colorless land allocation.
 
 Workbook allocation is preserved downstream and is separate from Scryfall color identity. For example, a fetchland can occupy a guild land slot and a mechanically blue colorless artifact can occupy the Blue section.
 

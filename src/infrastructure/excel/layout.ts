@@ -1,4 +1,4 @@
-import { GUILD_KEYS, type DraftAllocation, type DraftSection } from '../../domain'
+import { DEFAULT_CUBE_RULES, GUILD_KEYS, type DraftAllocation, type DraftSection } from '../../domain'
 import type { WorkbookPool, WorkbookSection } from './types'
 
 export interface ActiveSectionLayout {
@@ -63,8 +63,9 @@ export function draftAllocationFor(
 
   if (section !== 'multicolor' && section !== 'land') return undefined
 
-  const guildIndex = Math.floor((row - 4) / 4)
-  const guild = row >= 4 && row <= 43 ? GUILD_KEYS[guildIndex] : undefined
+  const blockSize = section === 'land' ? DEFAULT_CUBE_RULES.draft.guildLandCount : DEFAULT_CUBE_RULES.draft.dualColorCount
+  const guildIndex = Math.floor((row - 4) / blockSize)
+  const guild = row >= 4 && guildIndex < GUILD_KEYS.length ? GUILD_KEYS[guildIndex] : undefined
   return guild ? { section, guild } : { section }
 }
 

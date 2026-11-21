@@ -1,6 +1,5 @@
 import ExcelJS from 'exceljs'
 import { colorIdentityKey } from '../../domain/cube/colorIdentity'
-import { isTriomeLand } from '../../domain/cube/triomes'
 import type { DraftSection, GuildKey } from '../../domain/cube/types'
 import type { CardMetadata } from '../scryfall/types'
 import {
@@ -165,12 +164,10 @@ function draftBucket(layout: ActiveSectionLayout, row: number): string {
 }
 
 function additionBucket(card: CardMetadata): string {
+  if (card.colorIdentity.length >= 3) {
+    throw new Error(`${card.name} has more than two colors and cannot join the draft pool.`)
+  }
   if (card.isLand) {
-    // Triomes occupy general land slots, not a three-color spell section.
-    // Other 3+-color lands remain restricted by cube rules.
-    if (card.colorIdentity.length >= 3 && !isTriomeLand(card)) {
-      throw new Error(`${card.name} has a prohibited three-or-more-color identity; only Triome lands are exempt.`)
-    }
     // Existing guild allocations are positional and remain unchanged.
     return `land:${card.colorIdentity.length === 2 ? guildForIdentity(card) : 'general'}`
   }
@@ -267,7 +264,7 @@ export function planWorkbookDiff(
     finalOracleIds.add(oracleId)
   }
 
-  // Sort only *inside* workbook allocations. The four-cell guild blocks are
+  // Sort only *inside* workbook allocations. The guild blocks are
   // fixed by row, so sorting must never move a card to a different guild.
   const draftSlots = new Map<string, string[]>()
   for (const layout of DRAFT_SECTIONS) {

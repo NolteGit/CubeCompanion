@@ -1,15 +1,15 @@
 {
   "release": {
-    "snapshotId": "2659c258c8099ce6de0f7c127b1c39b0410e6f907275359952aa9c596ac1ad98",
-    "publishedAt": "2026-11-20T22:24:54.602Z",
-    "rulesRevision": "2",
-    "note": "Add 10 Triomes"
+    "snapshotId": "74b88308fcd5477fcc81e933d866325130ba225beeb6c33d929397e238052fd9",
+    "publishedAt": "2026-11-21T08:03:41.065Z",
+    "rulesRevision": "3",
+    "note": "Replace Triomes with check lands"
   },
   "snapshot": {
-    "id": "2659c258c8099ce6de0f7c127b1c39b0410e6f907275359952aa9c596ac1ad98",
-    "createdAt": "2026-11-20T22:24:54.602Z",
-    "note": "Add 10 Triomes",
-    "rulesRevision": "2",
+    "id": "74b88308fcd5477fcc81e933d866325130ba225beeb6c33d929397e238052fd9",
+    "createdAt": "2026-11-21T08:03:41.065Z",
+    "note": "Replace Triomes with check lands",
+    "rulesRevision": "3",
     "draftCards": [
       {
         "oracleId": "5def9f38-0a0b-4e8d-9f9d-29dcb46520b4",
@@ -3871,6 +3871,19 @@
         }
       },
       {
+        "oracleId": "027dd013-baa7-4111-b3c9-f4d1414e9c45",
+        "name": "Glacial Fortress",
+        "colorIdentity": [
+          "U",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "WU"
+        }
+      },
+      {
         "oracleId": "ef86989d-ce80-4e55-aece-7d11710eeffa",
         "name": "Polluted Delta",
         "colorIdentity": [],
@@ -3909,6 +3922,19 @@
       {
         "oracleId": "4b22be3a-8ce1-47d1-b82e-6c3ccfb0548b",
         "name": "Underground Sea",
+        "colorIdentity": [
+          "B",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "UB"
+        }
+      },
+      {
+        "oracleId": "819fc966-434e-470f-91e9-a38df974ad17",
+        "name": "Drowned Catacomb",
         "colorIdentity": [
           "B",
           "U"
@@ -3969,6 +3995,19 @@
         }
       },
       {
+        "oracleId": "63398c02-6fb1-481d-9d9f-81063532fbc0",
+        "name": "Dragonskull Summit",
+        "colorIdentity": [
+          "B",
+          "R"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "BR"
+        }
+      },
+      {
         "oracleId": "6587a463-a108-4854-b6d1-944e89b8c8a4",
         "name": "Wooded Foothills",
         "colorIdentity": [],
@@ -4007,6 +4046,19 @@
       {
         "oracleId": "22e3cf1d-3559-4ce1-954c-8dc815342979",
         "name": "Taiga",
+        "colorIdentity": [
+          "G",
+          "R"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "RG"
+        }
+      },
+      {
+        "oracleId": "9516c4c1-d72d-434f-97e1-6a862434a169",
+        "name": "Rootbound Crag",
         "colorIdentity": [
           "G",
           "R"
@@ -4067,6 +4119,19 @@
         }
       },
       {
+        "oracleId": "402ec768-76fb-474e-ae74-babc90d833c4",
+        "name": "Sunpetal Grove",
+        "colorIdentity": [
+          "G",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "WG"
+        }
+      },
+      {
         "oracleId": "dab520d0-20b4-4273-ba6b-eb07f85ea433",
         "name": "Marsh Flats",
         "colorIdentity": [],
@@ -4105,6 +4170,19 @@
       {
         "oracleId": "c8d95ca8-7d12-4072-aeaf-e20f248c7e39",
         "name": "Scrubland",
+        "colorIdentity": [
+          "B",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "WB"
+        }
+      },
+      {
+        "oracleId": "7e5d9efe-48a9-434b-bb09-056e0e09cc9a",
+        "name": "Isolated Chapel",
         "colorIdentity": [
           "B",
           "W"
@@ -4165,6 +4243,19 @@
         }
       },
       {
+        "oracleId": "6a6c5e17-6465-4a1f-9d63-8a3ce2edc522",
+        "name": "Sulfur Falls",
+        "colorIdentity": [
+          "R",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "UR"
+        }
+      },
+      {
         "oracleId": "67d60b24-d429-4ded-90d9-06e49f28c396",
         "name": "Verdant Catacombs",
         "colorIdentity": [],
@@ -4203,6 +4294,19 @@
       {
         "oracleId": "b76d1ae6-ad1d-4bac-b4c3-2e03e0e84d9b",
         "name": "Bayou",
+        "colorIdentity": [
+          "B",
+          "G"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "BG"
+        }
+      },
+      {
+        "oracleId": "c9fe1383-1331-4a58-a45a-3320250221a9",
+        "name": "Woodland Cemetery",
         "colorIdentity": [
           "B",
           "G"
@@ -4263,6 +4367,19 @@
         }
       },
       {
+        "oracleId": "d7faa3c8-46cf-46b2-bfa4-89000307cf18",
+        "name": "Clifftop Retreat",
+        "colorIdentity": [
+          "R",
+          "W"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "WR"
+        }
+      },
+      {
         "oracleId": "09dd85aa-47bc-4713-a9b9-8b52ff2285ed",
         "name": "Misty Rainforest",
         "colorIdentity": [],
@@ -4301,6 +4418,19 @@
       {
         "oracleId": "74b7fe23-5d3a-4092-8d78-7c0eba8f6f73",
         "name": "Tropical Island",
+        "colorIdentity": [
+          "G",
+          "U"
+        ],
+        "isLand": true,
+        "draftAllocation": {
+          "section": "land",
+          "guild": "UG"
+        }
+      },
+      {
+        "oracleId": "fb5a3403-7f0b-406c-8c4f-d693be010ca6",
+        "name": "Hinterland Harbor",
         "colorIdentity": [
           "G",
           "U"
@@ -4486,136 +4616,6 @@
         "oracleId": "4c6a0c30-b547-4eff-8ff4-0ca25803c076",
         "name": "Urza's Saga",
         "colorIdentity": [],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "ec2b3779-55f7-4169-aa66-6312fb52721f",
-        "name": "Indatha Triome",
-        "colorIdentity": [
-          "B",
-          "G",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "6bae00e8-06cf-4ac4-a1cc-757e454109fe",
-        "name": "Ketria Triome",
-        "colorIdentity": [
-          "G",
-          "R",
-          "U"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "c7fa1dda-9312-4ec8-82cd-a1ba7bc33497",
-        "name": "Raugrin Triome",
-        "colorIdentity": [
-          "R",
-          "U",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "00625242-9348-4ef4-b975-f2ac82fee21d",
-        "name": "Savai Triome",
-        "colorIdentity": [
-          "B",
-          "R",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "fdd46004-eaba-4024-8687-39b23dc6a58c",
-        "name": "Zagoth Triome",
-        "colorIdentity": [
-          "B",
-          "G",
-          "U"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "f5896356-5744-4f7e-a4e5-1cc36dde5958",
-        "name": "Jetmir's Garden",
-        "colorIdentity": [
-          "G",
-          "R",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "6e9ef5ef-6aed-4d3e-a59b-9e3dc8740b1b",
-        "name": "Raffine's Tower",
-        "colorIdentity": [
-          "B",
-          "U",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "3123ec89-8e95-4761-ba17-747ec667509f",
-        "name": "Spara's Headquarters",
-        "colorIdentity": [
-          "G",
-          "U",
-          "W"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "8291543f-d086-48aa-b2b7-5481ca8c9198",
-        "name": "Xander's Lounge",
-        "colorIdentity": [
-          "B",
-          "R",
-          "U"
-        ],
-        "isLand": true,
-        "draftAllocation": {
-          "section": "land"
-        }
-      },
-      {
-        "oracleId": "f7e7b78c-c769-4720-8585-1874773eb342",
-        "name": "Ziatora's Proving Ground",
-        "colorIdentity": [
-          "B",
-          "G",
-          "R"
-        ],
         "isLand": true,
         "draftAllocation": {
           "section": "land"
@@ -5154,18 +5154,18 @@
         "colorless": 60,
         "lands": 70,
         "guildLands": {
-          "WU": 4,
-          "UB": 4,
-          "BR": 4,
-          "RG": 4,
-          "WG": 4,
-          "WB": 4,
-          "UR": 4,
-          "BG": 4,
-          "WR": 4,
-          "UG": 4
+          "WU": 5,
+          "UB": 5,
+          "BR": 5,
+          "RG": 5,
+          "WG": 5,
+          "WB": 5,
+          "UR": 5,
+          "BG": 5,
+          "WR": 5,
+          "UG": 5
         },
-        "generalLands": 30
+        "generalLands": 20
       },
       "commanders": 55
     }

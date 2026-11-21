@@ -75,16 +75,32 @@ describe('sandbox diff workbook import', () => {
     expect(() => planWorkbookDiff(workbook, { ...changes, draftAdded: ['Old White'], draftRemoved: [] }, cards)).toThrow('Duplicate')
   })
 
-  it('places a three-color Triome in a general land slot', () => {
-    const { workbook, cube, cards } = fixture()
+  it('rejects three-color Triomes', () => {
+    const { workbook, cards } = fixture()
     cards.set('savai triome', metadata('Savai Triome', ['W', 'B', 'R'], true))
-    const plan = planWorkbookDiff(workbook, {
+    expect(() => planWorkbookDiff(workbook, {
       draftAdded: ['Savai Triome'], draftRemoved: [],
       commandersAdded: [], commandersRemoved: [],
-    }, cards)
-    expect(plan.additions).toContainEqual({ pool: 'draft', name: 'Savai Triome', cell: 'W44' })
+    }, cards)).toThrow('more than two colors')
+  })
+
+  it('allows a fifth guild land but not a sixth', () => {
+    const { workbook, cube, cards } = fixture()
+    for (let row = 4; row <= 7; row += 1) {
+      const name = `Existing WU land ${row}`
+      cube.getCell(`W${row}`).value = name
+      cards.set(name.toLowerCase(), metadata(name, ['W', 'U'], true))
+    }
+    cube.getCell('W9').value = 'Keep UB land'
+    cards.set('keep ub land', metadata('Keep UB land', ['U', 'B'], true))
+    cards.set('fifth wu land', metadata('Fifth WU land', ['W', 'U'], true))
+    cards.set('sixth wu land', metadata('Sixth WU land', ['W', 'U'], true))
+    const changes = { draftAdded: ['Fifth WU land'], draftRemoved: [], commandersAdded: [], commandersRemoved: [] }
+    const plan = planWorkbookDiff(workbook, changes, cards)
+    expect(plan.additions).toContainEqual({ pool: 'draft', name: 'Fifth WU land', cell: 'W8' })
     applyWorkbookDiff(workbook, plan)
-    expect(cube.getCell('W44').text).toBe('Savai Triome')
+    expect(cube.getCell('W9').text).toBe('Keep UB land')
+    expect(() => planWorkbookDiff(workbook, { ...changes, draftAdded: ['Sixth WU land'] }, cards)).toThrow('No free land:WU slot')
   })
 
   it('cannot place a card in an already full guild block', () => {
@@ -132,7 +148,7 @@ describe('sorted Excel diff placement', () => {
     expect(cube.getCell('A2').text).toBe('White')
   })
 
-  it('keeps multicolor guilds separate and preserves four-row land groups', () => {
+  it('keeps multicolor guilds separate and preserves five-row land groups', () => {
     const { workbook, cube, cards } = fixture()
     for (const [row, name, cmc] of [
       [4, 'Old WU 1', 1], [5, 'Old WU 3', 3],
